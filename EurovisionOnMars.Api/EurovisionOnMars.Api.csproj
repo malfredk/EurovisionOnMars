@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj" />
   </ItemGroup>
 
