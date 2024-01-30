@@ -42,14 +42,9 @@ public class PlayersController : ControllerBase
         return Ok(player);
     }
 
-    [HttpGet("id/{id}")]
-    public async Task<ActionResult<Player>> GetPlayerById(string id)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<Player>> GetPlayerById(int id)
     {
-        if (string.IsNullOrEmpty(id))
-        {
-            return BadRequest();
-        }
-
         var player = await _context.Players.FirstOrDefaultAsync(p => p.Id == id);
 
         if (player == null)
@@ -74,7 +69,7 @@ public class PlayersController : ControllerBase
             return Conflict();
         }
 
-        var newPlayer = new Player(username, username); // TODO: id
+        var newPlayer = new Player(username);
         _context.Players.Add(newPlayer);
         await _context.SaveChangesAsync();
 

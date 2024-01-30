@@ -1,6 +1,6 @@
 ﻿namespace EurovisionOnMars.Entity;
 
-public record Player (string Id, string Username)
+public record Player (string Username)
 {
-
+    public int Id { get; init; }
 }
