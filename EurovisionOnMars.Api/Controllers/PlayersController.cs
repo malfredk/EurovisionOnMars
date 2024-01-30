@@ -1,4 +1,6 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Api.Mappers;
+using EurovisionOnMars.Dto;
+using EurovisionOnMars.Entity;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ namespace EurovisionOnMars.Api.Controllers;
 public class PlayersController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly PlayerMapper _mapper = new PlayerMapper(); // TODO: consider dependency injection
 
     public PlayersController(DataContext context)
     {
@@ -17,15 +20,15 @@ public class PlayersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Player>>> GetPlayers()
+    public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayers()
     {
         var players = await _context.Players.ToListAsync();
-
-        return Ok(players);
+        var playerDtos = players.Select(player => _mapper.ToDto(player));
+        return Ok(playerDtos);
     }
 
     [HttpGet("{username}")]
-    public async Task<ActionResult<Player>> GetPlayerByUsername(string username)
+    public async Task<ActionResult<PlayerDto>> GetPlayerByUsername(string username)
     {
         if (string.IsNullOrEmpty(username))
         {
@@ -39,11 +42,12 @@ public class PlayersController : ControllerBase
             return NotFound();
         }
 
-        return Ok(player);
+        var playerDto = _mapper.ToDto(player);
+        return Ok(playerDto);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Player>> GetPlayerById(int id)
+    public async Task<ActionResult<PlayerDto>> GetPlayerById(int id)
     {
         var player = await _context.Players.FirstOrDefaultAsync(p => p.Id == id);
 
@@ -52,11 +56,12 @@ public class PlayersController : ControllerBase
             return NotFound();
         }
 
-        return Ok(player);
+        var playerDto = _mapper.ToDto(player);
+        return Ok(playerDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Player>> CreatePlayer([FromBody] string username)
+    public async Task<ActionResult<PlayerDto>> CreatePlayer([FromBody] string username)
     {
         if (string.IsNullOrEmpty(username))
         {
@@ -73,6 +78,8 @@ public class PlayersController : ControllerBase
         _context.Players.Add(newPlayer);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetPlayerByUsername), new { username = newPlayer.Username }, newPlayer);
+        var newPlayerDto = _mapper.ToDto(newPlayer);
+
+        return CreatedAtAction(nameof(GetPlayerByUsername), new { username = newPlayer.Username }, newPlayerDto);
     }
 }
