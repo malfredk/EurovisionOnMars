@@ -8,11 +8,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api", "EurovisionOnMars.Api\EurovisionOnMars.Api.csproj", "{F30E5D33-0464-46D4-965B-6332AD1B3534}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Wasm", "src\EurovisionOnMars.Wasm\EurovisionOnMars.Wasm.csproj", "{A8200B1A-CBC7-49AF-8373-74913E54EF75}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Entity", "EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj", "{4AA2A73B-D329-4E22-9AB4-A27FC9E6BB39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api", "src\EurovisionOnMars.Api\EurovisionOnMars.Api.csproj", "{AA135298-4074-4F37-B89A-18BA49F87883}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Dto", "EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj", "{5278280C-E93B-4B8E-BD14-0BB251C73E19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Dto", "src\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj", "{DD93864D-C308-444B-BC8C-9862A1FC655D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Entity", "src\EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj", "{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,18 +22,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F30E5D33-0464-46D4-965B-6332AD1B3534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F30E5D33-0464-46D4-965B-6332AD1B3534}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F30E5D33-0464-46D4-965B-6332AD1B3534}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F30E5D33-0464-46D4-965B-6332AD1B3534}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4AA2A73B-D329-4E22-9AB4-A27FC9E6BB39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4AA2A73B-D329-4E22-9AB4-A27FC9E6BB39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4AA2A73B-D329-4E22-9AB4-A27FC9E6BB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4AA2A73B-D329-4E22-9AB4-A27FC9E6BB39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5278280C-E93B-4B8E-BD14-0BB251C73E19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5278280C-E93B-4B8E-BD14-0BB251C73E19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5278280C-E93B-4B8E-BD14-0BB251C73E19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5278280C-E93B-4B8E-BD14-0BB251C73E19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8200B1A-CBC7-49AF-8373-74913E54EF75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8200B1A-CBC7-49AF-8373-74913E54EF75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8200B1A-CBC7-49AF-8373-74913E54EF75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8200B1A-CBC7-49AF-8373-74913E54EF75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA135298-4074-4F37-B89A-18BA49F87883}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA135298-4074-4F37-B89A-18BA49F87883}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA135298-4074-4F37-B89A-18BA49F87883}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA135298-4074-4F37-B89A-18BA49F87883}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
