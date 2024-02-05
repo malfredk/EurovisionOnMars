@@ -60,8 +60,8 @@ public class PlayersController : ControllerBase
         return Ok(playerDto);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<PlayerDto>> CreatePlayer([FromBody] string username)
+    [HttpPost("{username}")]
+    public async Task<ActionResult<PlayerDto>> CreatePlayer(string username)
     {
         if (string.IsNullOrEmpty(username))
         {
