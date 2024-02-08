@@ -1,24 +1,72 @@
 ﻿@page "/"
-@using EurovisionOnMars.Dto
 @inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<PageTitle>eurovision</PageTitle>
 
 <div>
-    <p>lag ny bruker:</p>
-    <input type="text" @bind="username" onkeypress="HandleKeyPress" />
-    <button onclick="CreatePlayer">lagre</button>
+    <p>ny spiller:</p>
+    <input type="text" @bind="newUsername" /> @* TODO: add handling of enter key press (@onkeypress="HandleKeyPressExisting") *@
+    <button @onclick="CreatePlayer">spill</button> 
+</div>
+<br />
+<div>
+    <p>eksisterende spiller:</p>
+    <input type="text" @bind="existingUsername" />
+    <button @onclick="GetPlayer">spill</button>
 </div>
 
 @code {
-    private string username;
+    private string? newUsername;
+    private string? existingUsername;
+    private PlayerDto? player;
 
     private async Task CreatePlayer()
     {
-        await Http.PostFromJsonAsync<PlayerDto>("Players", username);
+        if (string.IsNullOrEmpty(newUsername))
+        {
+            return;
+        }
+        var response = await Http.PostAsJsonAsync<string>("https://localhost:7195/api/Players/", newUsername); // TODO: automatically parse url
+        if (response.IsSuccessStatusCode)
+        {
+            player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            Console.WriteLine($"Successfully created player with username: {player!.Username}");
+        }
+        else
+        {
+            // TODO: handle error
+            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+        }
+    }
+
+    private async Task GetPlayer()
+    {
+        var response = await Http.GetFromJsonAsync<PlayerDto>($"https://localhost:7195/api/Players/{existingUsername}");
+        if (response != null) // TODO: handle error
+        {
+            player = response;
+            Console.WriteLine($"Got existing player with username: {player.Username}");
+        }
+        else
+        {
+            // TODO: handle error
+            Console.WriteLine($"Failed to get existing player");
+        }
+    }
+
+    private async Task HandleKeyPressNew(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await CreatePlayer();
+        }
+    }
+
+    private async Task HandleKeyPressExisting(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await GetPlayer();
+        }
     }
 }
