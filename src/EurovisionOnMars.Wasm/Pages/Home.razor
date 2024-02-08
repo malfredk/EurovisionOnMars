@@ -5,13 +5,13 @@
 
 <div>
     <p>ny spiller:</p>
-    <input type="text" @bind="newUsername" /> @* TODO: add handling of enter key press (@onkeypress="HandleKeyPressExisting") *@
+    <input type="text" @bind="newUsername" @onkeydown="HandleEnterNew" />
     <button @onclick="CreatePlayer">spill</button> 
 </div>
 <br />
 <div>
     <p>eksisterende spiller:</p>
-    <input type="text" @bind="existingUsername" />
+    <input type="text" @bind="existingUsername" @onkeydown="HandleEnterExisting"/>
     <button @onclick="GetPlayer">spill</button>
 </div>
 
@@ -54,17 +54,17 @@
         }
     }
 
-    private async Task HandleKeyPressNew(KeyboardEventArgs args)
+    private async Task HandleEnterNew(KeyboardEventArgs args)
     {
-        if (args.Key == "Enter")
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
         {
             await CreatePlayer();
         }
     }
 
-    private async Task HandleKeyPressExisting(KeyboardEventArgs args)
+    private async Task HandleEnterExisting(KeyboardEventArgs args)
     {
-        if (args.Key == "Enter")
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
         {
             await GetPlayer();
         }
