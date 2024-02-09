@@ -1,3 +1,4 @@
+using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Entity.DataAccess;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DevConnection")));
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 var app = builder.Build();
 
@@ -35,6 +37,8 @@ app.UseCors(policy =>
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
