@@ -21,7 +21,7 @@ public class PlayerService : IPlayerService
         return await _repository.GetPlayers();
     }
 
-    public async Task<Player?> GetPlayer(int id)
+    public async Task<Player> GetPlayer(int id)
     {
         var player = await _repository.GetPlayer(id);
         if (player == null)
@@ -31,7 +31,7 @@ public class PlayerService : IPlayerService
         return player;
     }
 
-    public async Task<Player?> GetPlayer(string username)
+    public async Task<Player> GetPlayer(string username)
     {
         if (string.IsNullOrEmpty(username))
         {
