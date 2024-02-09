@@ -1,3 +1,5 @@
+using EurovisionOnMars.Api.Repositories;
+using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
@@ -12,6 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DevConnection")));
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 
 var app = builder.Build();
 

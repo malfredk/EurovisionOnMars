@@ -1,9 +1,7 @@
 ﻿using EurovisionOnMars.Api.Mappers;
+using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Dto;
-using EurovisionOnMars.Entity;
-using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EurovisionOnMars.Api.Controllers;
 
@@ -11,51 +9,36 @@ namespace EurovisionOnMars.Api.Controllers;
 [ApiController]
 public class PlayersController : ControllerBase
 {
-    private readonly DataContext _context;
+    private readonly IPlayerService _service;
+    private readonly ILogger<PlayersController> _logger;
     private readonly PlayerMapper _mapper = new PlayerMapper(); // TODO: consider dependency injection
 
-    public PlayersController(DataContext context)
+    public PlayersController(IPlayerService service, ILogger<PlayersController> logger)
     {
-        _context = context;
+        _service = service;
+        _logger = logger;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayers()
     {
-        var players = await _context.Players.ToListAsync();
+        var players = await _service.GetPlayers();
         var playerDtos = players.Select(player => _mapper.ToDto(player));
         return Ok(playerDtos);
-    }
-
-    [HttpGet("{username}")]
-    public async Task<ActionResult<PlayerDto>> GetPlayerByUsername(string username)
-    {
-        if (string.IsNullOrEmpty(username))
-        {
-            return BadRequest();
-        }
-
-        var player = await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
-
-        if (player == null)
-        {
-            return NotFound();
-        }
-
-        var playerDto = _mapper.ToDto(player);
-        return Ok(playerDto);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PlayerDto>> GetPlayerById(int id)
     {
-        var player = await _context.Players.FirstOrDefaultAsync(p => p.Id == id);
+        var player = await _service.GetPlayer(id);
+        var playerDto = _mapper.ToDto(player);
+        return Ok(playerDto);
+    }
 
-        if (player == null)
-        {
-            return NotFound();
-        }
-
+    [HttpGet("{username}")]
+    public async Task<ActionResult<PlayerDto>> GetPlayerByUsername(string username)
+    {
+        var player = await _service.GetPlayer(username);
         var playerDto = _mapper.ToDto(player);
         return Ok(playerDto);
     }
@@ -63,23 +46,8 @@ public class PlayersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PlayerDto>> CreatePlayer([FromBody] string username)
     {
-        if (string.IsNullOrEmpty(username))
-        {
-            return BadRequest();
-        }
-
-        var existingPlayer = await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
-        if (existingPlayer != null)
-        {
-            return Conflict();
-        }
-
-        var newPlayer = new Player(username);
-        _context.Players.Add(newPlayer);
-        await _context.SaveChangesAsync();
-
-        var newPlayerDto = _mapper.ToDto(newPlayer);
-
-        return CreatedAtAction(nameof(GetPlayerByUsername), new { username = newPlayer.Username }, newPlayerDto);
+        var player = await _service.CreatePlayer(username);
+        var playerDto = _mapper.ToDto(player);
+        return CreatedAtAction(nameof(GetPlayerByUsername), new { username = player.Username }, playerDto);
     }
 }
