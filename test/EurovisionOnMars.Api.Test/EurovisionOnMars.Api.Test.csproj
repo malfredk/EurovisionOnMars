@@ -23,8 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mappers\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EurovisionOnMars.Api\EurovisionOnMars.Api.csproj" />
+    <ProjectReference Include="..\..\src\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj" />
+    <ProjectReference Include="..\..\src\EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj" />
   </ItemGroup>
 
 </Project>
