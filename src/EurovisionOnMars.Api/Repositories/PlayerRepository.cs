@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Repositories;
 
-public class PlayerRepository : IPlayerRespository
+public class PlayerRepository : IPlayerRepository
 {
     private readonly DataContext _context;
     private readonly ILogger<PlayerRepository> _logger;

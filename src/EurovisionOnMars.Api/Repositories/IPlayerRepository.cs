@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Repositories;
 
-public interface IPlayerRespository
+public interface IPlayerRepository
 {
     Task<ImmutableList<Player>> GetPlayers();
     Task<Player?> GetPlayer(int id);
