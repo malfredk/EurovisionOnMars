@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Api.Repositories;
+using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 
@@ -56,7 +57,7 @@ public class PlayerService : IPlayerService
         var existingPlayer = await _repository.GetPlayer(username);
         if (existingPlayer != null)
         {
-            throw new ArgumentException($"Player with username={username} already exists");
+            throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
         return await _repository.CreatePlayer(username);
     }

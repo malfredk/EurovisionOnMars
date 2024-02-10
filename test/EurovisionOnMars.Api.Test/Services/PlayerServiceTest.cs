@@ -1,6 +1,7 @@
 ﻿using Castle.Core.Logging;
 using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
+using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -171,7 +172,7 @@ public class PlayerServiceTest
             .ReturnsAsync(existingPlayer);
 
         // act and assert
-        Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreatePlayer(username));
+        Assert.ThrowsAsync<DuplicateUsernameException>(async () => await _service.CreatePlayer(username));
 
         _repositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
         _repositoryMock.Verify(r => r.CreatePlayer(It.IsAny<string>()), Times.Never());
