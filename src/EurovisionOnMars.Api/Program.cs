@@ -1,3 +1,4 @@
+using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
+builder.Services.AddTransient<IRatingMapper, RatingMapper>();
 
 var app = builder.Build();
 

@@ -3,9 +3,20 @@ using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Mappers;
 
-public class PlayerMapper
+public interface IPlayerMapper
 {
-    private readonly RatingMapper _ratingMapper = new RatingMapper();
+    public Player UpdateEntity(Player entity, PlayerDto dto);
+    public PlayerDto ToDto(Player entity);
+}
+
+public class PlayerMapper : IPlayerMapper
+{
+    private readonly IRatingMapper _ratingMapper;
+
+    public PlayerMapper(IRatingMapper ratingMapper)
+    {
+        _ratingMapper = ratingMapper;
+    }
 
     public Player UpdateEntity(Player entity, PlayerDto dto) 
     {

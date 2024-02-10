@@ -1,12 +1,21 @@
 ﻿using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Dto;
 using EurovisionOnMars.Entity;
+using Moq;
 
 namespace EurovisionOnMars.Api.Test.Mappers;
 
 public class PlayerMapperTest
 {
-    private readonly PlayerMapper _mapper = new PlayerMapper();
+    private readonly Mock<IRatingMapper> _ratingMapperMock;
+    private readonly PlayerMapper _mapper;
+
+    public PlayerMapperTest()
+    {
+        _ratingMapperMock = new Mock<IRatingMapper>();
+
+        _mapper = new PlayerMapper(_ratingMapperMock.Object);
+    }
 
     [Fact]
     public void UpdateEntity()

@@ -11,12 +11,17 @@ public class PlayersController : ControllerBase
 {
     private readonly IPlayerService _service;
     private readonly ILogger<PlayersController> _logger;
-    private readonly PlayerMapper _mapper = new PlayerMapper(); // TODO: consider dependency injection
+    private readonly IPlayerMapper _mapper;
 
-    public PlayersController(IPlayerService service, ILogger<PlayersController> logger)
+    public PlayersController(
+        IPlayerService service, 
+        ILogger<PlayersController> logger,
+        IPlayerMapper mapper
+        )
     {
         _service = service;
         _logger = logger;
+        _mapper = mapper;
     }
 
     [HttpGet]

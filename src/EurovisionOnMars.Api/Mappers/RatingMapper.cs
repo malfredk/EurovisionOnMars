@@ -3,7 +3,13 @@ using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Mappers;
 
-public class RatingMapper
+public interface IRatingMapper
+{
+    public Rating UpdateEntity(Rating entity, RatingDto dto);
+    public RatingDto ToDto(Rating entity);
+}
+
+public class RatingMapper : IRatingMapper
 {
     public Rating UpdateEntity(Rating entity, RatingDto dto)
     {
