@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject HttpClient Http
+@inject IToastService ToastService
 
 <PageTitle>eurovision</PageTitle>
 
@@ -24,33 +25,57 @@
     {
         if (string.IsNullOrEmpty(newUsername))
         {
+            ToastService.ShowError("noe gikk galt, prøv igjen");
             return;
         }
+
         var response = await Http.PostAsJsonAsync<string>("https://localhost:7195/api/Players/", newUsername); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            ToastService.ShowSuccess("spiller opprettet");
             Console.WriteLine($"Successfully created player with username: {player!.Username}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError("brukernavnet er allerede i bruk");
+            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            ToastService.ShowError("ugyldig brukernavn");
+            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
         }
         else
         {
-            // TODO: handle error
+            ToastService.ShowError("noe gikk galt, prøv igjen");
             Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
         }
     }
 
     private async Task GetPlayer()
     {
+        if (string.IsNullOrEmpty(existingUsername))
+        {
+            ToastService.ShowError("noe gikk galt, prøv igjen");
+            return;
+        }
+
         var response = await Http.GetAsync($"https://localhost:7195/api/Players/{existingUsername}");
-        if (response.IsSuccessStatusCode) // TODO: handle error
+        if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
             Console.WriteLine($"Got existing player with username: {player!.Username}");
         }
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            ToastService.ShowError("spilleren eksisterer ikke");
+            Console.WriteLine($"Failed to get existing player");
+        }
         else
         {
-            // TODO: handle error
-            Console.WriteLine($"Failed to get existing player");
+            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
         }
     }
 
