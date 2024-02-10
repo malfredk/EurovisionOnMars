@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject HttpClient Http
 @inject IToastService ToastService
+@inject NavigationManager NavigationManager
 
 <PageTitle>eurovision</PageTitle>
 
@@ -35,6 +36,7 @@
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
             ToastService.ShowSuccess("spiller opprettet");
             Console.WriteLine($"Successfully created player with username: {player!.Username}");
+            NavigationManager.NavigateTo($"/player/{player!.Id}");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
         {
@@ -66,6 +68,7 @@
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
             Console.WriteLine($"Got existing player with username: {player!.Username}");
+            NavigationManager.NavigateTo($"/player/{player!.Id}");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
