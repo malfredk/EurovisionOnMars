@@ -13,7 +13,7 @@ public class PlayerMapperTest
     {
         // arrange
         var originalEntity = new Player("malene");
-        var dto = new PlayerDto(12, "bob");
+        var dto = new PlayerDto(12, "bob", null);
 
         // act
         var updatedEntity = _mapper.UpdateEntity(originalEntity, dto);
