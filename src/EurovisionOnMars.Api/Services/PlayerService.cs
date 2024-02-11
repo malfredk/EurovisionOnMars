@@ -16,7 +16,6 @@ public interface IPlayerService
 public class PlayerService : IPlayerService
 {
     private readonly IPlayerRepository _repository;
-
     private readonly ILogger<PlayerService> _logger;
 
     public PlayerService(IPlayerRepository repository, ILogger<PlayerService> logger)
