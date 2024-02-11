@@ -12,6 +12,7 @@ public interface IPlayerMapper
 public class PlayerMapper : IPlayerMapper
 {
     private readonly IRatingMapper _ratingMapper;
+    private readonly Utils _utils = new Utils();
 
     public PlayerMapper(IRatingMapper ratingMapper)
     {
@@ -20,7 +21,7 @@ public class PlayerMapper : IPlayerMapper
 
     public Player UpdateEntity(Player entity, PlayerDto dto) 
     {
-        // TODO: update fields that are editeble
+        var ratingEntities = _utils.UpdateList(entity.Ratings, dto.Ratings, _ratingMapper.UpdateEntity);
         return entity;
     }
 
