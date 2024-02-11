@@ -26,17 +26,11 @@ public class PlayerMapper : IPlayerMapper
 
     public PlayerDto ToDto(Player entity)
     {
-        List<RatingDto> ratingDtos = null;
-        if (entity.Ratings != null)
-        {
-            ratingDtos = entity.Ratings.Select(rating => _ratingMapper.ToDto(rating)).ToList();
-        }
-        
         return new PlayerDto
             (
                 entity.Id, 
                 entity.Username,
-                ratingDtos
+                Utils.MapList(entity.Ratings, _ratingMapper.ToDto)
             );
     }
 }
