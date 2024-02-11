@@ -38,7 +38,10 @@ public class PlayerRepository : IPlayerRepository
     public async Task<Player> CreatePlayer(string username)
     {
         _logger.LogDebug($"Creating player with {username}");
-        var newPlayer = new Player(username);
+        var newPlayer = new Player
+        { 
+            Username = username
+        };
         _context.Players.Add(newPlayer);
         await _context.SaveChangesAsync();
         return newPlayer;

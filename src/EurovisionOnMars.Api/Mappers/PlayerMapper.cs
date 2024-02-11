@@ -22,6 +22,7 @@ public class PlayerMapper : IPlayerMapper
     public Player UpdateEntity(Player entity, PlayerDto dto) 
     {
         var ratingEntities = _utils.UpdateList(entity.Ratings, dto.Ratings, _ratingMapper.UpdateEntity);
+        entity.Ratings = ratingEntities;
         return entity;
     }
 

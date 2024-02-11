@@ -27,8 +27,8 @@ public class PlayerServiceTest
     public async void GetPlayers()
     {
         // arrange
-        var player1 = new Player("alice");
-        var player2 = new Player("bob");
+        var player1 = new Player { Username = "alice" };
+        var player2 = new Player{ Username = "bob" };
         var expectedPlayers = new List<Player>() { 
             player1,
             player2
@@ -51,7 +51,7 @@ public class PlayerServiceTest
     {
         // arrange
         var id = 14;
-        var expectedPlayer = new Player("sam");
+        var expectedPlayer = new Player{ Username = "sam" };
 
         _repositoryMock.Setup(r => r.GetPlayer(id))
             .ReturnsAsync(expectedPlayer);
@@ -85,7 +85,7 @@ public class PlayerServiceTest
     {
         // arrange
         var username = "nisse";
-        var expectedPlayer = new Player(username);
+        var expectedPlayer = new Player { Username = username };
 
         _repositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync(expectedPlayer);
@@ -131,7 +131,7 @@ public class PlayerServiceTest
     {
         // arrange
         var username = "hihi";
-        var expectedPlayer = new Player(username);
+        var expectedPlayer = new Player{ Username = username };
 
         _repositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync((Player)null);
@@ -166,7 +166,7 @@ public class PlayerServiceTest
     {
         // arrange
         var username = "nope";
-        var existingPlayer = new Player(username);
+        var existingPlayer = new Player{ Username = username };
 
         _repositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync(existingPlayer);
