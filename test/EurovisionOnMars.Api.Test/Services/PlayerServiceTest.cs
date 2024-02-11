@@ -66,7 +66,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public void GetPlayer_NotValidId()
+    public async void GetPlayer_NotValidId()
     {
         // arrange
         var id = 14;
@@ -75,7 +75,7 @@ public class PlayerServiceTest
             .ReturnsAsync((Player)null);
 
         // act and assert
-        Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(id));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(id));
 
         _repositoryMock.Verify(r => r.GetPlayer(id), Times.Once);
     }
@@ -100,19 +100,19 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public void GetPlayer_NotValidUsername()
+    public async void GetPlayer_NotValidUsername()
     {
         // arrange
         var username = "";
 
         // act and assert
-        Assert.ThrowsAsync<ArgumentException>(async () => await _service.GetPlayer(username));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.GetPlayer(username));
 
         _repositoryMock.Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
     }
 
     [Fact]
-    public void GetPlayer_NotExistingUsername()
+    public async void GetPlayer_NotExistingUsername()
     {
         // arrange
         var username = "nope";
@@ -121,7 +121,7 @@ public class PlayerServiceTest
             .ReturnsAsync((Player)null);
 
         // act and assert
-        Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(username));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(username));
         
         _repositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
     }
@@ -149,20 +149,20 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public void CreatePlayer_NotValidUsername()
+    public async void CreatePlayer_NotValidUsername()
     {
         // arrange
         var username = "";
 
         // act and assert
-        Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreatePlayer(username));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreatePlayer(username));
         
         _repositoryMock.Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
         _repositoryMock.Verify(r => r.CreatePlayer(It.IsAny<string>()), Times.Never());
     }
 
     [Fact]
-    public void CreatePlayer_ExistingUsername()
+    public async void CreatePlayer_ExistingUsername()
     {
         // arrange
         var username = "nope";
@@ -172,7 +172,7 @@ public class PlayerServiceTest
             .ReturnsAsync(existingPlayer);
 
         // act and assert
-        Assert.ThrowsAsync<DuplicateUsernameException>(async () => await _service.CreatePlayer(username));
+        await Assert.ThrowsAsync<DuplicateUsernameException>(async () => await _service.CreatePlayer(username));
 
         _repositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
         _repositoryMock.Verify(r => r.CreatePlayer(It.IsAny<string>()), Times.Never());

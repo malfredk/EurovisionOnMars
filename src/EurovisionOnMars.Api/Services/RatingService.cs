@@ -47,7 +47,7 @@ public class RatingService : IRatingService
 
     public async Task<Rating> UpdateRating(Rating rating)
     {
-        var ratings = await _repository.GetRatingsByPlayer(rating.PlayerId);
+        var ratings = await GetRatingsByPlayer(rating.PlayerId);
         ValidatePoints(rating, ratings);
 
         return await _repository.UpdateRating(rating);
