@@ -1,6 +1,47 @@
 ﻿@page "/player/{id:int}"
+@inject HttpClient Http
+@inject IToastService ToastService
+
 <h3>Player</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>land</th>
+            <th>plassering</th>
+            <th>poengsum</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rating in ratings)
+        {
+            <tr>
+                <td>test #</td>
+                <td>test land</td>
+                <td>test plassering</td>
+                <td>@rating.Category1</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     [Parameter] public int Id { get; set; }
+    public List<RatingDto> ratings { get; set; } = new List<RatingDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            Console.WriteLine($"Got ratings for player with id={Id}");
+        }
+        else
+        {
+            ToastService.ShowError("noe gikk galt");
+            Console.WriteLine($"Failed to get ratings for player with id={Id}");
+        }
+    }
 }
