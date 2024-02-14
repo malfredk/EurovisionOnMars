@@ -16,9 +16,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DevConnection")));
+
 builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
 builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
 builder.Services.AddTransient<IRatingMapper, RatingMapper>();
 

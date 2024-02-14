@@ -28,7 +28,7 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<IEnumerable<PlayerDto>>> GetPlayers()
     {
         var players = await _service.GetPlayers();
-        var playerDtos = players.Select(player => _mapper.ToDto(player));
+        var playerDtos = Utils.MapList(players.ToList(), _mapper.ToDto);
         return Ok(playerDtos);
     }
 
