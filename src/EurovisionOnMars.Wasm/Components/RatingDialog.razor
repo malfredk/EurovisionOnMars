@@ -7,24 +7,27 @@
             <MudGrid>
                 <MudItem>
                     <MudNumericField 
-                        @bind-Value="category1" 
+                        Value="@category1" 
                         Label="låt" 
                         Variant="Variant.Outlined" 
-                        Step="1" Min="1" Max="12" />
+                        Step="1" Min="1" Max="12" 
+                        ValueChanged="(int? newPoints) => HandlePointsChange(category1, newPoints, (points) => category1 = points)"/>
                 </MudItem>
                 <MudItem>
                     <MudNumericField 
-                        @bind-Value="category2" 
+                        Value="@category2" 
                         Label="opptreden" 
                         Variant="Variant.Outlined" 
-                        Step="1" Min="1" Max="12" />
+                        Step="1" Min="1" Max="12"
+                        ValueChanged="(int? newPoints) => HandlePointsChange(category2, newPoints, (points) => category2 = points)" />
                 </MudItem>
                 <MudItem>
                     <MudNumericField 
-                        @bind-Value="category3" 
+                        Value="@category3" 
                         Label="mgp-faktor" 
                         Variant="Variant.Outlined" 
-                        Step="1" Min="1" Max="12" />
+                        Step="1" Min="1" Max="12"
+                        ValueChanged="(int? newPoints) => HandlePointsChange(category3, newPoints, (points) => category3 = points)" />
                 </MudItem>
             </MudGrid>
         </MudForm>
@@ -85,5 +88,45 @@
             ToastService.ShowError("noe gikk galt, prøv igjen");
             Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
         }
+    }
+
+    private void HandlePointsChange(int? oldPoints, int? newPoints, Action<int?> setter)
+    {
+        Console.WriteLine("********************************************"); // TODO: remove console logging
+        Console.WriteLine($"Previous values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
+        Console.WriteLine($"Trying to change {oldPoints} to {newPoints}");
+        // handling null
+        if (newPoints == null)
+        {
+            return;
+        }
+        else if (oldPoints == null)
+        {
+            setter(newPoints);
+            return;
+        }
+
+        // skipping 9 and 11 points
+        if (oldPoints == 8 && newPoints == 9)
+        {
+            setter(10);
+        }
+        else if (oldPoints == 10 && newPoints == 11)
+        {
+            setter(12);
+        }
+        else if (oldPoints == 12 && newPoints == 11)
+        {
+            setter(10);
+        }
+        else if (oldPoints == 10 && newPoints == 9)
+        {
+            setter(8);
+        }
+        else
+        {
+            setter(newPoints);
+        }
+        Console.WriteLine($"After values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
     }
 }
