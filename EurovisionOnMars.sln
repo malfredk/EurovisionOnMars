@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Entity", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api.Test", "test\EurovisionOnMars.Api.Test\EurovisionOnMars.Api.Test.csproj", "{11329C45-DAD2-4AAF-A443-8266D37271F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.CustomException", "src\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj", "{82E38281-3C15-411D-8090-60D2721F4DB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.CustomException", "src\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj", "{82E38281-3C15-411D-8090-60D2721F4DB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
