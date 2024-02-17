@@ -41,12 +41,12 @@
         else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
         {
             ToastService.ShowError("brukernavnet er allerede i bruk");
-            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+            Console.WriteLine($"Failed to create new player due to duplicate username");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
             ToastService.ShowError("ugyldig brukernavn");
-            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+            Console.WriteLine($"Failed to create new player due to invalid username");
         }
         else
         {
