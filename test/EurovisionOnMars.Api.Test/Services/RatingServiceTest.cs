@@ -196,9 +196,9 @@ public class RatingServiceTest
             Id = id,
             PlayerId = 657,
             Player = new Player { Username = "nei" },
-            Category1 = category1Points,
-            Category2 = category2Points,
-            Category3 = category3Points
+            Category1Points = category1Points,
+            Category2Points = category2Points,
+            Category3Points = category3Points
         };
     }
 }

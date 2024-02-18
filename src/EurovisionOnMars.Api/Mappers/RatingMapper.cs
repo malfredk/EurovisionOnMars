@@ -13,9 +13,9 @@ public class RatingMapper : IRatingMapper
 {
     public Rating UpdateEntity(Rating entity, RatingDto dto)
     {
-        entity.Category1 = dto.Category1;
-        entity.Category2 = dto.Category2;
-        entity.Category3 = dto.Category3;
+        entity.Category1Points = dto.Category1;
+        entity.Category2Points = dto.Category2;
+        entity.Category3Points = dto.Category3;
         return entity;
     }
 
@@ -24,9 +24,9 @@ public class RatingMapper : IRatingMapper
         return new RatingDto
             (
                 entity.Id,
-                entity.Category1,
-                entity.Category2,
-                entity.Category3,
+                entity.Category1Points,
+                entity.Category2Points,
+                entity.Category3Points,
                 entity.PlayerId
             );
     }

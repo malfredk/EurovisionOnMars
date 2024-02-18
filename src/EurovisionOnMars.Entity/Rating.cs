@@ -2,9 +2,11 @@
 
 public record Rating : IdBase
 {
-    public int? Category1 { get; set; }
-    public int? Category2 { get; set; }
-    public int? Category3 { get; set; }
+    public int? Category1Points { get; set; }
+    public int? Category2Points { get; set; }
+    public int? Category3Points { get; set; }
     public required int PlayerId { get; init; }
-    public required Player Player { get; set; }
+    public Player? Player { get; set; }
+    public int? PointsSum { get; set; }
+    public int? Ranking { get; set; }
 }

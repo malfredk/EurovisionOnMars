@@ -55,9 +55,9 @@ public class RatingService : IRatingService
 
     private void ValidatePoints(Rating rating, ImmutableList<Rating> existingRatings)
     {
-        Func<Rating, int?> category1PointsGetter = r => r.Category1;
-        Func<Rating, int?> category2PointsGetter = r => r.Category2;
-        Func<Rating, int?> category3PointsGetter = r => r.Category3;
+        Func<Rating, int?> category1PointsGetter = r => r.Category1Points;
+        Func<Rating, int?> category2PointsGetter = r => r.Category2Points;
+        Func<Rating, int?> category3PointsGetter = r => r.Category3Points;
 
         _logger.LogDebug($"Validating points in rating with id={rating.Id} for category 1");
         ValidatePointsForCategory(rating, existingRatings, category1PointsGetter);

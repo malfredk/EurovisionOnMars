@@ -104,9 +104,9 @@ public class PlayerMapperTest
         return new Rating
         {
             Id = id,
-            Category1 = 1,
-            Category2 = null,
-            Category3 = 3,
+            Category1Points = 1,
+            Category2Points = null,
+            Category3Points = 3,
             PlayerId = 788888,
             Player = playerEntity
         };
