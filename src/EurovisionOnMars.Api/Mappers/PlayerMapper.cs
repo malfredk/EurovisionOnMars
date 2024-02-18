@@ -29,10 +29,10 @@ public class PlayerMapper : IPlayerMapper
     public PlayerDto ToDto(Player entity)
     {
         return new PlayerDto
-            (
-                entity.Id, 
-                entity.Username,
-                Utils.MapList(entity.Ratings, _ratingMapper.ToDto)
-            );
+        {
+            Id = entity.Id,
+            Username = entity.Username,
+            Ratings = Utils.MapList(entity.Ratings, _ratingMapper.ToDto)
+        };
     }
 }

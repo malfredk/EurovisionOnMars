@@ -23,7 +23,14 @@ public class RatingMapperTest
             Player = playerEntity
         };
 
-        var dto = new RatingDto(787878, 100, 200, 300, 34);
+        var dto = new RatingDto
+        {
+            Id = 787878,
+            Category1Points = 100,
+            Category2Points = 200,
+            Category3Points = 300,
+            PlayerId = 34
+        };
 
         // act
         var updatedEntity = _mapper.UpdateEntity(originalEntity, dto);
@@ -32,9 +39,9 @@ public class RatingMapperTest
         Assert.Equal(updatedEntity.Id, originalEntity.Id);
         Assert.NotEqual(updatedEntity.Id, dto.Id);
 
-        Assert.Equal(updatedEntity.Category1Points, dto.Category1);
-        Assert.Equal(updatedEntity.Category2Points, dto.Category2);
-        Assert.Equal(updatedEntity.Category3Points, dto.Category3);
+        Assert.Equal(updatedEntity.Category1Points, dto.Category1Points);
+        Assert.Equal(updatedEntity.Category2Points, dto.Category2Points);
+        Assert.Equal(updatedEntity.Category3Points, dto.Category3Points);
 
         Assert.Equal(updatedEntity.PlayerId, originalEntity.PlayerId);
         Assert.NotEqual(updatedEntity.PlayerId, dto.PlayerId);
@@ -62,9 +69,9 @@ public class RatingMapperTest
 
         // assert
         Assert.Equal(dto.Id, entity.Id);
-        Assert.Equal(dto.Category1, entity.Category1Points);
-        Assert.Equal(dto.Category2, entity.Category2Points);
-        Assert.Equal(dto.Category3, entity.Category3Points);
+        Assert.Equal(dto.Category1Points, entity.Category1Points);
+        Assert.Equal(dto.Category2Points, entity.Category2Points);
+        Assert.Equal(dto.Category3Points, entity.Category3Points);
         Assert.Equal(dto.PlayerId, entity.PlayerId);
     }
 }

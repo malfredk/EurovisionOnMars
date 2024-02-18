@@ -115,15 +115,22 @@ public class PlayerMapperTest
     private static PlayerDto CreatePlayerDto(List<RatingDto> ratings)
     {
         return new PlayerDto
-            (
-            345, 
-            "test", 
-            ratings
-            );
+        {
+            Id = 345,
+            Username = "test",
+            Ratings = ratings
+        };
     }
 
     private static RatingDto CreateRatingDto(int id)
     {
-        return new RatingDto(id, 100, 200, 300, 34);
+        return new RatingDto
+        {
+            Id = id,
+            Category1Points = 100,
+            Category2Points = 200,
+            Category3Points = 300,
+            PlayerId = 34
+        };
     }
 }

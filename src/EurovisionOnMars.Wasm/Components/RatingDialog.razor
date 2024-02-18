@@ -51,9 +51,9 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        this.category1 = Rating.Category1;
-        this.category2 = Rating.Category2;
-        this.category3 = Rating.Category3;
+        this.category1 = Rating.Category1Points;
+        this.category2 = Rating.Category2Points;
+        this.category3 = Rating.Category3Points;
     }
 
     private void Cancel()
@@ -63,13 +63,14 @@
 
     private async void UpdateRating()
     {
-        var ratingRequest = new RatingDto(
-            Rating.Id, 
-            category1, 
-            category2, 
-            category3, 
-            Rating.PlayerId
-        );
+        var ratingRequest = new RatingDto
+        {
+            Id = Rating.Id,
+            Category1Points = category1,
+            Category2Points = category2,
+            Category3Points = category3,
+            PlayerId = Rating.PlayerId
+        };
         var response = await Http.PutAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
         {

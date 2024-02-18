@@ -21,7 +21,7 @@
         <MudTd DataLabel="#">2</MudTd>
         <MudTd DataLabel="land">norge</MudTd>
         <MudTd DataLabel="plassering">10</MudTd>
-        <MudTd DataLabel="poengsum">@rating.Category3</MudTd>
+        <MudTd DataLabel="poengsum">@rating.Category3Points</MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -65,8 +65,8 @@
 
     private void UpdateRatingState(RatingDto rating, RatingDto updatedRating)
     {
-        rating.Category1 = updatedRating.Category1;
-        rating.Category2 = updatedRating.Category2;
-        rating.Category3 = updatedRating.Category3;
+        rating.Category1Points = updatedRating.Category1Points;
+        rating.Category2Points = updatedRating.Category2Points;
+        rating.Category3Points = updatedRating.Category3Points;
     }
 }

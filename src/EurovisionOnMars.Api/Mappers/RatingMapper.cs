@@ -13,21 +13,21 @@ public class RatingMapper : IRatingMapper
 {
     public Rating UpdateEntity(Rating entity, RatingDto dto)
     {
-        entity.Category1Points = dto.Category1;
-        entity.Category2Points = dto.Category2;
-        entity.Category3Points = dto.Category3;
+        entity.Category1Points = dto.Category1Points;
+        entity.Category2Points = dto.Category2Points;
+        entity.Category3Points = dto.Category3Points;
         return entity;
     }
 
     public RatingDto ToDto(Rating entity)
     {
         return new RatingDto
-            (
-                entity.Id,
-                entity.Category1Points,
-                entity.Category2Points,
-                entity.Category3Points,
-                entity.PlayerId
-            );
+        {
+            Id = entity.Id,
+            Category1Points = entity.Category1Points,
+            Category2Points = entity.Category2Points,
+            Category3Points = entity.Category3Points,
+            PlayerId = entity.PlayerId
+        };
     }
 }
