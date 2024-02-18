@@ -44,11 +44,29 @@
         }
     }
 
-    private void HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
+    private async void HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
         var parameters = new DialogParameters<RatingDialog>();
         parameters.Add(x => x.Rating, selectedRating);
-        DialogService.Show<RatingDialog>($"stemmeskjema for {selectedRating.Id}", parameters);
+
+        var dialogResponse = await DialogService.ShowAsync<RatingDialog>($"stemmeskjema for {selectedRating.Id}", parameters);
+        var dialogResult = await dialogResponse.Result;
+        if (!dialogResult.Canceled)
+        {
+            var updatedRating = await dialogResponse.GetReturnValueAsync<RatingDto>();
+            if (updatedRating != null)
+            {
+                UpdateRatingState(selectedRating, updatedRating);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void UpdateRatingState(RatingDto rating, RatingDto updatedRating)
+    {
+        rating.Category1 = updatedRating.Category1;
+        rating.Category2 = updatedRating.Category2;
+        rating.Category3 = updatedRating.Category3;
     }
 }

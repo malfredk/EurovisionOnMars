@@ -76,7 +76,7 @@
             Rating = await response.Content.ReadFromJsonAsync<RatingDto>();
             ToastService.ShowSuccess("avstemning lagret");
             Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
-            Dialog.Close(DialogResult.Ok(true));
+            Dialog.Close(DialogResult.Ok(Rating));
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
