@@ -95,38 +95,43 @@
         Console.WriteLine("********************************************"); // TODO: remove console logging
         Console.WriteLine($"Previous values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
         Console.WriteLine($"Trying to change {oldPoints} to {newPoints}");
-        // handling null
-        if (newPoints == null)
+        // skipping 9 points
+        if (newPoints == 9)
         {
-            return;
+            if (oldPoints == 8)
+            {
+                setter(10);
+            }
+            else if (oldPoints == 10)
+            {
+                setter(8);
+            }
+            else
+            {
+                setter(8);
+            }
         }
-        else if (oldPoints == null)
+        // skipping 11 points
+        else if (newPoints == 11)
         {
-            setter(newPoints);
-            return;
-        }
-
-        // skipping 9 and 11 points
-        if (oldPoints == 8 && newPoints == 9)
-        {
-            setter(10);
-        }
-        else if (oldPoints == 10 && newPoints == 11)
-        {
-            setter(12);
-        }
-        else if (oldPoints == 12 && newPoints == 11)
-        {
-            setter(10);
-        }
-        else if (oldPoints == 10 && newPoints == 9)
-        {
-            setter(8);
+            if (oldPoints == 10)
+            {
+                setter(12);
+            }
+            else if (oldPoints == 12)
+            {
+                setter(10);
+            }
+            else
+            {
+                setter(10);
+            }
         }
         else
         {
             setter(newPoints);
         }
+
         Console.WriteLine($"After values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
     }
 }
