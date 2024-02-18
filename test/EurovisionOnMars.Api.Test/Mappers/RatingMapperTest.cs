@@ -12,16 +12,7 @@ public class RatingMapperTest
     public void UpdateEntity()
     {
         // arrange
-        var playerEntity = new Player { Username = "jadda" };
-        var originalEntity = new Rating
-        {
-            Id = 34,
-            Category1Points = 1,
-            Category2Points = null,
-            Category3Points = 3,
-            PlayerId = 788888,
-            Player = playerEntity
-        };
+        var originalEntity = CreateRatingEntity();
 
         var dto = new RatingDto
         {
@@ -29,7 +20,9 @@ public class RatingMapperTest
             Category1Points = 100,
             Category2Points = 200,
             Category3Points = 300,
-            PlayerId = 34
+            PlayerId = 34,
+            PointsSum = 677,
+            Ranking = 13
         };
 
         // act
@@ -47,22 +40,18 @@ public class RatingMapperTest
         Assert.NotEqual(updatedEntity.PlayerId, dto.PlayerId);
 
         Assert.Equal(updatedEntity.Player, originalEntity.Player);
+
+        Assert.Equal(updatedEntity.PointsSum, 600);
+        Assert.NotEqual(updatedEntity.PointsSum, dto.PointsSum);
+
+        Assert.Equal(updatedEntity.Ranking, dto.Ranking);
     }
 
     [Fact]
     public void ToDto()
     {
         // arrange
-        var playerEntity = new Player { Username = "jadda" };
-        var entity = new Rating
-        {
-            Id = 34,
-            Category1Points = 1,
-            Category2Points = 67,
-            Category3Points = 3,
-            PlayerId = 788888,
-            Player = playerEntity
-        };
+        var entity = CreateRatingEntity();
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -73,5 +62,23 @@ public class RatingMapperTest
         Assert.Equal(dto.Category2Points, entity.Category2Points);
         Assert.Equal(dto.Category3Points, entity.Category3Points);
         Assert.Equal(dto.PlayerId, entity.PlayerId);
+        Assert.Equal(dto.PointsSum, entity.PointsSum);
+        Assert.Equal(dto.Ranking, entity.Ranking);
+    }
+
+    private Rating CreateRatingEntity()
+    {
+        var playerEntity = new Player { Username = "jadda" };
+        return new Rating
+        {
+            Id = 34,
+            Category1Points = 1,
+            Category2Points = null,
+            Category3Points = 3,
+            PlayerId = 788888,
+            Player = playerEntity,
+            PointsSum = 9000,
+            Ranking = 26
+        };
     }
 }
