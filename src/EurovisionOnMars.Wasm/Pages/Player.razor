@@ -1,47 +1,54 @@
 ﻿@page "/player/{id:int}"
+@using EurovisionOnMars.Wasm.Components
 @inject HttpClient Http
 @inject IToastService ToastService
+@inject IDialogService DialogService
 
-<h3>Player</h3>
+<MudTable 
+    T="RatingDto" 
+    Items="@Ratings" 
+    OnRowClick="HandleSelectRating"
+    Breakpoint="Breakpoint.None" 
+    Hover=true RowClass="cursor-pointer">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>land</MudTh>
+        <MudTh>plassering</MudTh>
+        <MudTh>poengsum</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="rating">
+        <!-- TODO: replace with actual values -->
+        <MudTd DataLabel="#">2</MudTd>
+        <MudTd DataLabel="land">norge</MudTd>
+        <MudTd DataLabel="plassering">10</MudTd>
+        <MudTd DataLabel="poengsum">@rating.Category3</MudTd>
+    </RowTemplate>
+</MudTable>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>land</th>
-            <th>plassering</th>
-            <th>poengsum</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var rating in ratings)
-        {
-            <tr>
-                <td>test #</td>
-                <td>test land</td>
-                <td>test plassering</td>
-                <td>@rating.Category1</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@code {
+    @code {
     [Parameter] public int Id { get; set; }
-    public List<RatingDto> ratings { get; set; } = new List<RatingDto>();
+    public List<RatingDto> Ratings { get; set; } = new List<RatingDto>();
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
         if (response.IsSuccessStatusCode)
         {
-            ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
             Console.WriteLine($"Got ratings for player with id={Id}");
         }
         else
         {
-            ToastService.ShowError("noe gikk galt");
+            ToastService.ShowError("noe gikk galt, prøv igjen");
             Console.WriteLine($"Failed to get ratings for player with id={Id}");
         }
+    }
+
+    private void HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
+    {
+        var selectedRating = tableRowClickEventArgs.Item;
+        var parameters = new DialogParameters<RatingDialog>();
+        parameters.Add(x => x.Rating, selectedRating);
+        DialogService.Show<RatingDialog>($"stemmeskjema for {selectedRating.Id}", parameters);
     }
 }
