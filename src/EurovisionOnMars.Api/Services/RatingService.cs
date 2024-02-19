@@ -8,7 +8,7 @@ public interface IRatingService
 {
     Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId);
     Task<Rating> GetRating(int id);
-    Task<Rating> UpdateRating(Rating rating);
+    Task UpdateRating(Rating rating);
 }
 
 public class RatingService : IRatingService
@@ -45,12 +45,60 @@ public class RatingService : IRatingService
         return rating;
     }
 
-    public async Task<Rating> UpdateRating(Rating rating)
+    public async Task UpdateRating(Rating newRating)
     {
-        var ratings = await GetRatingsByPlayer(rating.PlayerId);
-        ValidatePoints(rating, ratings);
+        var ratings = await GetRatingsByPlayer(newRating.PlayerId);
 
-        return await _repository.UpdateRating(rating);
+        ValidatePoints(newRating, ratings);
+        ratings = ReplaceRatingInList(newRating, ratings);
+        ratings = SetRankings(ratings);
+
+        foreach (var rating in ratings)
+        {
+            await _repository.UpdateRating(rating);
+        }
+    }
+
+    private ImmutableList<Rating> ReplaceRatingInList(Rating newRating, ImmutableList<Rating> ratings)
+    {
+        var oldRating = ratings.FirstOrDefault(r => r.Id == newRating.Id);
+        return ratings.Replace(oldRating!, newRating);
+    }
+
+    private ImmutableList<Rating> SetRankings(ImmutableList<Rating> ratings)
+    {
+        var sortedRatings = ratings.Sort((r1, r2) => (r2.PointsSum ?? 0).CompareTo(r1.PointsSum ??  0))
+            .ToList();
+
+        int? previousPoints = -1; // initiated to ensure first currentPoints is different
+        int? currentPoints;
+        int ranking = 0;
+        int sameRankingCount = 1;
+        foreach (var rating in sortedRatings)
+        {
+            currentPoints = rating.PointsSum;
+
+            // will not set ranking for countries that have not been voted on yet
+            if (currentPoints == null)
+            {
+                break;
+            }
+
+            if (currentPoints == previousPoints)
+            {
+                sameRankingCount++;
+            }
+            else
+            {
+
+                ranking += sameRankingCount;
+                sameRankingCount = 1;
+            }
+
+            rating.Ranking = ranking;
+            previousPoints = currentPoints;
+        }
+        return sortedRatings.ToImmutableList();
     }
 
     private void ValidatePoints(Rating rating, ImmutableList<Rating> existingRatings)

@@ -74,10 +74,9 @@
         var response = await Http.PutAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
         {
-            Rating = await response.Content.ReadFromJsonAsync<RatingDto>();
             ToastService.ShowSuccess("avstemning lagret");
             Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
-            Dialog.Close(DialogResult.Ok(Rating));
+            Dialog.Close();
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {

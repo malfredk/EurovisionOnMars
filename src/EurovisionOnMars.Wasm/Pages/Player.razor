@@ -31,17 +31,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
-        if (response.IsSuccessStatusCode)
-        {
-            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
-            Console.WriteLine($"Got ratings for player with id={Id}");
-        }
-        else
-        {
-            ToastService.ShowError("noe gikk galt, prøv igjen");
-            Console.WriteLine($"Failed to get ratings for player with id={Id}");
-        }
+        await FetchRatings();
     }
 
     private async Task HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
@@ -54,19 +44,23 @@
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {
-            var updatedRating = await dialogResponse.GetReturnValueAsync<RatingDto>();
-            if (updatedRating != null)
-            {
-                UpdateRatingState(selectedRating, updatedRating);
-                StateHasChanged();
-            }
+            await FetchRatings();
+            StateHasChanged();
         }
     }
 
-    private void UpdateRatingState(RatingDto rating, RatingDto updatedRating)
+    private async Task FetchRatings()
     {
-        rating.Category1Points = updatedRating.Category1Points;
-        rating.Category2Points = updatedRating.Category2Points;
-        rating.Category3Points = updatedRating.Category3Points;
+        var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            Console.WriteLine($"Got ratings for player with id={Id}");
+        }
+        else
+        {
+            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Console.WriteLine($"Failed to get ratings for player with id={Id}");
+        }
     }
 }

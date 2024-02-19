@@ -42,11 +42,11 @@ public class RatingsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<RatingDto>> UpdateRating([FromBody] RatingDto ratingDto)
+    public async Task<ActionResult> UpdateRating([FromBody] RatingDto ratingDto)
     {
         var rating = await _service.GetRating(ratingDto.Id);
-        var ratingWithUpdatedValues = _mapper.UpdateEntity(rating, ratingDto); 
-        var updatedRating = await _service.UpdateRating(ratingWithUpdatedValues);
-        return Ok(updatedRating);
+        var mappedRating = _mapper.UpdateEntity(rating, ratingDto); 
+        await _service.UpdateRating(mappedRating);
+        return Ok();
     }
 }
