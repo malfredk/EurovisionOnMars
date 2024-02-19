@@ -44,7 +44,7 @@
         }
     }
 
-    private async void HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
+    private async Task HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
         var parameters = new DialogParameters<RatingDialog>();
