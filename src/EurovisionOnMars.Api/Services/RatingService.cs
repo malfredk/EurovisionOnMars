@@ -32,7 +32,7 @@ public class RatingService : IRatingService
         {
             throw new KeyNotFoundException($"Player with id={playerId} is missing ratings");
         }
-        return ratings;
+        return SortRatingsByRankingThenNumber(ratings);
     }
     
     public async Task<Rating> GetRating(int id)
@@ -57,6 +57,12 @@ public class RatingService : IRatingService
         {
             await _repository.UpdateRating(rating);
         }
+    }
+
+    private ImmutableList<Rating> SortRatingsByRankingThenNumber(ImmutableList<Rating> ratings)
+    {
+        return ratings.OrderBy(r => r.Ranking ?? 100).ToImmutableList();
+            // TODO: .ThenBy(r => r.Country.Number);
     }
 
     private ImmutableList<Rating> ReplaceRatingInList(Rating newRating, ImmutableList<Rating> ratings)

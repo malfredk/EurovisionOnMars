@@ -3,6 +3,7 @@ using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SQLitePCL;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Services;
@@ -29,10 +30,31 @@ public class RatingServiceTest
         // arrange
         var playerId = 788778;
 
-        var rating1 = CreateRating(12);
-        var rating2 = CreateRating(222);
+        var rating1 = CreateRating(1, null, null);
+        var rating2 = CreateRating(2, null, 5);
+        var rating3 = CreateRating(3, null, 7);
+        var rating4 = CreateRating(4, null, 1);
+        var rating5 = CreateRating(5, null, 5);
+        var rating6 = CreateRating(6, null, null);
 
-        var expectedRatings = new List<Rating>() { rating1, rating2 }.ToImmutableList();
+        var expectedRatings = new List<Rating>() 
+        { 
+            rating1,
+            rating2,
+            rating3,
+            rating4,
+            rating5,
+            rating6
+        }.ToImmutableList();
+        var sortedExpectedRatings = new List<Rating>()
+        {
+            rating4,
+            rating2, 
+            rating5,
+            rating3,
+            rating1,
+            rating6
+        }.ToImmutableList();
 
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
             .ReturnsAsync(expectedRatings);
@@ -41,7 +63,7 @@ public class RatingServiceTest
         var ratings = await _service.GetRatingsByPlayer(playerId);
 
         // assert
-        Assert.Equal(ratings, expectedRatings);
+        Assert.Equal(ratings, sortedExpectedRatings);
 
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
     }
@@ -71,7 +93,7 @@ public class RatingServiceTest
         // arrange
         var id = 765;
 
-        var expectedRating = CreateRating(12);
+        var expectedRating = CreateRating(12, 1, null, 3);
 
         _repositoryMock.Setup(r => r.GetRating(id))
             .ReturnsAsync(expectedRating);
@@ -253,11 +275,6 @@ public class RatingServiceTest
     }
 
     // helper methods
-
-    private static Rating CreateRating(int id)
-    {
-        return CreateRating(id, 1, null, 3);
-    }
 
     private static Rating CreateRating
         (
