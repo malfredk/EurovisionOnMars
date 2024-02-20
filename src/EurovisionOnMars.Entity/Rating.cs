@@ -9,4 +9,6 @@ public record Rating : IdBase
     public Player? Player { get; set; }
     public int? PointsSum { get; set; }
     public int? Ranking { get; set; }
+    public required int CountryId { get; init; }
+    public Country? Country { get; set; }
 }
