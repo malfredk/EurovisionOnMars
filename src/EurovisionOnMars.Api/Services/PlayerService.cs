@@ -2,6 +2,7 @@
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 
 namespace EurovisionOnMars.Api.Services;
 
@@ -56,10 +57,7 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> CreatePlayer(string username)
     {
-        if (string.IsNullOrEmpty(username))
-        {
-            throw new ArgumentException("Username cannot be null nor empty");
-        }
+        ValidateUsername(username);
 
         var existingPlayer = await _repository.GetPlayer(username);
         if (existingPlayer != null)
@@ -67,5 +65,20 @@ public class PlayerService : IPlayerService
             throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
         return await _repository.CreatePlayer(username);
+    }
+
+    private void ValidateUsername(string username)
+    {
+        string pattern = @"^[a-zA-Z0-9æøåÆØÅ]*$";
+        int maxLength = 12;
+
+        var isValid = !string.IsNullOrEmpty(username) 
+            && Regex.IsMatch(username, pattern)
+            && username.Length <= maxLength;
+
+        if (!isValid)
+        {
+            throw new ArgumentException("Username can only contain letters and numbers");
+        }
     }
 }

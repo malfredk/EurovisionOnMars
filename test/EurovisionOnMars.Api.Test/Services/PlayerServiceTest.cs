@@ -130,7 +130,7 @@ public class PlayerServiceTest
     public async void CreatePlayer_ValidUsername()
     {
         // arrange
-        var username = "hihi";
+        var username = "hiæøÅ1278";
         var expectedPlayer = new Player{ Username = username };
 
         _repositoryMock.Setup(r => r.GetPlayer(username))
@@ -148,12 +148,14 @@ public class PlayerServiceTest
         _repositoryMock.Verify(r => r.CreatePlayer(username), Times.Once);
     }
 
-    [Fact]
-    public async void CreatePlayer_NotValidUsername()
+    [Theory]
+    [InlineData("")]
+    [InlineData("hei ho")]
+    [InlineData("j*n")]
+    [InlineData("=ndwnfks")]
+    [InlineData("tretten123456")]
+    public async void CreatePlayer_NotValidUsername(string username)
     {
-        // arrange
-        var username = "";
-
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreatePlayer(username));
         
