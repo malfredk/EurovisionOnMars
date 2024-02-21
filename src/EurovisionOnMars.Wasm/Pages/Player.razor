@@ -23,9 +23,8 @@
         <MudTh>poengsum</MudTh>
     </HeaderContent>
     <RowTemplate Context="rating">
-        <!-- TODO: replace with actual values -->
-        <MudTd DataLabel="#">2</MudTd>
-        <MudTd DataLabel="land">norge</MudTd>
+        <MudTd DataLabel="#">@rating.Country.Number</MudTd>
+        <MudTd DataLabel="land">@rating.Country.Name</MudTd>
         <MudTd DataLabel="plassering">@rating.Ranking</MudTd>
         <MudTd DataLabel="poengsum">@rating.PointsSum</MudTd>
     </RowTemplate>
