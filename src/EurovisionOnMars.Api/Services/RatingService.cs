@@ -61,8 +61,10 @@ public class RatingService : IRatingService
 
     private ImmutableList<Rating> SortRatingsByRankingThenNumber(ImmutableList<Rating> ratings)
     {
-        return ratings.OrderBy(r => r.Ranking ?? 100).ToImmutableList();
-            // TODO: .ThenBy(r => r.Country.Number);
+        return ratings
+            .OrderBy(r => r.Ranking ?? 100)
+            .ThenBy(r => r.Country.Number)
+            .ToImmutableList();
     }
 
     private ImmutableList<Rating> ReplaceRatingInList(Rating newRating, ImmutableList<Rating> ratings)

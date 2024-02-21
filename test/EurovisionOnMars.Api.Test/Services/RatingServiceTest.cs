@@ -30,12 +30,12 @@ public class RatingServiceTest
         // arrange
         var playerId = 788778;
 
-        var rating1 = CreateRating(1, null, null);
-        var rating2 = CreateRating(2, null, 5);
-        var rating3 = CreateRating(3, null, 7);
-        var rating4 = CreateRating(4, null, 1);
-        var rating5 = CreateRating(5, null, 5);
-        var rating6 = CreateRating(6, null, null);
+        var rating1 = CreateRating(1, null, null, 100);
+        var rating2 = CreateRating(2, null, 5, 5);
+        var rating3 = CreateRating(3, null, 7, 10);
+        var rating4 = CreateRating(4, null, 1, 19);
+        var rating5 = CreateRating(5, null, 5, 6);
+        var rating6 = CreateRating(6, null, null, 89);
 
         var expectedRatings = new List<Rating>() 
         { 
@@ -52,8 +52,8 @@ public class RatingServiceTest
             rating2, 
             rating5,
             rating3,
-            rating1,
-            rating6
+            rating6,
+            rating1
         }.ToImmutableList();
 
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
@@ -132,7 +132,7 @@ public class RatingServiceTest
     {
         // arrange
         var playerId = 657;
-        var oldRating = CreateRating(100, null, null, null);
+        var oldRating = CreateRating(100, null, null);
 
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
             .ReturnsAsync(new List<Rating>() { otherRating, oldRating }.ToImmutableList());
@@ -181,7 +181,7 @@ public class RatingServiceTest
     }
 
     [Fact]
-    public async void UpdateRating_Sorting()
+    public async void UpdateRating_CorrectRanking()
     {
         // arrange
         var playerId = 657;
@@ -302,6 +302,17 @@ public class RatingServiceTest
         int? ranking
         )
     {
+        return CreateRating(id, pointsSum, ranking, 10000);
+    }
+    
+    private static Rating CreateRating
+        (
+        int id,
+        int? pointsSum,
+        int? ranking, 
+        int countryNumber
+        )
+    {
         return new Rating
         {
             Id = id,
@@ -311,7 +322,18 @@ public class RatingServiceTest
             Category1Points = 1,
             Category2Points = 1,
             Category3Points = 1,
-            CountryId = 5678
+            CountryId = 5678,
+            Country = CreateCountry(countryNumber)
+        };
+    }
+
+    private static Country CreateCountry(int number)
+    {
+        return new Country
+        { 
+            Id = 23999,
+            Name = "lk",
+            Number = number
         };
     }
 }

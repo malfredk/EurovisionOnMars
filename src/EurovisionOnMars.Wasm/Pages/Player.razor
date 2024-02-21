@@ -11,8 +11,12 @@
     Breakpoint="Breakpoint.None" 
     Hover=true RowClass="cursor-pointer">
     <HeaderContent>
-        <!-- TODO: <MudTableSortLabel SortBy="new Func<RatingDto, object>(r => r.Number)">#</MudTableSortLabel> -->
-        <MudTh>#</MudTh> 
+        <MudTh>
+            <MudTableSortLabel 
+                SortBy="new Func<RatingDto, object>(r => r.Country.Number)">
+                    #
+                </MudTableSortLabel>
+            </MudTh>
         <MudTh>land</MudTh>
         <MudTh>
             <MudTableSortLabel 
