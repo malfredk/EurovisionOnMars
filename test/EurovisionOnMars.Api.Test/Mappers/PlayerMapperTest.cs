@@ -131,7 +131,8 @@ public class PlayerMapperTest
             Category1Points = 100,
             Category2Points = 200,
             Category3Points = 300,
-            PlayerId = 34
+            PlayerId = 34,
+            CountryId = 88
         };
     }
 }

@@ -1,18 +1,27 @@
 ﻿using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Dto;
 using EurovisionOnMars.Entity;
+using Moq;
 
 namespace EurovisionOnMars.Api.Test.Mappers;
 
 public class RatingMapperTest
 {
-    private readonly RatingMapper _mapper = new RatingMapper();
+    private readonly Mock<ICountryMapper> _countryMapperMock;
+
+    private readonly RatingMapper _mapper;
+
+    public RatingMapperTest()
+    {
+        _countryMapperMock = new Mock<ICountryMapper>();
+        _mapper = new RatingMapper(_countryMapperMock.Object);
+    }
 
     [Fact]
     public void UpdateEntity()
     {
         // arrange
-        var originalEntity = CreateRatingEntity();
+        var originalEntity = CreateRatingEntity(null);
 
         var dto = new RatingDto
         {
@@ -22,7 +31,8 @@ public class RatingMapperTest
             Category3Points = 300,
             PlayerId = 34,
             PointsSum = 677,
-            Ranking = 13
+            Ranking = 13,
+            CountryId = 67890
         };
 
         // act
@@ -51,7 +61,12 @@ public class RatingMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = CreateRatingEntity();
+        var countryEntity = CreateCountryEntity();
+        var countryDto = CreateCountryDto();
+        var entity = CreateRatingEntity(countryEntity);
+
+        _countryMapperMock.Setup(c => c.ToDto(countryEntity))
+            .Returns(countryDto);
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -64,9 +79,11 @@ public class RatingMapperTest
         Assert.Equal(dto.PlayerId, entity.PlayerId);
         Assert.Equal(dto.PointsSum, entity.PointsSum);
         Assert.Equal(dto.Ranking, entity.Ranking);
+
+        _countryMapperMock.Verify(c => c.ToDto(countryEntity), Times.Once());
     }
 
-    private Rating CreateRatingEntity()
+    private Rating CreateRatingEntity(Country? country)
     {
         var playerEntity = new Player { Username = "jadda" };
         return new Rating
@@ -79,7 +96,28 @@ public class RatingMapperTest
             Player = playerEntity,
             PointsSum = 9000,
             Ranking = 26,
-            CountryId = 5678
+            CountryId = 5678,
+            Country = country
+        };
+    }
+
+    private Country CreateCountryEntity()
+    {
+        return new Country
+        { 
+            Id = 233,
+            Number = 1,
+            Name = "mdewl"
+        };
+    }
+
+    private CountryDto CreateCountryDto()
+    {
+        return new CountryDto
+        {
+            Id = 43,
+            Number = 3,
+            Name = "md79232ewl"
         };
     }
 }
