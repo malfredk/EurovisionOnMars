@@ -290,7 +290,8 @@ public class RatingServiceTest
             PlayerId = 657,
             Category1Points = category1Points,
             Category2Points = category2Points,
-            Category3Points = category3Points
+            Category3Points = category3Points,
+            CountryId = 5678
         };
     }
 
@@ -309,7 +310,8 @@ public class RatingServiceTest
             Ranking = ranking,
             Category1Points = 1,
             Category2Points = 1,
-            Category3Points = 1
+            Category3Points = 1,
+            CountryId = 5678
         };
     }
 }

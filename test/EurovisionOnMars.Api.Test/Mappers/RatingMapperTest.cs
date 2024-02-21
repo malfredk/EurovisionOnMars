@@ -78,7 +78,8 @@ public class RatingMapperTest
             PlayerId = 788888,
             Player = playerEntity,
             PointsSum = 9000,
-            Ranking = 26
+            Ranking = 26,
+            CountryId = 5678
         };
     }
 }

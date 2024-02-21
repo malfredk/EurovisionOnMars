@@ -108,7 +108,8 @@ public class PlayerMapperTest
             Category2Points = null,
             Category3Points = 3,
             PlayerId = 788888,
-            Player = playerEntity
+            Player = playerEntity,
+            CountryId = 89
         };
     }
 
