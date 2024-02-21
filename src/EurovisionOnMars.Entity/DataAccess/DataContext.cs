@@ -10,4 +10,5 @@ public class DataContext : DbContext
 
     public DbSet<Player> Players => Set<Player>();
     public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<Country> Countries => Set<Country>();
 }

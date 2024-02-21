@@ -26,14 +26,19 @@ public class RatingRepository : IRatingRepository
     public async Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId)
     {
         _logger.LogDebug($"Getting all ratings for player with id={playerId}");
-        var ratings = await _context.Ratings.Where(r => r.PlayerId == playerId).ToListAsync();
+        var ratings = await _context.Ratings
+            .Where(r => r.PlayerId == playerId)
+            .Include(r => r.Country)
+            .ToListAsync();
         return ratings.ToImmutableList();
     }
 
     public async Task<Rating?> GetRating(int id)
     {
         _logger.LogDebug($"Getting rating with id={id}");
-        return await _context.Ratings.FirstOrDefaultAsync(r => r.Id == id);
+        return await _context.Ratings
+            .Include(r => r.Country)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
     public async Task<Rating> UpdateRating(Rating rating)
