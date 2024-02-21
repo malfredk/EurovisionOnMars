@@ -69,7 +69,8 @@
             Category1Points = category1,
             Category2Points = category2,
             Category3Points = category3,
-            PlayerId = Rating.PlayerId
+            PlayerId = Rating.PlayerId,
+            CountryId = Rating.CountryId
         };
         var response = await Http.PutAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
