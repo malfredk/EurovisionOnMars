@@ -11,6 +11,7 @@ public interface IPlayerRepository
     Task<Player?> GetPlayer(int id);
     Task<Player?> GetPlayer(string username);
     Task<Player> CreatePlayer(string username);
+    Task<Player> UpdatePlayer(Player player);
 }
 
 public class PlayerRepository : IPlayerRepository
@@ -45,7 +46,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<Player> CreatePlayer(string username)
     {
-        _logger.LogDebug($"Creating player with {username}");
+        _logger.LogDebug($"Creating player with username={username}");
         var newPlayer = new Player
         { 
             Username = username
@@ -53,5 +54,13 @@ public class PlayerRepository : IPlayerRepository
         _context.Players.Add(newPlayer);
         await _context.SaveChangesAsync();
         return newPlayer;
+    }
+
+    public async Task<Player> UpdatePlayer(Player player)
+    {
+        _logger.LogDebug($"Updating player with id={player.Id}");
+        var updatedPlayer = _context.Update(player);
+        await _context.SaveChangesAsync();
+        return updatedPlayer.Entity;
     }
 }
