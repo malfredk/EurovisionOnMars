@@ -16,23 +16,32 @@ public interface IPlayerService
 
 public class PlayerService : IPlayerService
 {
-    private readonly IPlayerRepository _repository;
+    private readonly IPlayerRepository _playerRepository;
+    private readonly ICountryRepository _countryRepository;
+    private readonly IRatingRepository _ratingRepository;
     private readonly ILogger<PlayerService> _logger;
 
-    public PlayerService(IPlayerRepository repository, ILogger<PlayerService> logger)
+    public PlayerService(
+        IPlayerRepository playerRepository, 
+        ICountryRepository countryRepository, 
+        IRatingRepository ratingRepository,
+        ILogger<PlayerService> logger
+        )
     {
-        _repository = repository;
+        _playerRepository = playerRepository;
+        _countryRepository = countryRepository;
+        _ratingRepository = ratingRepository;
         _logger = logger;
     }
 
     public async Task<ImmutableList<Player>> GetPlayers()
     {
-        return await _repository.GetPlayers();
+        return await _playerRepository.GetPlayers();
     }
 
     public async Task<Player> GetPlayer(int id)
     {
-        var player = await _repository.GetPlayer(id);
+        var player = await _playerRepository.GetPlayer(id);
         if (player == null)
         {
             throw new KeyNotFoundException($"No player with id={id} exists");
@@ -47,7 +56,7 @@ public class PlayerService : IPlayerService
             throw new ArgumentException("Username cannot be null nor empty");
         }
 
-        var player = await _repository.GetPlayer(username);
+        var player = await _playerRepository.GetPlayer(username);
         if (player == null)
         {
             throw new KeyNotFoundException($"No player with username={username} exists");
@@ -59,12 +68,34 @@ public class PlayerService : IPlayerService
     {
         ValidateUsername(username);
 
-        var existingPlayer = await _repository.GetPlayer(username);
+        var existingPlayer = await _playerRepository.GetPlayer(username);
         if (existingPlayer != null)
         {
             throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
-        return await _repository.CreatePlayer(username);
+
+        var player = await _playerRepository.CreatePlayer(username);
+        await CreateInitialRatings(player.Id);
+        return player;
+    }
+
+    private async Task CreateInitialRatings(int playerId)
+    {
+        var countries = await _countryRepository.GetCountries();
+        foreach (var country in countries)
+        {
+            await CreateInitialRating(playerId, country);
+        }
+    }
+
+    private async Task CreateInitialRating(int playerId, Country country)
+    {
+        var rating = new Rating
+        {
+            PlayerId = playerId,
+            CountryId = country.Id
+        };
+        await _ratingRepository.CreateRating(rating);
     }
 
     private void ValidateUsername(string username)
