@@ -1,5 +1,7 @@
 ﻿@page "/player/{id:int}"
+
 @using EurovisionOnMars.Wasm.Components
+
 @inject HttpClient Http
 @inject IToastService ToastService
 @inject IDialogService DialogService
@@ -15,8 +17,8 @@
             <MudTableSortLabel 
                 SortBy="new Func<RatingDto, object>(r => r.Country.Number)">
                     #
-                </MudTableSortLabel>
-            </MudTh>
+            </MudTableSortLabel>
+        </MudTh>
         <MudTh>land</MudTh>
         <MudTh>
             <MudTableSortLabel 
@@ -34,7 +36,7 @@
     </RowTemplate>
 </MudTable>
 
-    @code {
+@code {
     [Parameter] public int Id { get; set; }
     public List<RatingDto> Ratings { get; set; } = new List<RatingDto>();
 

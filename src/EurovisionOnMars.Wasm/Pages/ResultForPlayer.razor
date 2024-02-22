@@ -1,0 +1,42 @@
+﻿@page "/player/{id:int}/result"
+
+@inject HttpClient Http
+@inject IToastService ToastService
+
+<h3>ditt resultat</h3>
+
+<MudTable
+    Items="@Ratings"
+    Breakpoint="Breakpoint.None" 
+    Hover=true RowClass="cursor-pointer">
+    <HeaderContent>
+        <MudTh>land</MudTh>
+        <MudTh>differanse</MudTh>
+        <MudTh>bonuspoeng</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="rating">
+        <MudTd DataLabel="land">@rating.Country.Name</MudTd>
+        <MudTd DataLabel="differanse i plassering">@rating.PointsSum</MudTd>
+        <MudTd DataLabel="bonuspoeng">@rating.PointsSum</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    public List<RatingDto> Ratings { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            Console.WriteLine($"Got ratings for player with id={Id}");
+        }
+        else
+        {
+            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Console.WriteLine($"Failed to get ratings for player with id={Id}");
+        }
+    }
+}
