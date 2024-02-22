@@ -9,6 +9,7 @@ public interface IRatingRepository
 {
     Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId);
     Task<Rating?> GetRating(int id);
+    Task<Rating> CreateRating(Rating rating);
     Task<Rating> UpdateRating(Rating rating);
 }
 
@@ -39,6 +40,14 @@ public class RatingRepository : IRatingRepository
         return await _context.Ratings
             .Include(r => r.Country)
             .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
+    public async Task<Rating> CreateRating(Rating rating)
+    {
+        _logger.LogDebug("Creating rating");
+        _context.Ratings.Add(rating);
+        await _context.SaveChangesAsync();
+        return rating;
     }
 
     public async Task<Rating> UpdateRating(Rating rating)
