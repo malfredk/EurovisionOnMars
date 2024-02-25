@@ -1,6 +1,5 @@
 ﻿using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Entity;
-using NuGet.Protocol.Core.Types;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Services;
