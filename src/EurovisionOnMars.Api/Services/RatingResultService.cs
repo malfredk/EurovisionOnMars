@@ -88,7 +88,7 @@ public class RatingResultService : IRatingResultService
         return 0;
     }
 
-    private bool HasUniqueRanking(Rating rating, List<Rating> ratings)
+    private bool HasUniqueRanking(Rating rating, ImmutableList<Rating> ratings)
     {
         var sameRankingList = ratings.Where(r => r.Ranking == rating.Ranking);
         if (sameRankingList.Count() == 1)
