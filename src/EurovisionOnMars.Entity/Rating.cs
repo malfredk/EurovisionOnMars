@@ -11,4 +11,5 @@ public record Rating : IdBase
     public int? Ranking { get; set; }
     public int CountryId { get; init; }
     public Country? Country { get; set; }
+    public RatingResult RatingResult { get; set; } = new RatingResult();
 }
