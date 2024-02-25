@@ -3,7 +3,7 @@
 @using EurovisionOnMars.Wasm.Components
 
 @inject HttpClient Http
-@inject IToastService ToastService
+@inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
 <MudTable 
@@ -70,7 +70,7 @@
         }
         else
         {
-            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine($"Failed to get ratings for player with id={Id}");
         }
     }

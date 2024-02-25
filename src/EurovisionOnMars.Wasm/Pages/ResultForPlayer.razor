@@ -1,7 +1,7 @@
 ﻿@page "/player/{id:int}/result"
 
 @inject HttpClient Http
-@inject IToastService ToastService
+@inject ISnackbar Snackbar
 
 <h3>ditt resultat</h3>
 
@@ -35,7 +35,7 @@
         }
         else
         {
-            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine($"Failed to get ratings for player with id={Id}");
         }
     }

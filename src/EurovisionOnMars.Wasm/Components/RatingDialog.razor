@@ -1,5 +1,5 @@
 ﻿@inject HttpClient Http
-@inject IToastService ToastService
+@inject ISnackbar Snackbar
 
 <MudDialog>
     <DialogContent>
@@ -75,18 +75,18 @@
         var response = await Http.PutAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
         {
-            ToastService.ShowSuccess("avstemning lagret");
+            Snackbar.Add("avstemning lagret", Severity.Success);
             Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
             Dialog.Close();
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
-            ToastService.ShowError("man kan gi 1-8, 10 eller 12 poeng, og man kan kun gi 10 og 12 poeng én gang i hver kategori");
+            Snackbar.Add("man kan gi 1-8, 10 eller 12 poeng, og man kan kun gi 10 og 12 poeng én gang i hver kategori", Severity.Error);
             Console.WriteLine($"Failed to update rating");
         }
         else
         {
-            ToastService.ShowError("noe gikk galt, prøv igjen");
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
         }
     }
