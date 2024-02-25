@@ -22,6 +22,7 @@ builder.Services.AddScoped<IRatingService, RatingService>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 

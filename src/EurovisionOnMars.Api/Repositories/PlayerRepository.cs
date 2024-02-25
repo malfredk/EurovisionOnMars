@@ -10,7 +10,7 @@ public interface IPlayerRepository
     Task<ImmutableList<Player>> GetPlayers();
     Task<Player?> GetPlayer(int id);
     Task<Player?> GetPlayer(string username);
-    Task<Player> CreatePlayer(string username);
+    Task<Player> CreatePlayer(Player player);
     Task<Player> UpdatePlayer(Player player);
 }
 
@@ -44,16 +44,12 @@ public class PlayerRepository : IPlayerRepository
         return await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
     }
 
-    public async Task<Player> CreatePlayer(string username)
+    public async Task<Player> CreatePlayer(Player player)
     {
-        _logger.LogDebug($"Creating player with username={username}");
-        var newPlayer = new Player
-        { 
-            Username = username
-        };
-        _context.Players.Add(newPlayer);
+        _logger.LogDebug($"Creating player with username={player.Username}");
+        _context.Players.Add(player);
         await _context.SaveChangesAsync();
-        return newPlayer;
+        return player;
     }
 
     public async Task<Player> UpdatePlayer(Player player)

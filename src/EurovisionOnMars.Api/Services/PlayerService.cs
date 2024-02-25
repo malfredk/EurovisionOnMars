@@ -18,19 +18,16 @@ public class PlayerService : IPlayerService
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly ICountryRepository _countryRepository;
-    private readonly IRatingRepository _ratingRepository;
     private readonly ILogger<PlayerService> _logger;
 
     public PlayerService(
         IPlayerRepository playerRepository, 
         ICountryRepository countryRepository, 
-        IRatingRepository ratingRepository,
         ILogger<PlayerService> logger
         )
     {
         _playerRepository = playerRepository;
         _countryRepository = countryRepository;
-        _ratingRepository = ratingRepository;
         _logger = logger;
     }
 
@@ -74,28 +71,33 @@ public class PlayerService : IPlayerService
             throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
 
-        var player = await _playerRepository.CreatePlayer(username);
-        await CreateInitialRatings(player.Id);
-        return player;
+        var ratings = await CreateInitialRatings();
+        var player = new Player 
+        { 
+            Username = username,
+            Ratings = ratings
+        };
+        return await _playerRepository.CreatePlayer(player);
     }
 
-    private async Task CreateInitialRatings(int playerId)
+    private async Task<List<Rating>> CreateInitialRatings()
     {
+        var ratings = new List<Rating>();
         var countries = await _countryRepository.GetCountries();
         foreach (var country in countries)
         {
-            await CreateInitialRating(playerId, country);
+            ratings.Add(CreateInitialRating(country));
         }
+        return ratings;
     }
 
-    private async Task CreateInitialRating(int playerId, Country country)
+    private Rating CreateInitialRating(Country country)
     {
-        var rating = new Rating
+        return new Rating
         {
-            PlayerId = playerId,
-            CountryId = country.Id
+            CountryId = country.Id,
+            Country = country
         };
-        await _ratingRepository.CreateRating(rating);
     }
 
     private void ValidateUsername(string username)
