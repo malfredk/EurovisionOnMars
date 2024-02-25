@@ -30,6 +30,7 @@ public class RatingRepository : IRatingRepository
         var ratings = await _context.Ratings
             .Where(r => r.PlayerId == playerId)
             .Include(r => r.Country)
+            .Include(r => r.RatingResult)
             .ToListAsync();
         return ratings.ToImmutableList();
     }
