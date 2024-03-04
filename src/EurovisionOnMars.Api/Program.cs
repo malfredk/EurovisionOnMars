@@ -29,6 +29,8 @@ builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
 builder.Services.AddTransient<IRatingMapper, RatingMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
+builder.Services.AddTransient<IPlayerResultMapper, PlayerResultMapper>();
+builder.Services.AddTransient<IRatingResultMapper, RatingResultMapper>();
 
 var app = builder.Build();
 
