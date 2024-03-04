@@ -12,11 +12,13 @@ public interface IPlayerMapper
 public class PlayerMapper : IPlayerMapper
 {
     private readonly IRatingMapper _ratingMapper;
+    private readonly IPlayerResultMapper _playerResultMapper;
     private readonly Utils _utils = new Utils();
 
-    public PlayerMapper(IRatingMapper ratingMapper)
+    public PlayerMapper(IRatingMapper ratingMapper, IPlayerResultMapper playerResultMapper)
     {
         _ratingMapper = ratingMapper;
+        _playerResultMapper = playerResultMapper;
     }
 
     public Player UpdateEntity(Player entity, PlayerDto dto) 
@@ -32,7 +34,8 @@ public class PlayerMapper : IPlayerMapper
         {
             Id = entity.Id,
             Username = entity.Username,
-            Ratings = Utils.MapList(entity.Ratings, _ratingMapper.ToDto)
+            Ratings = Utils.MapList(entity.Ratings, _ratingMapper.ToDto),
+            PlayerResult = _playerResultMapper.ToDto(entity.PlayerResult)
         };
     }
 }

@@ -12,10 +12,12 @@ public interface IRatingMapper
 public class RatingMapper : IRatingMapper
 {
     private readonly ICountryMapper _countryMapper;
+    private readonly IRatingResultMapper _ratingResultMapper;
 
-    public RatingMapper(ICountryMapper countryMapper)
+    public RatingMapper(ICountryMapper countryMapper, IRatingResultMapper ratingResultMapper)
     {
         _countryMapper = countryMapper;
+        _ratingResultMapper = ratingResultMapper;
     }
 
     public Rating UpdateEntity(Rating entity, RatingDto dto)
@@ -40,7 +42,8 @@ public class RatingMapper : IRatingMapper
             PointsSum = entity.PointsSum,
             Ranking = entity.Ranking,
             CountryId = entity.CountryId,
-            Country = _countryMapper.ToDto(entity.Country)
+            Country = _countryMapper.ToDto(entity.Country),
+            RatingResult = _ratingResultMapper.ToDto(entity.RatingResult)
         };
     }
 }
