@@ -16,8 +16,8 @@
     </HeaderContent>
     <RowTemplate Context="rating">
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
-        <MudTd DataLabel="differanse i plassering">@rating.PointsSum</MudTd>
-        <MudTd DataLabel="bonuspoeng">@rating.PointsSum</MudTd>
+        <MudTd DataLabel="differanse i plassering">@rating.RatingResult.RankingDifference</MudTd>
+        <MudTd DataLabel="bonuspoeng">@rating.RatingResult.BonusPoints</MudTd>
     </RowTemplate>
 </MudTable>
 
