@@ -13,6 +13,7 @@ public class RatingResultMapper : IRatingResultMapper
     {
         return new RatingResultDto
         {
+            Id = entity.Id,
             RankingDifference = entity.RankingDifference,
             BonusPoints = entity.BonusPoints
         };

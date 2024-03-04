@@ -14,6 +14,7 @@ public class PlayerResultMapper : IPlayerResultMapper
     {
         return new PlayerResultDto
         {
+            Id = entity.Id,
             Ranking = entity.Ranking,
             Score = entity.Score,
         };
