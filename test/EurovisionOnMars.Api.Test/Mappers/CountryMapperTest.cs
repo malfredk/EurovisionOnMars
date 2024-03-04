@@ -1,5 +1,4 @@
 ﻿using EurovisionOnMars.Api.Mappers;
-using EurovisionOnMars.Dto;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Mappers;
