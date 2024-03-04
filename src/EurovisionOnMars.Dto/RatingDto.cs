@@ -10,4 +10,5 @@ public record RatingDto : IdBaseDto
     public int? Ranking { get; set; }
     public required int CountryId { get; set; }
     public CountryDto? Country { get; set; }
+    public RatingResultDto? RatingResult { get; set; }
 }
