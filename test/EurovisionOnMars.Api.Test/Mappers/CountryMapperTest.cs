@@ -17,10 +17,10 @@ public class CountryMapperTest
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(dto.Id, entity.Id);
-        Assert.Equal(dto.Number, entity.Number);
-        Assert.Equal(dto.Name, entity.Name);
-        Assert.Equal(dto.Ranking, entity.Ranking);
+        Assert.Equal(entity.Id, dto.Id);
+        Assert.Equal(entity.Number, dto.Number);
+        Assert.Equal(entity.Name, dto.Name);
+        Assert.Equal(entity.Ranking, dto.Ranking);
     }
 
     private Country CreateEntity()
