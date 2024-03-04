@@ -79,10 +79,15 @@
             Snackbar.Add("spilleren eksisterer ikke", Severity.Error);
             Console.WriteLine($"Failed to get existing player");
         }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            Snackbar.Add("ugyldig brukernavn", Severity.Error);
+            Console.WriteLine($"Failed to get existing player due to invalid username");
+        }
         else
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
-            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+            Console.WriteLine($"Failed to get existing player due to: {response.StatusCode}");
         }
     }
 

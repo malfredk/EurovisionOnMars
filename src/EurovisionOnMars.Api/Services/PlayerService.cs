@@ -48,10 +48,7 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> GetPlayer(string username)
     {
-        if (string.IsNullOrEmpty(username))
-        {
-            throw new ArgumentException("Username cannot be null nor empty");
-        }
+        ValidateUsername(username);
 
         var player = await _playerRepository.GetPlayer(username);
         if (player == null)
