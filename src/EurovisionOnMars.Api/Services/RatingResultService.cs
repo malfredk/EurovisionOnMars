@@ -13,12 +13,13 @@ public class RatingResultService : IRatingResultService
 {
     private readonly IRatingRepository _ratingRepository;
     private readonly IRatingResultRepository _ratingResultRepository;
-    private readonly ILogger<RatingService> _logger;
+    private readonly ILogger<RatingResultService> _logger;
 
-    public RatingResultService(
+    public RatingResultService
+        (
         IRatingRepository ratingRepository, 
         IRatingResultRepository ratingResultRepository,
-        ILogger<RatingService> logger
+        ILogger<RatingResultService> logger
         )
     {
         _ratingRepository = ratingRepository;
@@ -34,8 +35,8 @@ public class RatingResultService : IRatingResultService
             throw new KeyNotFoundException($"Player with id={playerId} is missing ratings");
         }
 
-        int? rankingDifference;
-        int? bonusPoints;
+        int rankingDifference;
+        int bonusPoints;
         foreach (var rating in ratings)
         {
             rankingDifference = CalculateRankingDifference(rating);
@@ -59,26 +60,28 @@ public class RatingResultService : IRatingResultService
         return;
     }
 
-    private int? CalculateRankingDifference(Rating rating)
+    private int CalculateRankingDifference(Rating rating)
     {
         var actualRanking = rating.Country.Ranking;
         var expectedRanking = rating.Ranking;
 
-        // TODO: what if they are null
-        if (actualRanking != null && expectedRanking != null)
+        if (actualRanking == null)
+        {
+            throw new Exception("Country is missing ranking");
+        }
+        // player is penalized for not rating a country
+        else if (expectedRanking == null)
+        {
+            return 26;
+        }
+        else
         {
             return (int)(actualRanking - expectedRanking);
         }
-        return null;
     }
 
-    private int? CalculateBonusPoints(Rating rating, ImmutableList<Rating> ratings, int? rankingDifference)
+    private int CalculateBonusPoints(Rating rating, ImmutableList<Rating> ratings, int rankingDifference)
     {
-        if (rankingDifference == null)
-        {
-            return null;
-        }
-
         if (rankingDifference == 0 && HasUniqueRanking(rating, ratings))
         {
             return DetermineBonusPoints((int)rating.Ranking!);
