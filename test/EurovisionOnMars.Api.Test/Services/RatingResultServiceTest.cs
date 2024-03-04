@@ -96,6 +96,21 @@ public class RatingResultServiceTest
         _ratingResultRepositoryMock.Verify(m => m.UpdateRatingResult(It.IsAny<RatingResult>()), Times.Exactly(7));
     }
 
+    [Fact]
+    public async void CalculateRatingResults_MissingCountryRanking()
+    {
+        // arrange
+        var playerId = 67;
+        var country = CreateCountry(null);
+        var rating = CreateRating(country, 26);
+
+        _ratingRepositoryMock.Setup(m => m.GetRatingsByPlayer(playerId))
+            .ReturnsAsync(new List<Rating>() { rating }.ToImmutableList());
+
+        // act and assert
+        await Assert.ThrowsAsync<Exception>(async () => await _service.CalculateRatingResults(playerId));
+    }
+
     private static Country CreateCountry(int? ranking)
     {
         return new Country
