@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using EurovisionOnMars.Api.Repositories;
+﻿using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
