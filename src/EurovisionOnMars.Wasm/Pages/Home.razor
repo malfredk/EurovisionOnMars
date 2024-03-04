@@ -4,19 +4,22 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<PageTitle>eurovision</PageTitle>
-
-<div>
-    <p>ny spiller:</p>
-    <input type="text" @bind="newUsername" @onkeydown="HandleEnterNew" />
-    <button @onclick="CreatePlayer">spill</button> 
-</div>
-<br />
-<div>
-    <p>eksisterende spiller:</p>
-    <input type="text" @bind="existingUsername" @onkeydown="HandleEnterExisting"/>
-    <button @onclick="GetPlayer">spill</button>
-</div>
+<MudGrid Spacing="1" Class="align-end">
+    <MudItem>
+        <MudTextField @bind-Value="newUsername" OnKeyDown="HandleEnterNew" Label="ny spiller"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudButton OnClick="CreatePlayer">spill</MudButton>
+    </MudItem>
+</MudGrid>
+<MudGrid Spacing="1" Class="align-end">
+    <MudItem>
+        <MudTextField @bind-Value="existingUsername" OnKeyDown="HandleEnterExisting" Label="eksisterende spiller"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudButton OnClick="GetPlayer">spill</MudButton>
+    </MudItem>
+</MudGrid>
 
 @code {
     private string? newUsername;
