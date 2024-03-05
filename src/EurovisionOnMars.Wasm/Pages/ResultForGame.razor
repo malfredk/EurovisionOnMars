@@ -1,0 +1,38 @@
+﻿@page "/resultat"
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudTable 
+    Items="@Players"
+    Breakpoint="Breakpoint.None">
+    <HeaderContent>
+        <MudTh>plassering</MudTh>
+        <MudTh>poeng</MudTh>
+        <MudTh>spiller</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="player">
+        <MudTd DataLabel="plassering">@player.PlayerResult.Ranking</MudTd>
+        <MudTd DataLabel="poeng">@player.PlayerResult.Score</MudTd>
+        <MudTd DataLabel="spiller">@player.Username</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public List<PlayerDto> Players { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"https://localhost:7195/api/Players");
+        if (response.IsSuccessStatusCode)
+        {
+            Players = await response.Content.ReadFromJsonAsync<List<PlayerDto>>();
+            Console.WriteLine($"Got all players");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to get players");
+        }
+    }
+}
