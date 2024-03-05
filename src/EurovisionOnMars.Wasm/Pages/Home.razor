@@ -40,7 +40,7 @@
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
             Snackbar.Add("spiller opprettet", Severity.Success);
             Console.WriteLine($"Successfully created player with username: {player!.Username}");
-            NavigationManager.NavigateTo($"/player/{player!.Id}");
+            NavigationManager.NavigateTo($"/spiller/{player!.Id}");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
         {
@@ -72,7 +72,7 @@
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
             Console.WriteLine($"Got existing player with username: {player!.Username}");
-            NavigationManager.NavigateTo($"/player/{player!.Id}");
+            NavigationManager.NavigateTo($"/spiller/{player!.Id}");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
