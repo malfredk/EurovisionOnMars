@@ -41,7 +41,7 @@ public class CountryRepository : ICountryRepository
     public async Task<Country> UpdateCountry(Country country)
     {
         _logger.LogDebug($"Updating country with id={country.Id}");
-        var updatedCountry = _context.Update(country);
+        var updatedCountry = _context.Countries.Update(country);
         await _context.SaveChangesAsync();
         return updatedCountry.Entity;
     }

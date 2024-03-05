@@ -42,7 +42,7 @@ public class PlayerResultRepository : IPlayerResultRepository
     public async Task<PlayerResult> UpdatePlayerResult(PlayerResult playerResult)
     {
         _logger.LogDebug($"Updating player result with id={playerResult.Id}");
-        var updatedPlayerResult = _context.Update(playerResult);
+        var updatedPlayerResult = _context.PlayerResults.Update(playerResult);
         await _context.SaveChangesAsync();
         return updatedPlayerResult.Entity;
     }
