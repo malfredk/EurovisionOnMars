@@ -8,6 +8,7 @@ namespace EurovisionOnMars.Api.Repositories;
 public interface ICountryRepository
 {
     Task<ImmutableList<Country>> GetCountries();
+    Task<Country?> GetCountry(int id);
     Task<Country> CreateCountry(Country country);
     Task<Country> UpdateCountry(Country country);
 }
@@ -28,6 +29,12 @@ public class CountryRepository : ICountryRepository
         _logger.LogDebug("Getting all countries");
         var countries = await _context.Countries.ToListAsync();
         return countries.ToImmutableList();
+    }
+
+    public async Task<Country?> GetCountry(int id)
+    {
+        _logger.LogDebug($"Getting country with id={id}");
+        return await _context.Countries.FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Country> CreateCountry(Country country)
