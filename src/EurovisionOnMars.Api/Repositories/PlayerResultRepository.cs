@@ -1,11 +1,13 @@
 ﻿using EurovisionOnMars.Entity;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Repositories;
 
 public interface IPlayerResultRepository
 {
+    Task<ImmutableList<PlayerResult>> GetPlayerResults();
     Task<PlayerResult?> GetPlayerResult(int playerId);
     Task<PlayerResult> UpdatePlayerResult(PlayerResult playerResult);
 }
@@ -19,6 +21,13 @@ public class PlayerResultRepository : IPlayerResultRepository
     {
         _context = context;
         _logger = logger;
+    }
+
+    public async Task<ImmutableList<PlayerResult>> GetPlayerResults()
+    {
+        _logger.LogDebug($"Getting all player results");
+        var playerResults = await _context.PlayerResults.ToListAsync();
+        return playerResults.ToImmutableList();
     }
 
     public async Task<PlayerResult?> GetPlayerResult(int playerId)
