@@ -35,7 +35,7 @@ public class RatingResultRepository : IRatingResultRepository
 
     public async Task<RatingResult> UpdateRatingResult(RatingResult ratingResult)
     {
-        _logger.LogDebug($"Updating ratingResult with id={ratingResult.Id}");
+        _logger.LogDebug($"Updating rating result with id={ratingResult.Id}");
         var updatedRatingResult = _context.Update(ratingResult);
         await _context.SaveChangesAsync();
         return updatedRatingResult.Entity;
