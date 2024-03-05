@@ -41,7 +41,7 @@ public class RatingsController : ControllerBase
         return Ok(ratingDto);
     }
 
-    [HttpPut]
+    [HttpPatch]
     public async Task<ActionResult> UpdateRating([FromBody] RatingDto ratingDto)
     {
         var rating = await _service.GetRating(ratingDto.Id);
