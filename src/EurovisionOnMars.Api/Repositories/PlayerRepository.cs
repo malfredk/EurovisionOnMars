@@ -28,7 +28,9 @@ public class PlayerRepository : IPlayerRepository
     public async Task<ImmutableList<Player>> GetPlayers()
     {
         _logger.LogDebug("Getting all players");
-        var players = await _context.Players.ToListAsync();
+        var players = await _context.Players
+            .Include(p => p.PlayerResult)
+            .ToListAsync();
         return players.ToImmutableList();
     }
 
