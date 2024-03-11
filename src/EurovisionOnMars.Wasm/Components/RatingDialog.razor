@@ -72,7 +72,7 @@
             PlayerId = Rating.PlayerId,
             CountryId = Rating.CountryId
         };
-        var response = await Http.PutAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
+        var response = await Http.PatchAsJsonAsync<RatingDto>("https://localhost:7195/api/Ratings/", ratingRequest); // TODO: automatically parse url
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("avstemning lagret", Severity.Success);
