@@ -93,9 +93,6 @@
 
     private void HandlePointsChange(int? oldPoints, int? newPoints, Action<int?> setter)
     {
-        Console.WriteLine("********************************************"); // TODO: remove console logging
-        Console.WriteLine($"Previous values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
-        Console.WriteLine($"Trying to change {oldPoints} to {newPoints}");
         // skipping 9 points
         if (newPoints == 9)
         {
@@ -132,7 +129,5 @@
         {
             setter(newPoints);
         }
-
-        Console.WriteLine($"After values are: cat 1: {category1}, cat 2: {category2}, cat 3: {category3}");
     }
 }
