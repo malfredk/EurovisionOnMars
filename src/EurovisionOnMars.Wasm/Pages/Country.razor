@@ -1,0 +1,86 @@
+﻿@page "/land"
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<NavigationBar></NavigationBar>
+
+<MudTable
+    T="CountryDto"
+    Items="@Countries"
+    Breakpoint="Breakpoint.None"
+    Hover=true RowClass="cursor-pointer"
+    CanCancelEdit=true
+    @bind-SelectedItem="selectedCountry"
+    EditTrigger="TableEditTrigger.RowClick"
+    OnCommitEditClick="@(async () => await UpdateRanking(selectedCountry))"
+    RowEditPreview="BackupRanking"
+    RowEditCancel="ResetCountry">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>land</MudTh>
+        <MudTh>plassering</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="country">
+        <MudTd DataLabel="#">@country.Number</MudTd>
+        <MudTd DataLabel="land">@country.Name</MudTd>
+        <MudTd DataLabel="plassering">@country.Ranking</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate Context="country">
+        <MudTd DataLabel="#">@country.Number</MudTd>
+        <MudTd DataLabel="land">@country.Name</MudTd>
+        <MudTd DataLabel="plassering">
+            <MudNumericField @bind-Value="@country.Ranking" Min="1" Max="26"></MudNumericField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public List<CountryDto>? Countries;
+    private CountryDto? selectedCountry = null;
+    private int? backupRanking;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchCountries();
+    }
+
+    private async Task UpdateRanking(CountryDto country)
+    {
+        var response = await Http.PatchAsJsonAsync<CountryDto>("https://localhost:7195/api/Countries/", country);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("resultat lagret", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to update country due to: {response.StatusCode}");
+        }
+    } 
+
+    private async Task FetchCountries()
+    {
+        var response = await Http.GetAsync("https://localhost:7195/api/Countries");
+        if (response.IsSuccessStatusCode)
+        {
+            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Failed to get countries");
+        }
+    }
+
+    private void BackupRanking(object country)
+    {
+        backupRanking = ((CountryDto)country).Ranking;
+    }
+
+    private void ResetCountry(object country)
+    {
+        ((CountryDto)country).Ranking = backupRanking;
+    }
+}
