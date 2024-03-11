@@ -25,7 +25,7 @@
 
 @code {
     [Parameter]
-    public int? PlayerId { get; set; }
+    public int? PlayerId { get; set; } = null;
 
     private bool disablePlayerPages => PlayerId == null;
 
