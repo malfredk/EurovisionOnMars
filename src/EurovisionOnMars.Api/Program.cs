@@ -19,6 +19,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<ICountryService, CountryService>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
