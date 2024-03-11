@@ -1,0 +1,51 @@
+﻿@inject NavigationManager NavigationManager
+
+<MudPaper>
+    <MudToolBar>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Home"
+            OnClick="NavigateHome">
+        </MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.HowToVote"
+            Disabled="disablePlayerPages"
+            OnClick="NavigateToPlayer">
+        </MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Grading"
+            Disabled="disablePlayerPages"
+            OnClick="NavigateToPlayerResult">
+        </MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Star"
+            OnClick="NavigateToResult">
+        </MudIconButton>
+    </MudToolBar>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int? PlayerId { get; set; }
+
+    private bool disablePlayerPages => PlayerId == null;
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void NavigateToPlayer()
+    {
+        NavigationManager.NavigateTo($"/spiller/{PlayerId}");
+    }
+
+    private void NavigateToPlayerResult()
+    {
+        NavigationManager.NavigateTo($"/spiller/{PlayerId}/resultat");
+    }
+
+    private void NavigateToResult()
+    {
+        NavigationManager.NavigateTo("/resultat");
+    }
+}
