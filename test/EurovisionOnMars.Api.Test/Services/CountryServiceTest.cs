@@ -104,6 +104,7 @@ public class CountryServiceTest
 
     [Theory]
     [InlineData("Danmark", 1)]
+    [InlineData("england", 1)]
     [InlineData("danmark2", 26)]
     [InlineData("danmark",0)]
     [InlineData("danmark",-10)]
