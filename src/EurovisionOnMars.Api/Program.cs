@@ -20,10 +20,15 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<IRatingResultService, RatingResultService>();
+builder.Services.AddScoped<IPlayerResultService, PlayerResultService>();
+builder.Services.AddScoped<IResultService, ResultService>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<IRatingResultRepository, RatingResultRepository>();
+builder.Services.AddScoped<IPlayerResultRepository, PlayerResultRepository>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
