@@ -123,7 +123,7 @@ public class CountryService : ICountryService
 
     private void ValidateName(string name)
     {
-        string pattern = @"^[a-zA-ZæøåÆØÅ]*$";
+        string pattern = @"^[a-zæøå -]*$";
         var isValid = !string.IsNullOrEmpty(name)
             && Regex.IsMatch(name, pattern)
             && POSSIBLE_PARTICIPANTS.Contains(name);
