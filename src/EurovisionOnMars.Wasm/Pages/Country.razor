@@ -7,7 +7,7 @@
 
 <NavigationBar></NavigationBar>
 
-<MudTable
+<MudTable 
     T="CountryDto"
     Items="@Countries"
     Breakpoint="Breakpoint.None"
@@ -18,12 +18,13 @@
     OnCommitEditClick="@(async () => await UpdateRanking(selectedCountry))"
     RowEditPreview="BackupRanking"
     RowEditCancel="ResetCountry">
+    <ToolBarContent>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateCountry"></MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Calculate" OnClick="CalculateResult"></MudIconButton>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>#</MudTh>
-        <MudTh>
-            land
-            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateCountry"></MudIconButton>
-        </MudTh>
+        <MudTh>land</MudTh>
         <MudTh>plassering</MudTh>
     </HeaderContent>
     <RowTemplate Context="country">
@@ -100,6 +101,20 @@
                 Countries.Add(newCountry);
                 StateHasChanged();
             }
+        }
+    }
+
+    private async Task CalculateResult()
+    {
+        var response = await Http.PostAsync("https://localhost:7195/api/ResultsCalculation", null);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("kalkulering av resultat var vellykket", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Failed to calculate results");
         }
     }
 }
