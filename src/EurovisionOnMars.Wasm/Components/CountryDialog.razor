@@ -1,0 +1,80 @@
+﻿@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudGrid>
+                <MudItem>
+                    <MudNumericField
+                        @bind-Value="number"
+                        Label="nummer"
+                        Variant="Variant.Outlined"
+                        Step="1" Min="1" Max="26"/>
+                </MudItem>
+                <MudItem>
+                    <MudTextField 
+                        @bind-Value="name"
+                        Label="navn"
+                        Variant="Variant.Outlined"/>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Check"
+            OnClick="CreateCountry">
+        </MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Close"
+            OnClick="Cancel">
+        </MudIconButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance Dialog { get; set; }
+
+    private int? number;
+    private string? name;
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+
+    private async Task CreateCountry()
+    {
+        if (number == null || name == null)
+        {
+            Snackbar.Add("navn og nummer er obligatorisk", Severity.Error);
+            Console.WriteLine($"Invalid country fields");
+            return;
+        }
+
+        var countryRequest = new CountryDto
+            {
+                Number = (int)number!,
+                Name = name!
+            };
+        var response = await Http.PostAsJsonAsync<CountryDto>("https://localhost:7195/api/Countries/", countryRequest); // TODO: automatically parse url
+        if (response.IsSuccessStatusCode)
+        {
+            var country = await response.Content.ReadFromJsonAsync<CountryDto>();
+            Snackbar.Add("land opprettet", Severity.Success);
+            Console.WriteLine($"Successfully created country with id: {country.Id}");
+            Dialog.Close(DialogResult.Ok(country));
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            Snackbar.Add("ugyldig land", Severity.Error);
+            Console.WriteLine($"Failed to create country");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to create country due to: {response.StatusCode}");
+        }
+    }
+}

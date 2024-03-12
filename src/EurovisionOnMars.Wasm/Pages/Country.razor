@@ -1,4 +1,5 @@
 ﻿@page "/land"
+@using EurovisionOnMars.Wasm.Components
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -19,7 +20,10 @@
     RowEditCancel="ResetCountry">
     <HeaderContent>
         <MudTh>#</MudTh>
-        <MudTh>land</MudTh>
+        <MudTh>
+            land
+            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateCountry"></MudIconButton>
+        </MudTh>
         <MudTh>plassering</MudTh>
     </HeaderContent>
     <RowTemplate Context="country">
@@ -36,8 +40,8 @@
     </RowEditingTemplate>
 </MudTable>
 
-@code {
-    public List<CountryDto>? Countries;
+    @code {
+    public List<CountryDto> Countries = new List<CountryDto>();
     private CountryDto? selectedCountry = null;
     private int? backupRanking;
 
@@ -65,7 +69,7 @@
         var response = await Http.GetAsync("https://localhost:7195/api/Countries");
         if (response.IsSuccessStatusCode)
         {
-            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
+            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>(); // TODO: fix possible issue with no countries
         }
         else
         {
@@ -82,5 +86,20 @@
     private void ResetCountry(object country)
     {
         ((CountryDto)country).Ranking = backupRanking;
+    }
+
+    private async Task CreateCountry()
+    {
+        var dialogResponse = await DialogService.ShowAsync<CountryDialog>("legg til nytt land");
+        var dialogResult = await dialogResponse.Result;
+        if (!dialogResult.Canceled)
+        {
+            var newCountry = dialogResult.Data as CountryDto;
+            if (newCountry != null)
+            {
+                Countries.Add(newCountry);
+                StateHasChanged();
+            }
+        }
     }
 }
