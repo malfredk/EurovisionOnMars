@@ -19,8 +19,15 @@
     RowEditPreview="BackupRanking"
     RowEditCancel="ResetCountry">
     <ToolBarContent>
-        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="CreateCountry"></MudIconButton>
-        <MudIconButton Icon="@Icons.Material.Filled.Calculate" OnClick="CalculateResult"></MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Add" 
+            OnClick="CreateCountry"
+            Disabled="disableAddButton">
+        </MudIconButton>
+        <MudIconButton 
+            Icon="@Icons.Material.Filled.Calculate" 
+            OnClick="CalculateResult">
+        </MudIconButton>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>#</MudTh>
@@ -41,10 +48,11 @@
     </RowEditingTemplate>
 </MudTable>
 
-@code {
+    @code {
     public List<CountryDto> Countries = new List<CountryDto>();
     private CountryDto? selectedCountry = null;
     private int? backupRanking;
+    private bool disableAddButton = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +79,7 @@
         if (response.IsSuccessStatusCode)
         {
             Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>(); // TODO: fix possible issue with no countries
+            disableAddButton = Countries != null && Countries.Count() == 26;
         }
         else
         {

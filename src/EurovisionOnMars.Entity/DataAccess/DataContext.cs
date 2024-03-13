@@ -13,4 +13,11 @@ public class DataContext : DbContext
     public DbSet<Country> Countries => Set<Country>();
     public DbSet<RatingResult> RatingResults => Set<RatingResult>();
     public DbSet<PlayerResult> PlayerResults => Set<PlayerResult>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Country>()
+            .HasIndex(e => e.Number)
+            .IsUnique();
+    }
 }
