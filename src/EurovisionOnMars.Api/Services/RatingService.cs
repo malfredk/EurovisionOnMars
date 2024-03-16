@@ -17,11 +17,16 @@ public class RatingService : IRatingService
     private static List<int> SPECIAL_POINTS = new List<int>() { 10, 12 };
 
     private readonly IRatingRepository _repository;
+    private readonly IRateClosingService _rateClosingService;
     private readonly ILogger<RatingService> _logger;
 
-    public RatingService(IRatingRepository repository, ILogger<RatingService> logger)
+    public RatingService(
+        IRatingRepository repository,
+        IRateClosingService rateClosingService,
+        ILogger<RatingService> logger)
     {
         _repository = repository;
+        _rateClosingService = rateClosingService;
         _logger = logger;
     }
 
@@ -47,6 +52,7 @@ public class RatingService : IRatingService
 
     public async Task UpdateRating(Rating newRating)
     {
+        _rateClosingService.ValidateRatingTime();
         var ratings = await GetRatingsByPlayer(newRating.PlayerId);
 
         ValidatePoints(newRating, ratings);

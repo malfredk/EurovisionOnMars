@@ -23,6 +23,8 @@ builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRatingResultService, RatingResultService>();
 builder.Services.AddScoped<IPlayerResultService, PlayerResultService>();
 builder.Services.AddScoped<IResultService, ResultService>();
+builder.Services.AddScoped<IRateClosingService, RateClosingService>();
+builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();

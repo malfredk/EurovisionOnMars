@@ -1,9 +1,9 @@
 ﻿using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
+using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SQLitePCL;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Services;
@@ -11,15 +11,20 @@ namespace EurovisionOnMars.Api.Test.Services;
 public class RatingServiceTest
 {
     private readonly Mock<IRatingRepository> _repositoryMock;
+    private readonly Mock<IRateClosingService> _rateClosingServiceMock;
     private readonly Mock<ILogger<RatingService>> _loggerMock;
     private readonly RatingService _service;
 
     public RatingServiceTest()
     {
         _repositoryMock = new Mock<IRatingRepository>();
+        _rateClosingServiceMock = new Mock<IRateClosingService>();
         _loggerMock = new Mock<ILogger<RatingService>>();
 
-        _service = new RatingService(_repositoryMock.Object, _loggerMock.Object);
+        _service = new RatingService(
+            _repositoryMock.Object, 
+            _rateClosingServiceMock.Object,
+            _loggerMock.Object);
     }
 
     // tests for getting ratings by player
@@ -65,6 +70,8 @@ public class RatingServiceTest
         // assert
         Assert.Equal(ratings, sortedExpectedRatings);
 
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
     }
 
@@ -81,6 +88,8 @@ public class RatingServiceTest
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRatingsByPlayer(playerId));
+        
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
     }
@@ -104,6 +113,8 @@ public class RatingServiceTest
         // assert
         Assert.Equal(rating, expectedRating);
 
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+
         _repositoryMock.Verify(r => r.GetRating(id), Times.Once());
     }
 
@@ -120,6 +131,8 @@ public class RatingServiceTest
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRating(id));
+
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
         _repositoryMock.Verify(r => r.GetRating(id), Times.Once());
     }
@@ -141,6 +154,8 @@ public class RatingServiceTest
         await _service.UpdateRating(newRating);
 
         // assert
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
 
         _repositoryMock.Verify(r  => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(2));
@@ -174,6 +189,8 @@ public class RatingServiceTest
         await _service.UpdateRating(newRating);
 
         // assert
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once);
@@ -225,6 +242,8 @@ public class RatingServiceTest
         await _service.UpdateRating(newRating);
 
         // assert
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(7));
@@ -250,6 +269,8 @@ public class RatingServiceTest
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(updatedRating));
 
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
     }
@@ -272,6 +293,23 @@ public class RatingServiceTest
         yield return new object[] { CreateRating(100, 6, -1, 2), CreateRating(1, 4, 2, 3) };
         // giving 0 points in category 2
         yield return new object[] { CreateRating(100, 6, 0, 2), CreateRating(1, 4, 2, 3) };
+    }
+
+    [Fact]
+    public async void UpdateRating_RatingClosed()
+    {
+        // arrange
+        var rating = CreateRating(1, null, null);
+        _rateClosingServiceMock.Setup(m => m.ValidateRatingTime())
+            .Throws<RatingIsClosedException>();
+
+        // act and assert
+        await Assert.ThrowsAsync<RatingIsClosedException>(async () => await _service.UpdateRating(rating));
+
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(It.IsAny<int>()), Times.Never());
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
     }
 
     // helper methods
