@@ -28,6 +28,9 @@ public class ExceptionHandlingMiddleware : IMiddleware
                 case DuplicateUsernameException:
                     context.Response.StatusCode = (int)HttpStatusCode.Conflict; 
                     break;
+                case RatingIsClosedException:
+                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    break;
                 case KeyNotFoundException:
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     break;

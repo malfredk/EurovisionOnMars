@@ -82,7 +82,12 @@
         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
             Snackbar.Add("man kan gi 1-8, 10 eller 12 poeng, og man kan kun gi 10 og 12 poeng én gang i hver kategori", Severity.Error);
-            Console.WriteLine($"Failed to update rating");
+            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            Snackbar.Add("stemming er stengt", Severity.Error);
+            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
         }
         else
         {
