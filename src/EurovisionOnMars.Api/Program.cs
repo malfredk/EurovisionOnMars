@@ -49,8 +49,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(policy =>
-    policy.WithOrigins("https://localhost:7052")
+app.UseCors(policy => policy // TODO: define for production and development
+    .WithOrigins("https://localhost:7052") // TODO: .AllowAnyOrigin()
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
 );
