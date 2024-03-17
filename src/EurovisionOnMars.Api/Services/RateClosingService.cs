@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.CustomException;
+using TimeZoneConverter;
 
 namespace EurovisionOnMars.Api.Services;
 
@@ -38,7 +39,7 @@ public interface IDateTimeNow
 
 public class DateTimeNow : IDateTimeNow
 {
-    public TimeZoneInfo OsloTimeZone => TimeZoneInfo.FindSystemTimeZoneById("Europe/Oslo");
+    public TimeZoneInfo OsloTimeZone => TZConvert.GetTimeZoneInfo("Europe/Oslo");
 
     public DateTimeOffset Now => TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, OsloTimeZone);
 }

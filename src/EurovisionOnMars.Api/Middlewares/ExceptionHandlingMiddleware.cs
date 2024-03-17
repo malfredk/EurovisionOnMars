@@ -17,7 +17,6 @@ public class ExceptionHandlingMiddleware : IMiddleware
         try 
         {
             await next(context);
-
         }
         catch (Exception ex)
         {
