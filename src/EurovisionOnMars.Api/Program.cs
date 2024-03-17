@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DevConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IRatingService, RatingService>();
@@ -50,7 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(policy => policy // TODO: define for production and development
-    .WithOrigins("https://localhost:7052") // TODO: .AllowAnyOrigin()
+    .AllowAnyOrigin() // .WithOrigins("https://localhost:7052") 
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
 );
