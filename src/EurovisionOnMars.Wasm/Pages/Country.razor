@@ -61,7 +61,7 @@
 
     private async Task UpdateRanking(CountryDto country)
     {
-        var response = await Http.PatchAsJsonAsync<CountryDto>("https://localhost:7195/api/Countries/", country);
+        var response = await Http.PatchAsJsonAsync<CountryDto>("/api/Countries/", country);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("resultat lagret", Severity.Success);
@@ -75,7 +75,7 @@
 
     private async Task FetchCountries()
     {
-        var response = await Http.GetAsync("https://localhost:7195/api/Countries");
+        var response = await Http.GetAsync("/api/Countries");
         if (response.IsSuccessStatusCode)
         {
             Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>(); // TODO: fix possible issue with no countries
@@ -115,7 +115,7 @@
 
     private async Task CalculateResult()
     {
-        var response = await Http.PostAsync("https://localhost:7195/api/ResultsCalculation", null);
+        var response = await Http.PostAsync("/api/ResultsCalculation", null);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("kalkulering av resultat var vellykket", Severity.Success);

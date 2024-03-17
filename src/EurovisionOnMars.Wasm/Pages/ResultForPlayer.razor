@@ -26,7 +26,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"https://localhost:7195/api/Ratings/{Id}");
+        var response = await Http.GetAsync($"/api/Ratings/{Id}");
         if (response.IsSuccessStatusCode)
         {
             Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();

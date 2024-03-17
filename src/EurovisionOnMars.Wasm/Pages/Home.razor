@@ -36,7 +36,7 @@
             return;
         }
 
-        var response = await Http.PostAsJsonAsync<string>("https://localhost:7195/api/Players/", newUsername); // TODO: automatically parse url
+        var response = await Http.PostAsJsonAsync<string>("/api/Players/", newUsername);
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
@@ -69,7 +69,7 @@
             return;
         }
 
-        var response = await Http.GetAsync($"https://localhost:7195/api/Players/{existingUsername}");
+        var response = await Http.GetAsync($"/api/Players/{existingUsername}");
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
