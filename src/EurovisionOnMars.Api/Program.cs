@@ -61,8 +61,8 @@ else
 {
     using (var serviceScope = app.Services.CreateScope())
     {
-        var dbContext = serviceScope.ServiceProvider.GetRequiredService<DbContext>();
-        dbContext.Database.EnsureCreated();
+        var dataContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
+        dataContext.Database.EnsureCreated();
     }
 }
 
