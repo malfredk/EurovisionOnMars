@@ -23,7 +23,11 @@ if (builder.Environment.IsDevelopment())
 else
 {
     builder.Services.AddDbContext<DataContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("Default"),
+            options => options.EnableRetryOnFailure()
+            )
+        );
 }
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
