@@ -1,13 +1,49 @@
 # EurovisionOnMars
 
+This is a simple game web app for Eurovision Song Contest. It is a gamification of the classic scorecard used when watching Eurovision with friends. 
+
+All players are entered in the same game. Instead of filling out a paper sheet, each player can rate the different countries in this web app. The rating closes before the results are revealed to prevent cheating. The host will need to manually enter the participating countries and their order. When the Eurovision results are ready, the host can enter the rankings and trigger calculation of the game result.   
+
+A player gets points based on the (absolute) difference between their predicted ranking and the actual ranking. In addition, a player is rewarded (negative) bonus points if a ranking is perfect. (The bonus points amounts are inspired by the Formula 1 points system.) The player with the least amount of points wins. 
+
 ## Development 
 
-### Creating local database
+### Database
 In Package Manager Console:
-1. Create migrations by running the following command
+1. Create migrations by running the following command  
 dotnet ef migrations add <nameOfMigration> --verbose --project .\src\EurovisionOnMars.Entity   --startup-project .\src\EurovisionOnMars.Api
 
-2. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Entity is exists first)
+2. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Entity is exists first)  
 dotnet ef database update --verbose --project .\src\EurovisionOnMars.Entity   --startup-project .\src\EurovisionOnMars.Api
 
+### Web App
+Simply run the web app by starting the *.Api* project with *https*.
+
 ## Production
+
+This guide utilizes Azure. Start by creating a resource group.
+
+### Database
+While creating a SQL database, create a SQL server. 
+
+Settings for the server:  
+* Use both SQL and Microsoft Entra authentication for the server
+
+Settings for the database:  
+* Allow Azure services and resources to access this server
+
+### Web App
+Create a web app with the following settings:
+* Publish: Code
+* Operating system: Linux
+* Basic authentication: Disable
+* Continous deployment: Enable
+* Enable public access: On
+* Enable network injection: Off
+
+Add connection string for the SQL database. 
+* Name: Default
+* Value: Server=xxxx,xxxx;Initial Catalog=xxxx;Persist Security Info=False;User ID=xxxx;Password=xxxx;
+
+In *Configuration* go to *General Settings* and set
+* Startup Command: dotnet EurovisionOnMars.Api.dll
