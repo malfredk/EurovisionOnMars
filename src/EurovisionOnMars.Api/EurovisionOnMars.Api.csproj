@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -29,6 +30,7 @@
     <ProjectReference Include="..\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj" />
+    <ProjectReference Include="..\EurovisionOnMars.Wasm\EurovisionOnMars.Wasm.csproj" />
   </ItemGroup>
 
 </Project>
