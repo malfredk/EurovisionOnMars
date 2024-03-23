@@ -39,7 +39,16 @@
     <RowTemplate Context="rating">
         <MudTd DataLabel="#">@rating.Country.Number</MudTd>
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
-        <MudTd DataLabel="plassering">@rating.Ranking</MudTd>
+        <MudTd DataLabel="plassering">
+            @rating.Ranking
+            @if (!HasUniquePointsSum(rating))
+            {
+                <MudIconButton 
+                    Icon="@Icons.Material.Filled.SwapVert"
+                    OnClick="@(async () => await HandleRanking(rating))">
+                </MudIconButton>
+            }
+        </MudTd>
         <MudTd DataLabel="poengsum">
             @rating.PointsSum
             @for (int tenPointer = 0; tenPointer < NumberOfSpecialPoints(rating, 10); tenPointer++)
@@ -69,7 +78,7 @@
         var parameters = new DialogParameters<RatingDialog>();
         parameters.Add(x => x.Rating, selectedRating);
 
-        var dialogResponse = await DialogService.ShowAsync<RatingDialog>($"stemmeskjema for {selectedRating.Country.Name}", parameters);
+        var dialogResponse = await DialogService.ShowAsync<RatingDialog>($"{selectedRating.Country.Name}", parameters);
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {
@@ -108,5 +117,41 @@
     private bool HasGivenSpecialPoints(int? categoryPoints, int specialPoints)
     {
         return categoryPoints != null && categoryPoints == specialPoints;
+    }
+
+    private bool HasUniquePointsSum(RatingDto rating)
+    {
+        var pointsSum = rating.PointsSum;
+        if (pointsSum == null)
+        {
+            return true;
+        }
+
+        foreach (var otherRating in Ratings)
+        {
+            var otherPointsSum = otherRating.PointsSum;
+            if (otherRating.Id != rating.Id
+                && otherPointsSum != null
+                && pointsSum == otherPointsSum)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private async Task HandleRanking(RatingDto rating)
+    {
+        var parameters = new DialogParameters<RankingDialog>();
+        parameters.Add(x => x.Rating, rating);
+        parameters.Add(x => x.Ratings, Ratings);
+
+        var dialogResponse = await DialogService.ShowAsync<RankingDialog>($"{rating.Country.Name}", parameters);
+        var dialogResult = await dialogResponse.Result;
+        if (!dialogResult.Canceled)
+        {
+            await FetchRatings();
+            StateHasChanged();
+        }
     }
 }

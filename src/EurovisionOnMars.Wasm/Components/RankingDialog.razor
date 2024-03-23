@@ -1,0 +1,95 @@
+﻿@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudGrid>
+                <MudItem>
+                    <MudNumericField 
+                        Value="@ranking"
+                        Label="plassering"
+                        Variant="Variant.Outlined"
+                        Step="1" Min="minRanking" Max="maxRanking"/>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="UpdateRating">stem</MudButton>
+        <MudButton OnClick="Cancel">avbryt</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance Dialog { get; set; }
+
+    [Parameter] public RatingDto Rating { get; set; }
+    [Parameter] public List<RatingDto> Ratings { get; set; }
+
+    private int ranking;
+    private int minRanking;
+    private int maxRanking;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.ranking = (int)Rating.Ranking!;
+        SetRankingLimits();
+    }
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+
+    private async Task UpdateRating()
+    {
+        // TODO: endpoint to update ranking
+        var ratingRequest = new RatingDto
+            {
+                Id = Rating.Id,
+                Ranking = ranking,
+                PlayerId = Rating.PlayerId,
+                CountryId = Rating.CountryId
+            };
+        var response = await Http.PatchAsJsonAsync<RatingDto>("/api/Ratings/", ratingRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("avstemning lagret", Severity.Success);
+            Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
+            Dialog.Close();
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            Snackbar.Add("stemming er stengt", Severity.Error);
+            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
+        }
+    }
+
+    private void SetRankingLimits()
+    {
+        var count = 0;
+        minRanking = (int)Rating.Ranking!;
+
+        var pointsSum = Rating.PointsSum;
+
+        foreach (var otherRating in Ratings)
+        {
+            var otherPointsSum = otherRating.PointsSum;
+            if (otherPointsSum != null
+                && pointsSum == otherPointsSum)
+            {
+                count++;
+                minRanking = Math.Min(minRanking, (int)otherRating.Ranking!);
+            }
+        }
+        maxRanking = minRanking + count - 1;
+    }
+}
