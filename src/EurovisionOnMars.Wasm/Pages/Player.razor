@@ -41,7 +41,7 @@
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
         <MudTd DataLabel="plassering">
             @rating.Ranking
-            @if (!HasUniquePointsSum(rating))
+            @if (hasFinishedRating && !HasUniquePointsSum(rating))
             {
                 <MudIconButton 
                     Icon="@Icons.Material.Filled.SwapVert"
@@ -67,9 +67,12 @@
     [Parameter] public int Id { get; set; }
     public List<RatingDto> Ratings { get; set; } = new List<RatingDto>();
 
+    private bool hasFinishedRating;
+
     protected override async Task OnInitializedAsync()
     {
         await FetchRatings();
+        SetHasFinishedRating();
     }
 
     private async Task HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
@@ -83,7 +86,21 @@
         if (!dialogResult.Canceled)
         {
             await FetchRatings();
+            SetHasFinishedRating();
             StateHasChanged();
+        }
+    }
+
+    private void SetHasFinishedRating()
+    {
+        hasFinishedRating = true;
+        foreach (var rating in Ratings)
+        {
+            if (rating.Ranking == null)
+            {
+                hasFinishedRating = false;
+                return;
+            }
         }
     }
 
