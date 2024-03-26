@@ -1,4 +1,5 @@
-﻿@inject HttpClient Http
+﻿@using EurovisionOnMars.Dto.Requests
+@inject HttpClient Http
 @inject ISnackbar Snackbar
 
 <MudDialog>
@@ -53,12 +54,12 @@
             return;
         }
 
-        var countryRequest = new CountryDto
+        var countryRequest = new NewCountryRequestDto
             {
                 Number = (int)number!,
                 Name = name!
             };
-        var response = await Http.PostAsJsonAsync<CountryDto>("/api/Countries/", countryRequest);
+        var response = await Http.PostAsJsonAsync<NewCountryRequestDto>("/api/Countries/", countryRequest);
         if (response.IsSuccessStatusCode)
         {
             var country = await response.Content.ReadFromJsonAsync<CountryDto>();

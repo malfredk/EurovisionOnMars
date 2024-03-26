@@ -61,7 +61,14 @@
 
     private async Task UpdateRanking(CountryDto country)
     {
-        var response = await Http.PatchAsJsonAsync<CountryDto>("/api/Countries/", country);
+        var ranking = country.Ranking;
+        if (ranking == null)
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Ranking is null");
+        }
+
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)country.Ranking!);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("resultat lagret", Severity.Success);

@@ -8,6 +8,6 @@ public class Utils
         {
             return null; 
         }
-        return entityList.Select(entity =>  toDto(entity)).ToList();
+        return entityList.Select(entity => toDto(entity)).ToList();
     }
 }

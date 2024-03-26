@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Api.Repositories;
+using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
@@ -8,9 +9,8 @@ namespace EurovisionOnMars.Api.Services;
 public interface ICountryService
 {
     Task<ImmutableList<Country>> GetCountries();
-    Task<Country> GetCountry(int id);
-    Task<Country> CreateCountry(Country country);
-    Task<Country> UpdateCountry(Country country);
+    Task<Country> CreateCountry(NewCountryRequestDto country);
+    Task<Country> UpdateCountry(int id, int ranking);
 }
 
 public class CountryService : ICountryService
@@ -86,7 +86,23 @@ public class CountryService : ICountryService
         return await _countryRepository.GetCountries();
     }
 
-    public async Task<Country> GetCountry(int id)
+    public async Task<Country> CreateCountry(NewCountryRequestDto countryDto)
+    {
+        ValidateName(countryDto.Name);
+        ValidateNumber(countryDto.Number);
+        var country = CreateEntity(countryDto);
+        return await _countryRepository.CreateCountry(country);
+    }
+
+    public async Task<Country> UpdateCountry(int id, int ranking)
+    {
+        ValidateNumber(ranking);
+        var country = await GetCountry(id);
+        var updatedCountry = UpdateEntity(country, ranking);
+        return await _countryRepository.UpdateCountry(updatedCountry);
+    }
+
+    private async Task<Country> GetCountry(int id)
     {
         var country = await _countryRepository.GetCountry(id);
         if (country == null)
@@ -94,19 +110,6 @@ public class CountryService : ICountryService
             throw new KeyNotFoundException($"No country with id={id} exists");
         }
         return country;
-    }
-
-    public async Task<Country> CreateCountry(Country country)
-    {
-        ValidateName(country.Name);
-        ValidateNumber(country.Number);
-        return await _countryRepository.CreateCountry(country);
-    }
-
-    public async Task<Country> UpdateCountry(Country country)
-    {
-        ValidateNumber(country.Ranking);
-        return await _countryRepository.UpdateCountry(country);
     }
 
     private void ValidateNumber(int? number)
@@ -132,5 +135,20 @@ public class CountryService : ICountryService
         {
             throw new ArgumentException("Invalid name of country");
         }
+    }
+
+    private Country CreateEntity(NewCountryRequestDto dto)
+    {
+        return new Country
+        {
+            Name = dto.Name,
+            Number = dto.Number
+        };
+    }
+
+    private Country UpdateEntity(Country entity, int ranking)
+    {
+        entity.Ranking = ranking;
+        return entity;
     }
 }

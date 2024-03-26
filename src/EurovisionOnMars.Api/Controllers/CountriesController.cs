@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Dto;
+using EurovisionOnMars.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Controllers;
@@ -33,20 +34,17 @@ public class CountriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CountryDto>> CreateCountry([FromBody] CountryDto countryRequestDto)
+    public async Task<ActionResult<CountryDto>> CreateCountry([FromBody] NewCountryRequestDto requestDto)
     {
-        var countryRequest = _mapper.ToEntity(countryRequestDto);
-        var country = await _service.CreateCountry(countryRequest);
+        var country = await _service.CreateCountry(requestDto);
         var countryDto = _mapper.ToDto(country);
         return Created(Request.Path.Value, countryDto);
     }
 
-    [HttpPatch]
-    public async Task<ActionResult> UpdateCountryRanking([FromBody] CountryDto countryRequestDto)
+    [HttpPatch("{id}")]
+    public async Task<ActionResult> UpdateCountryRanking(int id, [FromBody] int ranking)
     {
-        var country = await _service.GetCountry(countryRequestDto.Id);
-        var updatedCountry = _mapper.UpdateEntity(country, countryRequestDto);
-        await _service.UpdateCountry(updatedCountry);
+        await _service.UpdateCountry(id, ranking);
         return Ok();
     }
 }

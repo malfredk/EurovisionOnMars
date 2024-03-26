@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
-using EurovisionOnMars.CustomException;
+using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -46,40 +46,6 @@ public class CountryServiceTest
         _countryRepositoryMock.Verify(m => m.GetCountries(), Times.Once);
     }
 
-    [Fact]
-    public async void GetCountry()
-    {
-        // arrange
-        var id = 34;
-        var expectedCountry = CreateCountry("dska", 90);
-
-        _countryRepositoryMock.Setup(m => m.GetCountry(id))
-            .ReturnsAsync(expectedCountry);
-
-        // act
-        var actualCountry = await _service.GetCountry(id);
-
-        // assert
-        Assert.Equal(expectedCountry, actualCountry);
-
-        _countryRepositoryMock.Verify(m => m.GetCountry(id), Times.Once);
-    }
-
-    [Fact]
-    public async void GetCountry_InvalidId()
-    {
-        // arrange
-        var id = 34;
-
-        _countryRepositoryMock.Setup(m => m.GetCountry(id))
-            .ReturnsAsync((Country)null);
-
-        // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetCountry(id));
-
-        _countryRepositoryMock.Verify(m => m.GetCountry(id), Times.Once);
-    }
-
     [Theory]
     [InlineData("østerrike", 1)]
     [InlineData("san marino", 26)]
@@ -87,6 +53,7 @@ public class CountryServiceTest
     public async void CreateCountry_Valid(string name, int number)
     {
         // arrange
+        var countryRequest = CreateCountryRequest(name, number);
         var country = CreateCountry(name, number);
         var expectedCountry = CreateCountry("dska", 90);
 
@@ -94,7 +61,7 @@ public class CountryServiceTest
             .ReturnsAsync(expectedCountry);
 
         // act
-        var actualCountry = await _service.CreateCountry(country);
+        var actualCountry = await _service.CreateCountry(countryRequest);
 
         // assert
         Assert.Equal(expectedCountry, actualCountry);
@@ -111,13 +78,13 @@ public class CountryServiceTest
     [InlineData("danmark",27)]
     [InlineData("danmark_",1)]
     [InlineData("",1)]
-    public async void CreateCountry_InValid(string name, int number)
+    public async void CreateCountry_Invalid(string name, int number)
     {
         // arrange
-        var country = CreateCountry(name, number);
+        var countryRequest = CreateCountryRequest(name, number);
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreateCountry(country));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreateCountry(countryRequest));
 
         _countryRepositoryMock.Verify(m => m.CreateCountry(It.IsAny<Country>()), Times.Never);
     }
@@ -126,38 +93,68 @@ public class CountryServiceTest
     [InlineData(1)]
     [InlineData(26)]
     [InlineData(13)]
-    public async void UpdateCountry_Valid(int? ranking)
+    public async void UpdateCountry_Valid(int ranking)
     {
         // arrange
-        var country = CreateCountry(ranking);
+        var id = 974678;
+        var existingCountry = CreateCountry(null);
+        var updatedCountry = CreateCountry(ranking);
         var expectedCountry = CreateCountry("dska", 90);
 
-        _countryRepositoryMock.Setup(m => m.UpdateCountry(country))
+        _countryRepositoryMock.Setup(m => m.GetCountry(id))
+            .ReturnsAsync(existingCountry);
+        _countryRepositoryMock.Setup(m => m.UpdateCountry(existingCountry))
             .ReturnsAsync(expectedCountry);
 
         // act
-        var actualCountry = await _service.UpdateCountry(country);
+        var actualCountry = await _service.UpdateCountry(id, ranking);
 
         // assert
         Assert.Equal(expectedCountry, actualCountry);
 
-        _countryRepositoryMock.Verify(m => m.UpdateCountry(country), Times.Once);
+        _countryRepositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _countryRepositoryMock.Verify(m => m.UpdateCountry(existingCountry), Times.Once);
     }
 
     [Theory]
     [InlineData(0)]
     [InlineData(-10)]
     [InlineData(27)]
-    [InlineData(null)]
-    public async void UpdateCountry_InValid(int? ranking)
+    public async void UpdateCountry_Invalid(int ranking)
     {
         // arrange
-        var country = CreateCountry(ranking);
+        var id = 974678;
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateCountry(country));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateCountry(id, ranking));
 
+        _countryRepositoryMock.Verify(m => m.GetCountry(It.IsAny<int>()), Times.Never);
         _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
+    }
+
+    [Fact]
+    public async void UpdateCountry_InvalidId()
+    {
+        // arrange
+        var id = 34;
+
+        _countryRepositoryMock.Setup(m => m.GetCountry(id))
+            .ReturnsAsync((Country)null);
+
+        // act and assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.UpdateCountry(id, 3));
+
+        _countryRepositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
+    }
+
+    private NewCountryRequestDto CreateCountryRequest(string name, int number)
+    {
+        return new NewCountryRequestDto
+        {
+            Name = name,
+            Number = number
+        };
     }
 
     private Country CreateCountry(string name, int number)
