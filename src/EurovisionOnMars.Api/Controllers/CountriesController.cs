@@ -41,7 +41,7 @@ public class CountriesController : ControllerBase
         return Created(Request.Path.Value, countryDto);
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("{id:int}")]
     public async Task<ActionResult> UpdateCountryRanking(int id, [FromBody] int ranking)
     {
         await _service.UpdateCountry(id, ranking);
