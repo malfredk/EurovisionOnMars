@@ -71,7 +71,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void GetPlayer_NotValidId()
+    public async void GetPlayer_InvalidId()
     {
         // arrange
         var id = 14;
@@ -105,7 +105,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void GetPlayer_NotValidUsername()
+    public async void GetPlayer_InvalidUsername()
     {
         // arrange
         var username = "";
@@ -217,7 +217,8 @@ public class PlayerServiceTest
         return new Rating
         {
             CountryId = countryId,
-            Country = country
+            Country = country,
+            RatingResult = new RatingResult()
         };
     }
 }

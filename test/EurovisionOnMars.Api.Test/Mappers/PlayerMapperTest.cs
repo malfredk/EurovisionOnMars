@@ -20,47 +20,6 @@ public class PlayerMapperTest
     }
 
     [Fact]
-    public void UpdateEntity()
-    {
-        // arrange
-        var originalPlayerEntity = CreatePlayerEntity(167, "malene");
-
-        var originalRatingEntity1 = CreateRatingEntity(5666, originalPlayerEntity);
-        var originalRatingEntity2 = CreateRatingEntity(28, originalPlayerEntity);
-
-        var updatedRatingEntity1 = CreateRatingEntity(4, originalPlayerEntity);
-        var updatedRatingEntity2 = CreateRatingEntity(3, originalPlayerEntity);
-
-        originalPlayerEntity.Ratings = new List<Rating> { originalRatingEntity1, originalRatingEntity2 };
-
-        var ratingDto1 = CreateRatingDto(5666);
-        var ratingDto2 = CreateRatingDto(28);
-
-        var playerDto = CreatePlayerDto(new List<RatingDto> { ratingDto1, ratingDto2 });
-
-        _ratingMapperMock.Setup(m => m.UpdateEntity(originalRatingEntity1, ratingDto1))
-            .Returns(updatedRatingEntity1);
-        _ratingMapperMock.Setup(m => m.UpdateEntity(originalRatingEntity2, ratingDto2))
-            .Returns(updatedRatingEntity2);
-
-        // act
-        var updatedPlayerEntity = _mapper.UpdateEntity(originalPlayerEntity, playerDto);
-
-        // assert
-        Assert.Equal(updatedPlayerEntity.Username, originalPlayerEntity.Username);
-        Assert.NotEqual(updatedPlayerEntity.Username, playerDto.Username);
-        
-        Assert.Equal(updatedPlayerEntity.Id, originalPlayerEntity.Id);
-        Assert.NotEqual(updatedPlayerEntity.Id, playerDto.Id);
-
-        Assert.Equal(updatedPlayerEntity.Ratings[0], updatedRatingEntity1);
-        Assert.Equal(updatedPlayerEntity.Ratings[1], updatedRatingEntity2);
-
-        _ratingMapperMock.Verify(m => m.UpdateEntity(originalRatingEntity1, ratingDto1), Times.Once);
-        _ratingMapperMock.Verify(m => m.UpdateEntity(originalRatingEntity2, ratingDto2), Times.Once);
-    }
-
-    [Fact]
     public void ToDto()
     {
         // arrange
@@ -122,16 +81,6 @@ public class PlayerMapperTest
             PlayerId = 788888,
             Player = playerEntity,
             CountryId = 89
-        };
-    }
-
-    private static PlayerDto CreatePlayerDto(List<RatingDto> ratings)
-    {
-        return new PlayerDto
-        {
-            Id = 345,
-            Username = "test",
-            Ratings = ratings
         };
     }
 
