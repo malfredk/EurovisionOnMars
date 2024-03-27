@@ -65,7 +65,9 @@
     private ArrowDirection GetArrowDirection(RatingDto rating)
     {
         var rankingDifference = rating.RatingResult!.RankingDifference!;
-        if (rankingDifference is null || rankingDifference == 0)
+        if (rankingDifference is null || 
+            rankingDifference == 0 ||
+            rankingDifference == 26)
         {
             return ArrowDirection.NONE;
         }
