@@ -126,7 +126,8 @@ public class RatingResultServiceTest
         return new Rating
         {
             Ranking = ranking,
-            Country = country
+            Country = country,
+            RatingResult = new RatingResult()
         };
     }
 }
