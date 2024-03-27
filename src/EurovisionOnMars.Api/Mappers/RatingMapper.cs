@@ -27,10 +27,8 @@ public class RatingMapper : IRatingMapper
             Category1Points = entity.Category1Points,
             Category2Points = entity.Category2Points,
             Category3Points = entity.Category3Points,
-            PlayerId = entity.PlayerId,
             PointsSum = entity.PointsSum,
             Ranking = entity.Ranking,
-            CountryId = entity.CountryId,
             Country = entity.Country is null ? null : _countryMapper.ToDto(entity.Country),
             RatingResult = entity.RatingResult is null ? null : _ratingResultMapper.ToDto(entity.RatingResult)
         };

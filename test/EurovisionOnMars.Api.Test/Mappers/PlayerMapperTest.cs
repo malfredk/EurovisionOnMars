@@ -91,9 +91,7 @@ public class PlayerMapperTest
             Id = id,
             Category1Points = 100,
             Category2Points = 200,
-            Category3Points = 300,
-            PlayerId = 34,
-            CountryId = 88
+            Category3Points = 300
         };
     }
 }

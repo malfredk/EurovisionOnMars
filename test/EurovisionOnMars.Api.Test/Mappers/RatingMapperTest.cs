@@ -47,7 +47,6 @@ public class RatingMapperTest
         Assert.Equal(entity.Category1Points, dto.Category1Points);
         Assert.Equal(entity.Category2Points, dto.Category2Points);
         Assert.Equal(entity.Category3Points, dto.Category3Points);
-        Assert.Equal(entity.PlayerId, dto.PlayerId);
         Assert.Equal(entity.PointsSum, dto.PointsSum);
         Assert.Equal(entity.Ranking, dto.Ranking);
         Assert.Equal(countryDto, dto.Country);
