@@ -9,18 +9,30 @@
     Items="@Ratings"
     Breakpoint="Breakpoint.None">
     <HeaderContent>
+        <MudTh>faktisk plassering</MudTh>
         <MudTh>land</MudTh>
         <MudTh>differanse i plassering</MudTh>
         <MudTh>bonuspoeng</MudTh>
     </HeaderContent>
     <RowTemplate Context="rating">
+        <MudTd DataLabel="faktisk plassering">@rating.Country.Ranking</MudTd>
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
-        <MudTd DataLabel="differanse i plassering">@rating.RatingResult.RankingDifference</MudTd>
+        <MudTd DataLabel="differanse i plassering">
+            @GetAbsoluteRankingDifference(rating)
+            @if (GetArrowDirection(rating) == ArrowDirection.UP)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small"></MudIcon>
+            }
+            @if (GetArrowDirection(rating) == ArrowDirection.DOWN)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small"></MudIcon>
+            }
+        </MudTd>
         <MudTd DataLabel="bonuspoeng">@rating.RatingResult.BonusPoints</MudTd>
     </RowTemplate>
 </MudTable>
 
-@code {
+    @code {
     [Parameter] public int Id { get; set; }
     public List<RatingDto> Ratings { get; set; }
 
@@ -30,6 +42,7 @@
         if (response.IsSuccessStatusCode)
         {
             Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            Ratings = Ratings.OrderBy(r => r.Country.Ranking).ToList();
             Console.WriteLine($"Got ratings for player with id={Id}");
         }
         else
@@ -37,5 +50,34 @@
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine($"Failed to get ratings for player with id={Id}");
         }
+    }
+
+    private int GetAbsoluteRankingDifference(RatingDto rating)
+    {
+        return Math.Abs((int)rating.RatingResult!.RankingDifference!);
+    }
+
+    private ArrowDirection GetArrowDirection(RatingDto rating)
+    {
+        var rankingDifference = rating.RatingResult!.RankingDifference!;
+        if (rankingDifference == 0)
+        {
+            return ArrowDirection.NONE;
+        }
+        else if (rankingDifference > 0)
+        {
+            return ArrowDirection.DOWN;
+        }
+        else
+        {
+            return ArrowDirection.UP;
+        }
+    }
+
+    enum ArrowDirection
+    {
+        UP,
+        DOWN,
+        NONE
     }
 }
