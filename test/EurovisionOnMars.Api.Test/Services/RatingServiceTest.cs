@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Repositories;
 using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.CustomException;
+using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,6 +11,9 @@ namespace EurovisionOnMars.Api.Test.Services;
 
 public class RatingServiceTest
 {
+    private const int RATING_ID = 821;
+    private const int PLAYER_ID = 657;
+
     private readonly Mock<IRatingRepository> _repositoryMock;
     private readonly Mock<IRateClosingService> _rateClosingServiceMock;
     private readonly Mock<ILogger<RatingService>> _loggerMock;
@@ -33,8 +37,6 @@ public class RatingServiceTest
     public async void GetRatingsByPlayer()
     {
         // arrange
-        var playerId = 788778;
-
         var rating1 = CreateRating(1, null, null, 100);
         var rating2 = CreateRating(2, null, 5, 5);
         var rating3 = CreateRating(3, null, 7, 10);
@@ -61,37 +63,35 @@ public class RatingServiceTest
             rating1
         }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
             .ReturnsAsync(expectedRatings);
 
         // act
-        var ratings = await _service.GetRatingsByPlayer(playerId);
+        var ratings = await _service.GetRatingsByPlayer(PLAYER_ID);
 
         // assert
         Assert.Equal(ratings, sortedExpectedRatings);
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
     [Fact]
     public async void GetRatingsByPlayer_NoResults()
     {
         // arrange
-        var playerId = 657;
-
         var expectedRatings = new List<Rating>() { }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
             .ReturnsAsync(expectedRatings);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRatingsByPlayer(playerId));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRatingsByPlayer(PLAYER_ID));
         
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
     // tests for getting a rating by id
@@ -100,77 +100,91 @@ public class RatingServiceTest
     public async void GetRating()
     {
         // arrange
-        var id = 765;
-
         var expectedRating = CreateRating(12, 1, null, 3);
 
-        _repositoryMock.Setup(r => r.GetRating(id))
+        _repositoryMock.Setup(r => r.GetRating(RATING_ID))
             .ReturnsAsync(expectedRating);
 
         // act
-        var rating = await _service.GetRating(id);
+        var rating = await _service.GetRating(RATING_ID);
 
         // assert
         Assert.Equal(rating, expectedRating);
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
-        _repositoryMock.Verify(r => r.GetRating(id), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
     [Fact]
     public async void GetRating_InvalidId()
     {
         // arrange
-        var id = 3232;
-
         var expectedRating = (Rating)null;
 
-        _repositoryMock.Setup(r => r.GetRating(id))
+        _repositoryMock.Setup(r => r.GetRating(RATING_ID))
             .ReturnsAsync(expectedRating);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRating(id));
+        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRating(RATING_ID));
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
 
-        _repositoryMock.Verify(r => r.GetRating(id), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
     // tests for updating rating
 
     [Theory]
     [MemberData(nameof(GetTestData))]
-    public async void UpdateRating_ValidOtherRating(Rating newRating, Rating otherRating)
+    public async void UpdateRating_ValidOtherRating(
+        RatingPointsRequestDto requestRatingDto, 
+        Rating otherRating,
+        Rating expectedUpdatedRating
+        )
     {
         // arrange
-        var playerId = 657;
-        var oldRating = CreateRating(100, null, null);
+        var oldRating = CreateRating(RATING_ID, null, null);
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
+        _repositoryMock.Setup(m => m.GetRating(RATING_ID))
+            .ReturnsAsync(oldRating);
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
             .ReturnsAsync(new List<Rating>() { otherRating, oldRating }.ToImmutableList());
 
         // act
-        await _service.UpdateRating(newRating);
+        await _service.UpdateRating(RATING_ID, requestRatingDto);
 
         // assert
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
 
-        _repositoryMock.Verify(r  => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(2));
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(2));
         _repositoryMock.Verify(r => r.UpdateRating(otherRating), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(newRating), Times.Once());
+        _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
     }
 
     public static IEnumerable<object[]> GetTestData()
     {
         // giving 10 points in category 1, 10 points has already been given in category 3 for another country
-        yield return new object[] { CreateRating(100, 10, 1, 2), CreateRating(1, 6, 2, 10) };
+        yield return new object[] { 
+            CreateRatingRequest(10, 1, 2), 
+            CreateRating(1, 6, 2, 10),
+            CreateRating(RATING_ID, 10, 1, 2, 13, 1)
+        };
         // giving 10 points in category 1, 12 points has already been given in category 1 for another country
-        yield return new object[] { CreateRating(100, 10, 1, 2), CreateRating(1, 12, 2, 5) };
+        yield return new object[] { 
+            CreateRatingRequest(10, 1, 2), 
+            CreateRating(1, 12, 2, 5),
+            CreateRating(RATING_ID, 10, 1, 2, 13, 1)
+        };
         // giving 7 points in category 1, 7 points has already been given in category 1 for another country
-        yield return new object[] { CreateRating(100, 7, 1, 2), CreateRating(1, 7, 3, 6) };
+        yield return new object[] { 
+            CreateRatingRequest(7, 1, 2), 
+            CreateRating(1, 7, 3, 6),
+            CreateRating(RATING_ID, 7, 1, 2, 10, 1)
+        };
     }
 
     // giving 10 points in category 2, 10 points has already been given in category 2 for the same country
@@ -178,34 +192,35 @@ public class RatingServiceTest
     public async void UpdateRating_ValidUpdatedRating()
     {
         // arrange
-        var playerId = 657;
-        var oldRating = CreateRating(100, 10, 5, 8);
-        var newRating = CreateRating(100, 10, 1, 2);
+        var ratingRequest = CreateRatingRequest(1, 10, 2);
+        var oldRating = CreateRating(RATING_ID, 1, 10, 5, 1000, 67);
+        var expectedUpdatedRating = CreateRating(RATING_ID, 1, 10, 2, 13, 1);
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
+        _repositoryMock.Setup(m => m.GetRating(RATING_ID))
+            .ReturnsAsync(oldRating);
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
             .ReturnsAsync(new List<Rating>() { oldRating }.ToImmutableList());
 
         // act
-        await _service.UpdateRating(newRating);
+        await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once);
-        _repositoryMock.Verify(r => r.UpdateRating(newRating), Times.Once());
+        _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
     }
 
     [Fact]
     public async void UpdateRating_CorrectRanking()
     {
         // arrange
-        var playerId = 657;
-
-        var oldRating = CreateRating(100, null, null);
-        var newRating = CreateRating(100, 500, 1);
-        var expectedRating = CreateRating(100, 500, 4);
+        var oldRating = CreateRating(RATING_ID, null, null);
+        var ratingRequest = CreateRatingRequest(10, 10, 10);
+        var expectedUpdatedRating = CreateRating(RATING_ID, 10, 10, 10, 30, 4);
 
         var rating1 = CreateRating(1, 1000, null);
         var expectedRating1 = CreateRating(1, 1000, 1);
@@ -219,13 +234,15 @@ public class RatingServiceTest
         var rating4 = CreateRating(4, 700, null);
         var expectedRating4 = CreateRating(4, 700, 3);
 
-        var rating5 = CreateRating(5, 500, 2);
-        var expectedRating5 = CreateRating(5, 500, 4);
+        var rating5 = CreateRating(5, 30, 2);
+        var expectedRating5 = CreateRating(5, 30, 4);
 
-        var rating6 = CreateRating(6, 300, 10);
-        var expectedRating6 = CreateRating(6, 300, 6);
+        var rating6 = CreateRating(6, 2, 10);
+        var expectedRating6 = CreateRating(6, 2, 6);
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
+        _repositoryMock.Setup(m => m.GetRating(RATING_ID))
+            .ReturnsAsync(oldRating);
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
             .ReturnsAsync(new List<Rating>() 
             { 
                 oldRating,
@@ -239,15 +256,16 @@ public class RatingServiceTest
             .ToImmutableList());
 
         // act
-        await _service.UpdateRating(newRating);
+        await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once);
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(7));
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating), Times.Once());
+        _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(expectedRating1), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(expectedRating2), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(expectedRating3), Times.Once());
@@ -258,78 +276,100 @@ public class RatingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestData_Invalid))]
-    public async void UpdateRating_Invalid(Rating updatedRating, Rating existingRating)
+    public async void UpdateRating_Invalid(RatingPointsRequestDto ratingRequest, Rating otherRating)
     {
         // arrange
-        var playerId = 657;
+        var oldRating = CreateRating(RATING_ID, null, null);
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(playerId))
-            .ReturnsAsync(new List<Rating>() { existingRating }.ToImmutableList());
+        _repositoryMock.Setup(m => m.GetRating(RATING_ID))
+            .ReturnsAsync(oldRating);
+        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+            .ReturnsAsync(new List<Rating>() { otherRating }.ToImmutableList());
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(updatedRating));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, ratingRequest));
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(playerId), Times.Once());
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
     }
 
     public static IEnumerable<object[]> GetTestData_Invalid()
     {
         // giving 10 points in category 1, 10 points has already been given in category 1 for another country
-        yield return new object[] { CreateRating(100, 10, 1, 2), CreateRating(1, 10, 2, 3) };
+        yield return new object[] { CreateRatingRequest(10, 1, 2), CreateRating(1, 10, 2, 3) };
         // giving 12 points in category 2, 12 points has already been given in category 2 for another country
-        yield return new object[] { CreateRating(100, 4, 12, 2), CreateRating(1, 6, 12, 3) };
+        yield return new object[] { CreateRatingRequest(4, 12, 2), CreateRating(1, 6, 12, 3) };
         // giving 12 points in category 3, 12 points has already been given in category 3 for another country
-        yield return new object[] { CreateRating(100, 4, 1, 12), CreateRating(1, 6, 3, 12) };
+        yield return new object[] { CreateRatingRequest(4, 1, 12), CreateRating(1, 6, 3, 12) };
         // giving 9 points in category 1
-        yield return new object[] { CreateRating(100, 9, 1, 2), CreateRating(1, 4, 2, 3) };
-        // giving null points in category 1
-        yield return new object[] { CreateRating(100, null, 1, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] { CreateRatingRequest(9, 1, 2), CreateRating(1, 4, 2, 3) };
         // giving 13 points in category 3
-        yield return new object[] { CreateRating(100, 3, 1, 13), CreateRating(1, 4, 2, 3) };
+        yield return new object[] { CreateRatingRequest(3, 1, 13), CreateRating(1, 4, 2, 3) };
         // giving -1 points in category 2
-        yield return new object[] { CreateRating(100, 6, -1, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] { CreateRatingRequest(6, -1, 2), CreateRating(1, 4, 2, 3) };
         // giving 0 points in category 2
-        yield return new object[] { CreateRating(100, 6, 0, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] { CreateRatingRequest(6, 0, 2), CreateRating(1, 4, 2, 3) };
     }
 
     [Fact]
     public async void UpdateRating_RatingClosed()
     {
         // arrange
-        var rating = CreateRating(1, null, null);
+        var ratingRequest = CreateRatingRequest(1, 2, 3);
         _rateClosingServiceMock.Setup(m => m.ValidateRatingTime())
             .Throws<RatingIsClosedException>();
 
         // act and assert
-        await Assert.ThrowsAsync<RatingIsClosedException>(async () => await _service.UpdateRating(rating));
+        await Assert.ThrowsAsync<RatingIsClosedException>(async () => await _service.UpdateRating(RATING_ID, ratingRequest));
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
+        _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
     }
 
     // helper methods
 
+    private static RatingPointsRequestDto CreateRatingRequest
+        (
+        int category1Points, 
+        int category2Points,
+        int category3Points
+        )
+    {
+        return new RatingPointsRequestDto
+        {
+            Category1Points = category1Points,
+            Category2Points = category2Points,
+            Category3Points = category3Points
+        };
+    }
+
     private static Rating CreateRating
         (
-        int id, 
-        int? category1Points, 
-        int? category2Points,
-        int? category3Points
+        int id,
+        int category1Points,
+        int category2Points,
+        int category3Points,
+        int pointsSum,
+        int ranking
         )
     {
         return new Rating
         {
             Id = id,
-            PlayerId = 657,
+            PlayerId = PLAYER_ID,
             Category1Points = category1Points,
             Category2Points = category2Points,
             Category3Points = category3Points,
-            CountryId = 5678
+            CountryId = 5678,
+            PointsSum = pointsSum,
+            Ranking = ranking,
+            Country = CreateCountry(1000)
         };
     }
 
@@ -340,7 +380,7 @@ public class RatingServiceTest
         int? ranking
         )
     {
-        return CreateRating(id, pointsSum, ranking, 10000);
+        return CreateRating(id, pointsSum, ranking, 1000);
     }
     
     private static Rating CreateRating
@@ -354,7 +394,7 @@ public class RatingServiceTest
         return new Rating
         {
             Id = id,
-            PlayerId = 657,
+            PlayerId = PLAYER_ID,
             PointsSum = pointsSum,
             Ranking = ranking,
             Category1Points = 1,

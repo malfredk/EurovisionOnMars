@@ -5,7 +5,6 @@ namespace EurovisionOnMars.Api.Mappers;
 
 public interface IRatingMapper
 {
-    public Rating UpdateEntity(Rating entity, RatingDto dto);
     public RatingDto ToDto(Rating entity);
 }
 
@@ -20,16 +19,6 @@ public class RatingMapper : IRatingMapper
         _ratingResultMapper = ratingResultMapper;
     }
 
-    public Rating UpdateEntity(Rating entity, RatingDto dto)
-    {
-        entity.Category1Points = dto.Category1Points;
-        entity.Category2Points = dto.Category2Points;
-        entity.Category3Points = dto.Category3Points;
-        entity.PointsSum = dto.Category1Points + dto.Category2Points + dto.Category3Points; // TODO: consider moving logic to service
-        entity.Ranking = dto.Ranking;
-        return entity;
-    }
-
     public RatingDto ToDto(Rating entity)
     {
         return new RatingDto
@@ -42,8 +31,8 @@ public class RatingMapper : IRatingMapper
             PointsSum = entity.PointsSum,
             Ranking = entity.Ranking,
             CountryId = entity.CountryId,
-            Country = _countryMapper.ToDto(entity.Country),
-            RatingResult = _ratingResultMapper.ToDto(entity.RatingResult)
+            Country = entity.Country is null ? null : _countryMapper.ToDto(entity.Country),
+            RatingResult = entity.RatingResult is null ? null : _ratingResultMapper.ToDto(entity.RatingResult)
         };
     }
 }

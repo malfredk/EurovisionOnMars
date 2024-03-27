@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Api.Repositories;
+using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 
@@ -8,7 +9,7 @@ public interface IRatingService
 {
     Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId);
     Task<Rating> GetRating(int id);
-    Task UpdateRating(Rating rating);
+    Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto);
 }
 
 public class RatingService : IRatingService
@@ -50,19 +51,31 @@ public class RatingService : IRatingService
         return rating;
     }
 
-    public async Task UpdateRating(Rating newRating)
+    public async Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto)
     {
         _rateClosingService.ValidateRatingTime();
-        var ratings = await GetRatingsByPlayer(newRating.PlayerId);
+        var existingRating = await GetRating(id);
+        var ratings = await GetRatingsByPlayer(existingRating.PlayerId);
 
-        ValidatePoints(newRating, ratings);
-        ratings = ReplaceRatingInList(newRating, ratings);
+        var updatedRating = UpdateEntity(existingRating, ratingRequestDto);
+
+        ValidatePoints(updatedRating, ratings);
+        ratings = ReplaceRatingInList(updatedRating, ratings);
         ratings = SetRankings(ratings);
 
         foreach (var rating in ratings)
         {
             await _repository.UpdateRating(rating);
         }
+    }
+
+    private Rating UpdateEntity(Rating entity, RatingPointsRequestDto dto)
+    {
+        entity.Category1Points = dto.Category1Points;
+        entity.Category2Points = dto.Category2Points;
+        entity.Category3Points = dto.Category3Points;
+        entity.PointsSum = dto.Category1Points + dto.Category2Points + dto.Category3Points;
+        return entity;
     }
 
     private ImmutableList<Rating> SortRatingsByRankingThenNumber(ImmutableList<Rating> ratings)

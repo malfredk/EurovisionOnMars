@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Dto;
+using EurovisionOnMars.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Controllers;
@@ -33,20 +34,10 @@ public class RatingsController : ControllerBase
         return Ok(ratingDtos);
     }
 
-    [HttpGet("single/{id:int}")]
-    public async Task<ActionResult<RatingDto>> GetRating(int id)
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult> UpdateRating(int id, [FromBody] RatingPointsRequestDto ratingRequestDto)
     {
-        var rating = await _service.GetRating(id);
-        var ratingDto = _mapper.ToDto(rating);
-        return Ok(ratingDto);
-    }
-
-    [HttpPatch]
-    public async Task<ActionResult> UpdateRating([FromBody] RatingDto ratingDto)
-    {
-        var rating = await _service.GetRating(ratingDto.Id);
-        var mappedRating = _mapper.UpdateEntity(rating, ratingDto); 
-        await _service.UpdateRating(mappedRating);
+        await _service.UpdateRating(id, ratingRequestDto);
         return Ok();
     }
 }
