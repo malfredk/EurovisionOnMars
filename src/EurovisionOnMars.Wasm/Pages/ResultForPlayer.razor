@@ -52,15 +52,20 @@
         }
     }
 
-    private int GetAbsoluteRankingDifference(RatingDto rating)
+    private int? GetAbsoluteRankingDifference(RatingDto rating)
     {
+        var rankingDifference = rating.RatingResult?.RankingDifference;
+        if (rankingDifference is null)
+        {
+            return null;
+        }
         return Math.Abs((int)rating.RatingResult!.RankingDifference!);
     }
 
     private ArrowDirection GetArrowDirection(RatingDto rating)
     {
         var rankingDifference = rating.RatingResult!.RankingDifference!;
-        if (rankingDifference == 0)
+        if (rankingDifference is null || rankingDifference == 0)
         {
             return ArrowDirection.NONE;
         }
