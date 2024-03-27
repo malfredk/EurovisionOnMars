@@ -67,21 +67,25 @@
 
     private void SetRankingLimits()
     {
-        var count = 0;
-        minRanking = (int)Rating.Ranking!;
+        var samePointsSumCount = 0;
+        var ratingsWithBetterRankingCount = 0;
 
         var pointsSum = Rating.PointsSum;
-
         foreach (var otherRating in Ratings)
         {
             var otherPointsSum = otherRating.PointsSum;
             if (otherPointsSum != null
                 && pointsSum == otherPointsSum)
             {
-                count++;
-                minRanking = Math.Min(minRanking, (int)otherRating.Ranking!);
+                samePointsSumCount++;
+            }
+            if (otherPointsSum > pointsSum)
+            {
+                ratingsWithBetterRankingCount++;
             }
         }
-        maxRanking = minRanking + count - 1;
+
+        minRanking = ratingsWithBetterRankingCount + 1;
+        maxRanking = minRanking + samePointsSumCount - 1;
     }
 }
