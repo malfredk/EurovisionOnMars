@@ -68,13 +68,18 @@ public class PlayerService : IPlayerService
             throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
 
-        var ratings = await CreateInitialRatings();
-        var player = new Player 
-        { 
-            Username = username,
-            Ratings = ratings
-        };
+        var player = await CreateEntity(username);
         return await _playerRepository.CreatePlayer(player);
+    }
+
+    public async Task<Player> CreateEntity(string username)
+    {
+        return new Player
+        {
+            Username = username,
+            Ratings = await CreateInitialRatings(),
+            PlayerResult = new PlayerResult()
+        };
     }
 
     private async Task<List<Rating>> CreateInitialRatings()
@@ -93,7 +98,8 @@ public class PlayerService : IPlayerService
         return new Rating
         {
             CountryId = country.Id,
-            Country = country
+            Country = country,
+            RatingResult = new RatingResult()
         };
     }
 
