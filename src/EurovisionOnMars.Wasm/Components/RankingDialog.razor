@@ -7,7 +7,7 @@
             <MudGrid>
                 <MudItem>
                     <MudNumericField 
-                        Value="@ranking"
+                        @bind-Value="ranking"
                         Label="plassering"
                         Variant="Variant.Outlined"
                         Step="1" Min="minRanking" Max="maxRanking"/>
@@ -46,18 +46,10 @@
 
     private async Task UpdateRating()
     {
-        // TODO: endpoint to update ranking
-        var ratingRequest = new RatingDto
-            {
-                Id = Rating.Id,
-                Ranking = ranking,
-                PlayerId = Rating.PlayerId,
-                CountryId = Rating.CountryId
-            };
-        var response = await Http.PatchAsJsonAsync<RatingDto>("/api/Ratings/", ratingRequest);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Ratings/{Rating.Id}/Ranking", ranking);
         if (response.IsSuccessStatusCode)
         {
-            Snackbar.Add("avstemning lagret", Severity.Success);
+            Snackbar.Add("plassering lagret", Severity.Success);
             Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
             Dialog.Close();
         }

@@ -10,6 +10,7 @@ public interface IRatingService
     Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId);
     Task<Rating> GetRating(int id);
     Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto);
+    Task UpdateRating(int id, int ranking);
 }
 
 public class RatingService : IRatingService
@@ -67,6 +68,21 @@ public class RatingService : IRatingService
         {
             await _repository.UpdateRating(rating);
         }
+    }
+
+    public async Task UpdateRating(int id, int ranking)
+    {
+        _rateClosingService.ValidateRatingTime();
+
+        var existingRating = await GetRating(id);
+        var updatedRating = UpdateEntity(existingRating, ranking);
+        await _repository.UpdateRating(updatedRating);
+    }
+
+    private Rating UpdateEntity(Rating entity, int ranking)
+    {
+        entity.Ranking = ranking;
+        return entity;
     }
 
     private Rating UpdateEntity(Rating entity, RatingPointsRequestDto dto)

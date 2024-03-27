@@ -133,7 +133,7 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
-    // tests for updating rating
+    // tests for updating rating points
 
     [Theory]
     [MemberData(nameof(GetTestData))]
@@ -330,6 +330,31 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
+    }
+
+    // tests for updating rating ranking
+
+    [Fact]
+    public async void UpdateRatingRanking_Valid()
+    {
+        // arrange
+        var rankingRequest = 12;
+        var oldRating = CreateRating(RATING_ID, 34, 15);
+        var expectedUpdatedRating = CreateRating(RATING_ID, 34, 12);
+
+        _repositoryMock.Setup(m => m.GetRating(RATING_ID))
+            .ReturnsAsync(oldRating);
+
+        // act
+        await _service.UpdateRating(RATING_ID, rankingRequest);
+
+        // assert
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
+        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
+
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once);
+        _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
     }
 
     // helper methods

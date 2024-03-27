@@ -40,4 +40,11 @@ public class RatingsController : ControllerBase
         await _service.UpdateRating(id, ratingRequestDto);
         return Ok();
     }
+
+    [HttpPatch("{id:int}/Ranking")]
+    public async Task<ActionResult> UpdateRating(int id, [FromBody] int ranking)
+    {
+        await _service.UpdateRating(id, ranking);
+        return Ok();
+    }
 }
