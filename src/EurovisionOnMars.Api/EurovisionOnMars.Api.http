@@ -1,6 +1,3 @@
 @EurovisionOnMars.Api_HostAddress = http://localhost:5265
 
-GET {{EurovisionOnMars.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
 ###
