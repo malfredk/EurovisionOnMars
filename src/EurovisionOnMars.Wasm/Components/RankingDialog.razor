@@ -16,8 +16,16 @@
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="UpdateRating">stem</MudButton>
-        <MudButton OnClick="Cancel">avbryt</MudButton>
+        <MudIconButton 
+            Variant="Variant.Filled"
+            Icon="@Icons.Material.Filled.Check"
+            OnClick="UpdateRating">
+        </MudIconButton>
+        <MudIconButton 
+            Variant="Variant.Filled"
+            Icon="@Icons.Material.Filled.Close"
+            OnClick="Cancel">
+        </MudIconButton>
     </DialogActions>
 </MudDialog>
 
