@@ -83,7 +83,8 @@ public class CountryService : ICountryService
 
     public async Task<ImmutableList<Country>> GetCountries()
     {
-        return await _countryRepository.GetCountries();
+        var countries = await _countryRepository.GetCountries();
+        return countries.OrderBy(c => c.Number).ToImmutableList();
     }
 
     public async Task<Country> CreateCountry(NewCountryRequestDto countryDto)

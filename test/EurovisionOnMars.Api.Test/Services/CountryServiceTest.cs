@@ -28,14 +28,24 @@ public class CountryServiceTest
     public async void GetCountries()
     {
         // arrange
-        var expectedCountries = new List<Country> 
+        var country1 = CreateCountry("dska", 21);
+        var country2 = CreateCountry("wf", 4);
+        var country3 = CreateCountry("jojo", 7);
+        var countries = new List<Country> 
         { 
-            CreateCountry("dska", 90), 
-            CreateCountry("wf", -3) 
+            country1,
+            country2,
+            country3
+        }.ToImmutableList();
+        var expectedCountries = new List<Country>
+        {
+            country2,
+            country3,
+            country1
         }.ToImmutableList();
 
         _countryRepositoryMock.Setup(m => m.GetCountries())
-            .ReturnsAsync(expectedCountries);
+            .ReturnsAsync(countries);
 
         // act
         var actualCountries = await _service.GetCountries();
