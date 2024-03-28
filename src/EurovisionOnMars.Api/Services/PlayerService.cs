@@ -33,7 +33,10 @@ public class PlayerService : IPlayerService
 
     public async Task<ImmutableList<Player>> GetPlayers()
     {
-        return await _playerRepository.GetPlayers();
+        var players = await _playerRepository.GetPlayers();
+        return players
+            .OrderBy(p => p.PlayerResult.Ranking ?? int.MaxValue)
+            .ToImmutableList();
     }
 
     public async Task<Player> GetPlayer(int id)

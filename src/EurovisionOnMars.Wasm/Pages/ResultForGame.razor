@@ -32,7 +32,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"/api/Players");
+        var response = await Http.GetAsync("/api/Players");
         if (response.IsSuccessStatusCode)
         {
             Players = await response.Content.ReadFromJsonAsync<List<PlayerDto>>();

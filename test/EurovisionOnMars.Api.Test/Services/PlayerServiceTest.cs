@@ -32,15 +32,26 @@ public class PlayerServiceTest
     public async void GetPlayers()
     {
         // arrange
-        var player1 = new Player { Username = "alice" };
-        var player2 = new Player{ Username = "bob" };
-        var expectedPlayers = new List<Player>() { 
+        var player1 = CreatePlayer("alice", 5);
+        var player2 = CreatePlayer("bob", 1);
+        var player3 = CreatePlayer("chris", null);
+        var player4 = CreatePlayer("krass", 2);
+
+        var players = new List<Player>() { 
             player1,
-            player2
+            player2,
+            player3,
+            player4
+        }.ToImmutableList();
+        var expectedPlayers = new List<Player>() {
+            player2,
+            player4,
+            player1,
+            player3
         }.ToImmutableList();
 
         _playerRepositoryMock.Setup(r => r.GetPlayers())
-            .ReturnsAsync(expectedPlayers);
+            .ReturnsAsync(players);
 
         // act
         var actualPlayers = await _service.GetPlayers();
@@ -200,6 +211,19 @@ public class PlayerServiceTest
         _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
         _countryRepositoryMock.Verify(r => r.GetCountries(), Times.Never());
         _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
+    }
+
+    private static Player CreatePlayer(string username, int? ranking)
+    {
+        return new Player
+        {
+            Username = username,
+            PlayerResult = new PlayerResult 
+            { 
+                PlayerId = 1000,
+                Ranking = ranking
+            }
+        };
     }
 
     private static Country CreateCountry(int id, string name)
