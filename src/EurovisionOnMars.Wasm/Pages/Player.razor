@@ -12,6 +12,12 @@
     }
 </style>
 
+<style>
+    .scrollable-table {
+        height: calc(100vh - 90px);
+    }
+</style>
+
 <NavigationBar PlayerId="Id"></NavigationBar>
 
 <MudTable 
@@ -19,7 +25,8 @@
     Items="@Ratings" 
     OnRowClick="HandleSelectRating"
     Breakpoint="Breakpoint.None" 
-    Hover=true RowClass="cursor-pointer">
+    Hover=true RowClass="cursor-pointer"
+    FixedHeader=true Height="100%" Class="scrollable-table">
     <HeaderContent>
         <MudTh>
             <MudTableSortLabel 
