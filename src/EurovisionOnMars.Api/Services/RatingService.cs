@@ -73,10 +73,19 @@ public class RatingService : IRatingService
     public async Task UpdateRating(int id, int ranking)
     {
         _rateClosingService.ValidateRatingTime();
+        ValidateRanking(ranking);
 
         var existingRating = await GetRating(id);
         var updatedRating = UpdateEntity(existingRating, ranking);
         await _repository.UpdateRating(updatedRating);
+    }
+
+    private void ValidateRanking(int ranking)
+    {
+        if (ranking < 1 || ranking > 26)
+        {
+            throw new ArgumentException("Ranking must be between 1 and 26");
+        }
     }
 
     private Rating UpdateEntity(Rating entity, int ranking)

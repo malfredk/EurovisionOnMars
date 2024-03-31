@@ -334,13 +334,15 @@ public class RatingServiceTest
 
     // tests for updating rating ranking
 
-    [Fact]
-    public async void UpdateRatingRanking_Valid()
+    [InlineData(12)]
+    [InlineData(1)]
+    [InlineData(26)]
+    [Theory]
+    public async void UpdateRatingRanking_Valid(int rankingRequest)
     {
         // arrange
-        var rankingRequest = 12;
         var oldRating = CreateRating(RATING_ID, 34, 15);
-        var expectedUpdatedRating = CreateRating(RATING_ID, 34, 12);
+        var expectedUpdatedRating = CreateRating(RATING_ID, 34, rankingRequest);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
@@ -355,6 +357,25 @@ public class RatingServiceTest
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once);
         _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
+    }
+
+    [InlineData(-2)]
+    [InlineData(0)]
+    [InlineData(27)]
+    [Theory]
+    public async void UpdateRatingRanking_Invalid(int rankingRequest)
+    {
+        // arrange
+        var oldRating = CreateRating(RATING_ID, 34, 15);
+        var expectedUpdatedRating = CreateRating(RATING_ID, 34, rankingRequest);
+
+        // act and assert
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, rankingRequest));
+ 
+        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+
+        _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never);
     }
 
     // helper methods
