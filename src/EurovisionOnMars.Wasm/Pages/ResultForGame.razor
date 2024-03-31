@@ -25,15 +25,15 @@
             @player.PlayerResult.Ranking
             @if(player.PlayerResult.Ranking == 1)
             {
-                <MudIcon Icon="@MEDAL_ICON"></MudIcon>
+                <MudIcon Icon="@MEDAL_ICON" Style="color: #d4af37;"></MudIcon>
             }
             @if (player.PlayerResult.Ranking == 2)
             {
-                <MudIcon Icon="@MEDAL_ICON"></MudIcon>
+                <MudIcon Icon="@MEDAL_ICON" Style="color: #c0c0c0"></MudIcon>
             }
             @if (player.PlayerResult.Ranking == 3)
             {
-                <MudIcon Icon="@MEDAL_ICON"></MudIcon>
+                <MudIcon Icon="@MEDAL_ICON" Style="color: #cd7f32"></MudIcon>
             }
         </MudTd>
         <MudTd DataLabel="poeng">@player.PlayerResult.Score</MudTd>
