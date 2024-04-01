@@ -37,14 +37,14 @@ public class RatingServiceTest
     public async void GetRatingsByPlayer()
     {
         // arrange
-        var rating1 = CreateRating(1, null, null, 100);
-        var rating2 = CreateRating(2, null, 5, 5);
-        var rating3 = CreateRating(3, null, 7, 10);
-        var rating4 = CreateRating(4, null, 1, 19);
-        var rating5 = CreateRating(5, null, 5, 6);
-        var rating6 = CreateRating(6, null, null, 89);
+        var rating1 = CreateRatingForSorting(1, null, 100);
+        var rating2 = CreateRatingForSorting(2, 5, 5);
+        var rating3 = CreateRatingForSorting(3, 7, 10);
+        var rating4 = CreateRatingForSorting(4, 1, 19);
+        var rating5 = CreateRatingForSorting(5, 5, 6);
+        var rating6 = CreateRatingForSorting(6, null, 89);
 
-        var expectedRatings = new List<Rating>() 
+        var ratings = new List<Rating>() 
         { 
             rating1,
             rating2,
@@ -53,7 +53,7 @@ public class RatingServiceTest
             rating5,
             rating6
         }.ToImmutableList();
-        var sortedExpectedRatings = new List<Rating>()
+        var expectedSortedRatings = new List<Rating>()
         {
             rating4,
             rating2, 
@@ -64,16 +64,15 @@ public class RatingServiceTest
         }.ToImmutableList();
 
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
-            .ReturnsAsync(expectedRatings);
+            .ReturnsAsync(ratings);
 
         // act
-        var ratings = await _service.GetRatingsByPlayer(PLAYER_ID);
+        var actualRatings = await _service.GetRatingsByPlayer(PLAYER_ID);
 
         // assert
-        Assert.Equal(ratings, sortedExpectedRatings);
+        Assert.Equal(expectedSortedRatings, actualRatings);
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
@@ -81,16 +80,17 @@ public class RatingServiceTest
     public async void GetRatingsByPlayer_NoResults()
     {
         // arrange
-        var expectedRatings = new List<Rating>() { }.ToImmutableList();
+        var ratings = new List<Rating>() { }.ToImmutableList();
 
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
-            .ReturnsAsync(expectedRatings);
+            .ReturnsAsync(ratings);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRatingsByPlayer(PLAYER_ID));
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            async () => await _service.GetRatingsByPlayer(PLAYER_ID)
+            );
         
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
@@ -100,19 +100,18 @@ public class RatingServiceTest
     public async void GetRating()
     {
         // arrange
-        var expectedRating = CreateRating(12, 1, null, 3);
+        var expectedRating = CreateInitialRating(RATING_ID);
 
         _repositoryMock.Setup(r => r.GetRating(RATING_ID))
             .ReturnsAsync(expectedRating);
 
         // act
-        var rating = await _service.GetRating(RATING_ID);
+        var actualRating = await _service.GetRating(RATING_ID);
 
         // assert
-        Assert.Equal(rating, expectedRating);
+        Assert.Equal(actualRating, expectedRating);
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
@@ -126,10 +125,11 @@ public class RatingServiceTest
             .ReturnsAsync(expectedRating);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetRating(RATING_ID));
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            async () => await _service.GetRating(RATING_ID)
+            );
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
@@ -138,13 +138,13 @@ public class RatingServiceTest
     [Theory]
     [MemberData(nameof(GetTestData))]
     public async void UpdateRating_ValidOtherRating(
-        RatingPointsRequestDto requestRatingDto, 
+        RatingPointsRequestDto ratingRequest, 
         Rating otherRating,
         Rating expectedUpdatedRating
         )
     {
         // arrange
-        var oldRating = CreateRating(RATING_ID, null, null);
+        var oldRating = CreateInitialRating(RATING_ID);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
@@ -152,7 +152,7 @@ public class RatingServiceTest
             .ReturnsAsync(new List<Rating>() { otherRating, oldRating }.ToImmutableList());
 
         // act
-        await _service.UpdateRating(RATING_ID, requestRatingDto);
+        await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
@@ -160,30 +160,30 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
 
-        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(2));
-        _repositoryMock.Verify(r => r.UpdateRating(otherRating), Times.Once());
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
     }
 
     public static IEnumerable<object[]> GetTestData()
     {
-        // giving 10 points in category 1, 10 points has already been given in category 3 for another country
+        var otherRatingId = 999;
+        // giving 10 points in category 1, 10 points has already been given in category 3 for another rating
         yield return new object[] { 
             CreateRatingRequest(10, 1, 2), 
-            CreateRating(1, 6, 2, 10),
-            CreateRating(RATING_ID, 10, 1, 2, 13, 1)
+            CreateRatingWithPointsAndRanking(otherRatingId, 6, 7, 10, 100, 1),
+            CreateRatingWithPointsAndRanking(RATING_ID, 10, 1, 2, 13, 2)
         };
-        // giving 10 points in category 1, 12 points has already been given in category 1 for another country
+        // giving 10 points in category 1, 12 points has already been given in category 1 for another rating
         yield return new object[] { 
             CreateRatingRequest(10, 1, 2), 
-            CreateRating(1, 12, 2, 5),
-            CreateRating(RATING_ID, 10, 1, 2, 13, 1)
+            CreateRatingWithPointsAndRanking(otherRatingId, 12, 8, 4, 100, 1),
+            CreateRatingWithPointsAndRanking(RATING_ID, 10, 1, 2, 13, 2)
         };
-        // giving 7 points in category 1, 7 points has already been given in category 1 for another country
+        // giving 7 points in category 1, 7 points has already been given in category 1 for another rating
         yield return new object[] { 
             CreateRatingRequest(7, 1, 2), 
-            CreateRating(1, 7, 3, 6),
-            CreateRating(RATING_ID, 7, 1, 2, 10, 1)
+            CreateRatingWithPointsAndRanking(otherRatingId, 7, 6, 4, 100, 1),
+            CreateRatingWithPointsAndRanking(RATING_ID, 7, 1, 2, 10, 2)
         };
     }
 
@@ -193,8 +193,8 @@ public class RatingServiceTest
     {
         // arrange
         var ratingRequest = CreateRatingRequest(1, 10, 2);
-        var oldRating = CreateRating(RATING_ID, 1, 10, 5, 1000, 67);
-        var expectedUpdatedRating = CreateRating(RATING_ID, 1, 10, 2, 13, 1);
+        var oldRating = CreateRatingWithPointsAndRanking(RATING_ID, 1, 10, 5, 1000, 1);
+        var expectedUpdatedRating = CreateRatingWithPointsAndRanking(RATING_ID, 1, 10, 2, 13, 1);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
@@ -214,46 +214,22 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
     }
 
-    [Fact]
-    public async void UpdateRating_CorrectRanking()
+    [Theory]
+    [MemberData(nameof(GetTestDataRanking))]
+    public async void UpdateRating_CorrectRanking(
+        Rating oldRating,
+        List<Rating> otherRatings,
+        RatingPointsRequestDto ratingRequest,
+        List<Rating> expectedUpdatedRatings
+        )
     {
         // arrange
-        var oldRating = CreateRating(RATING_ID, null, null);
-        var ratingRequest = CreateRatingRequest(10, 10, 10);
-        var expectedUpdatedRating = CreateRating(RATING_ID, 10, 10, 10, 30, 4);
-
-        var rating1 = CreateRating(1, 1000, null);
-        var expectedRating1 = CreateRating(1, 1000, 1);
-
-        var rating2 = CreateRating(2, 1000, null);
-        var expectedRating2 = CreateRating(2, 1000, 1);
-
-        var rating3 = CreateRating(3, null, null);
-        var expectedRating3 = CreateRating(3, null, null);
-
-        var rating4 = CreateRating(4, 700, null);
-        var expectedRating4 = CreateRating(4, 700, 3);
-
-        var rating5 = CreateRating(5, 30, 2);
-        var expectedRating5 = CreateRating(5, 30, 4);
-
-        var rating6 = CreateRating(6, 2, 10);
-        var expectedRating6 = CreateRating(6, 2, 6);
+        otherRatings.Add(oldRating);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
         _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
-            .ReturnsAsync(new List<Rating>() 
-            { 
-                oldRating,
-                rating1,
-                rating2,
-                rating3,
-                rating4,
-                rating5,
-                rating6
-            }
-            .ToImmutableList());
+            .ReturnsAsync(otherRatings.ToImmutableList());
 
         // act
         await _service.UpdateRating(RATING_ID, ratingRequest);
@@ -264,14 +240,197 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once);
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
 
-        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(7));
-        _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating1), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating2), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating3), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating4), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating5), Times.Once());
-        _repositoryMock.Verify(r => r.UpdateRating(expectedRating6), Times.Once());
+        _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Exactly(expectedUpdatedRatings.Count()));
+        foreach (var expectedUpdatedRating in expectedUpdatedRatings)
+        {
+            _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
+        }
+    }
+
+    public static IEnumerable<object[]> GetTestDataRanking()
+    {
+        // first rating, taking 1st place - moving all one down
+        yield return new object[] {
+            CreateInitialRating(RATING_ID),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(666, 25, 6),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 2)
+            },
+            CreateRatingRequest(12, 12, 12),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 12, 12, 12, 36, 1),
+                CreateRatingWithPointsSumAndRanking(111, 35, 2),
+                CreateRatingWithPointsSumAndRanking(222, 32, 3),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 3),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 6),
+                CreateRatingWithPointsSumAndRanking(444, 30, 5),
+                CreateRatingWithPointsSumAndRanking(666, 25, 7)
+            }
+        };
+        // first rating, taking 4th (last) place
+        // no changes to the other's ranking
+        yield return new object[] {
+            CreateInitialRating(RATING_ID),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsSumAndRanking(111, 32, 1),
+                CreateRatingWithPointsSumAndRanking(222, 25, 2),
+                CreateRatingWithPointsSumAndRanking(333, 20, 3)
+            },
+            CreateRatingRequest(1, 1, 1),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 1, 1, 1, 3, 4)
+            }
+        };
+        // first rating, taking shared 2nd place
+        // resetting 2nd and moving all, but 1st and 2nd, one down
+        yield return new object[] {
+            CreateInitialRating(RATING_ID),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(666, 25, 6),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 2)
+            },
+            CreateRatingRequest(10, 10, 12),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 10, 10, 12, 32, 2),
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 6),
+                CreateRatingWithPointsSumAndRanking(444, 30, 5),
+                CreateRatingWithPointsSumAndRanking(666, 25, 7)
+            }
+        };
+        // first rating, taking shared 4th place - resetting 4th and moving 6th one down
+        yield return new object[] {
+            CreateInitialRating(RATING_ID),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(666, 25, 6),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 2)
+        },
+            CreateRatingRequest(10, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 10, 10, 10, 30, 4),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 4),
+                CreateRatingWithPointsSumAndRanking(666, 25, 7)
+            }
+        };
+        // changing rating, from shared 4th (set to 5th) to 2nd
+        // resetting 4th and moving 2nd and 3rd one down
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 30, 5),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(777, 20, 7),
+                CreateRatingWithPointsSumAndRanking(333, 31, 3)
+            },
+            CreateRatingRequest(12, 12, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 12, 12, 10, 34, 2),
+                CreateRatingWithPointsSumAndRanking(222, 32, 3),
+                CreateRatingWithPointsSumAndRanking(333, 31, 4),
+                CreateRatingWithPointsSumAndRanking(444, 30, 5),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 5)
+            }
+        };
+        // changing rating, from 2nd to shared 3rd
+        // resetting 4th and moving 3rd one up
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 33, 2),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(333, 31, 3),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
+                CreateRatingWithPointsSumAndRanking(777, 20, 7)
+            },
+            CreateRatingRequest(10, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 10, 10, 10, 30, 3),
+                CreateRatingWithPointsSumAndRanking(333, 31, 2),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 3),
+                CreateRatingWithPointsSumAndRanking(444, 30, 3),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 3)
+            }
+        };
+        // changing rating, from 1st to 7th (last)
+        // moving all one up
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 36, 1),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 2),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
+                CreateRatingWithPointsSumAndRanking(777, 20, 7)
+            },
+            CreateRatingRequest(1, 1, 1),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 1, 1, 1, 3, 7),
+                CreateRatingWithPointsSumAndRanking(222, 32, 1),
+                CreateRatingWithPointsSumAndRanking(22222, 32, 1),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 4),
+                CreateRatingWithPointsSumAndRanking(444, 30, 3),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 5),
+                CreateRatingWithPointsSumAndRanking(777, 20, 6)
+            }
+        };
+        // changing rating, points sum has changed but not ranking
+        // no change in ranking
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 33, 3),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(222, 34, 2),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
+                CreateRatingWithPointsSumAndRanking(777, 20, 7)
+            },
+            CreateRatingRequest(12, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 12, 10, 10, 32, 3)
+            }
+        };
     }
 
     [Theory]
@@ -279,7 +438,7 @@ public class RatingServiceTest
     public async void UpdateRating_Invalid(RatingPointsRequestDto ratingRequest, Rating otherRating)
     {
         // arrange
-        var oldRating = CreateRating(RATING_ID, null, null);
+        var oldRating = CreateRatingWithPointsSumAndRanking(RATING_ID, null, null);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
@@ -287,7 +446,9 @@ public class RatingServiceTest
             .ReturnsAsync(new List<Rating>() { otherRating }.ToImmutableList());
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, ratingRequest));
+        await Assert.ThrowsAsync<ArgumentException>(
+            async () => await _service.UpdateRating(RATING_ID, ratingRequest)
+            );
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
@@ -298,20 +459,49 @@ public class RatingServiceTest
 
     public static IEnumerable<object[]> GetTestData_Invalid()
     {
-        // giving 10 points in category 1, 10 points has already been given in category 1 for another country
-        yield return new object[] { CreateRatingRequest(10, 1, 2), CreateRating(1, 10, 2, 3) };
-        // giving 12 points in category 2, 12 points has already been given in category 2 for another country
-        yield return new object[] { CreateRatingRequest(4, 12, 2), CreateRating(1, 6, 12, 3) };
-        // giving 12 points in category 3, 12 points has already been given in category 3 for another country
-        yield return new object[] { CreateRatingRequest(4, 1, 12), CreateRating(1, 6, 3, 12) };
+        var otherRatingId = 999;
+        var simpleOtherRating = CreateInitialRating(otherRatingId);
+        // giving 10 points in category 1, 10 points has already been given in category 1 for another rating
+        yield return new object[] 
+        { 
+            CreateRatingRequest(10, 1, 2), 
+            CreateRatingWithPoints(otherRatingId, 10, 3, 4) 
+        };
+        // giving 12 points in category 2, 12 points has already been given in category 2 for another rating
+        yield return new object[] 
+        { 
+            CreateRatingRequest(4, 12, 2), 
+            CreateRatingWithPoints(otherRatingId, 6, 12, 3) 
+        };
+        // giving 12 points in category 3, 12 points has already been given in category 3 for another rating
+        yield return new object[] 
+        { 
+            CreateRatingRequest(4, 1, 12), 
+            CreateRatingWithPoints(otherRatingId, 1, 6, 12) };
         // giving 9 points in category 1
-        yield return new object[] { CreateRatingRequest(9, 1, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] 
+        { 
+            CreateRatingRequest(9, 1, 2),
+            simpleOtherRating
+        };
         // giving 13 points in category 3
-        yield return new object[] { CreateRatingRequest(3, 1, 13), CreateRating(1, 4, 2, 3) };
+        yield return new object[] 
+        { 
+            CreateRatingRequest(3, 1, 13),
+            simpleOtherRating
+        };
         // giving -1 points in category 2
-        yield return new object[] { CreateRatingRequest(6, -1, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] 
+        { 
+            CreateRatingRequest(6, -1, 2),
+            simpleOtherRating
+        };
         // giving 0 points in category 2
-        yield return new object[] { CreateRatingRequest(6, 0, 2), CreateRating(1, 4, 2, 3) };
+        yield return new object[] 
+        { 
+            CreateRatingRequest(6, 0, 2),
+            simpleOtherRating
+        };
     }
 
     [Fact]
@@ -323,7 +513,9 @@ public class RatingServiceTest
             .Throws<RatingIsClosedException>();
 
         // act and assert
-        await Assert.ThrowsAsync<RatingIsClosedException>(async () => await _service.UpdateRating(RATING_ID, ratingRequest));
+        await Assert.ThrowsAsync<RatingIsClosedException>(
+            async () => await _service.UpdateRating(RATING_ID, ratingRequest)
+            );
 
         _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
@@ -332,7 +524,7 @@ public class RatingServiceTest
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never());
     }
 
-    // tests for updating rating ranking
+    // tests for updating ranking
 
     [InlineData(12)]
     [InlineData(1)]
@@ -341,8 +533,8 @@ public class RatingServiceTest
     public async void UpdateRatingRanking_Valid(int rankingRequest)
     {
         // arrange
-        var oldRating = CreateRating(RATING_ID, 34, 15);
-        var expectedUpdatedRating = CreateRating(RATING_ID, 34, rankingRequest);
+        var oldRating = CreateRatingWithPointsSumAndRanking(RATING_ID, 34, 15);
+        var expectedUpdatedRating = CreateRatingWithPointsSumAndRanking(RATING_ID, 34, rankingRequest);
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
@@ -366,8 +558,8 @@ public class RatingServiceTest
     public async void UpdateRatingRanking_Invalid(int rankingRequest)
     {
         // arrange
-        var oldRating = CreateRating(RATING_ID, 34, 15);
-        var expectedUpdatedRating = CreateRating(RATING_ID, 34, rankingRequest);
+        var oldRating = CreateRatingWithPointsSumAndRanking(RATING_ID, 34, 15);
+        var expectedUpdatedRating = CreateRatingWithPointsSumAndRanking(RATING_ID, 34, rankingRequest);
 
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, rankingRequest));
@@ -395,45 +587,94 @@ public class RatingServiceTest
         };
     }
 
-    private static Rating CreateRating
+    private static Rating CreateRatingWithPoints
         (
         int id,
         int category1Points,
         int category2Points,
-        int category3Points,
-        int pointsSum,
-        int ranking
+        int category3Points
         )
     {
-        return new Rating
-        {
-            Id = id,
-            PlayerId = PLAYER_ID,
-            Category1Points = category1Points,
-            Category2Points = category2Points,
-            Category3Points = category3Points,
-            CountryId = 5678,
-            PointsSum = pointsSum,
-            Ranking = ranking,
-            Country = CreateCountry(1000)
-        };
+        return CreateRatingWithPointsAndRanking
+            (
+            id, 
+            category1Points,
+            category2Points,
+            category3Points,
+            null, 
+            null
+            );
     }
 
-    private static Rating CreateRating
+    private static Rating CreateRatingWithPointsAndRanking
+        (
+        int id,
+        int? category1Points,
+        int? category2Points,
+        int? category3Points,
+        int? pointsSum,
+        int? ranking
+        )
+    {
+        return CreateRating(
+            id, 
+            pointsSum,
+            ranking,
+            category1Points,
+            category2Points,
+            category3Points,
+            1000
+            );
+    }
+
+    private static Rating CreateInitialRating(int id)
+    {
+        return CreateRatingWithPointsSumAndRanking(id, null, null);
+    }
+
+    private static Rating CreateRatingWithPointsSumAndRanking
         (
         int id,
         int? pointsSum,
         int? ranking
         )
     {
-        return CreateRating(id, pointsSum, ranking, 1000);
+        return CreateRatingWithPointsAndRanking(
+            id, 
+            null,
+            null,
+            null,
+            pointsSum,
+            ranking
+            );
     }
-    
+
+    private static Rating CreateRatingForSorting
+        (
+        int id,
+        int? ranking,
+        int countryNumber
+        )
+    {
+        return CreateRating(
+            id,
+            null,
+            ranking,
+            null, 
+            null, 
+            null, 
+            countryNumber
+            );
+    }
+
     private static Rating CreateRating
         (
         int id,
         int? pointsSum,
         int? ranking, 
+        int? category1Points,
+        int? category2Points,
+        int? category3Points,
         int countryNumber
         )
     {
@@ -443,9 +684,9 @@ public class RatingServiceTest
             PlayerId = PLAYER_ID,
             PointsSum = pointsSum,
             Ranking = ranking,
-            Category1Points = 1,
-            Category2Points = 1,
-            Category3Points = 1,
+            Category1Points = category1Points,
+            Category2Points = category2Points,
+            Category3Points = category3Points,
             CountryId = 5678,
             Country = CreateCountry(countryNumber)
         };

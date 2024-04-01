@@ -55,19 +55,17 @@ public class RatingService : IRatingService
     public async Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto)
     {
         _rateClosingService.ValidateRatingTime();
+
         var existingRating = await GetRating(id);
+        var oldRanking = existingRating.Ranking;
+        var oldPointsSum = existingRating.PointsSum;
+
         var ratings = await GetRatingsByPlayer(existingRating.PlayerId);
 
         var updatedRating = UpdateEntity(existingRating, ratingRequestDto);
 
         ValidatePoints(updatedRating, ratings);
-        ratings = ReplaceRatingInList(updatedRating, ratings);
-        ratings = SetRankings(ratings);
-
-        foreach (var rating in ratings)
-        {
-            await _repository.UpdateRating(rating);
-        }
+        await SetRankingsAndUpdateDatabase(oldRanking, oldPointsSum, updatedRating, ratings);
     }
 
     public async Task UpdateRating(int id, int ranking)
@@ -111,30 +109,148 @@ public class RatingService : IRatingService
             .ToImmutableList();
     }
 
-    private ImmutableList<Rating> ReplaceRatingInList(Rating newRating, ImmutableList<Rating> ratings)
+    private async Task SetRankingsAndUpdateDatabase(
+        int? oldRanking,
+        int? oldPointsSum,
+        Rating updatedPointsRating,
+        ImmutableList<Rating> ratingsWithUpdatedPoints
+        )
     {
-        var oldRating = ratings.FirstOrDefault(r => r.Id == newRating.Id);
-        return ratings.Replace(oldRating!, newRating);
+        var selectedRatingId = updatedPointsRating.Id;
+        int updatedPointsSum = updatedPointsRating.PointsSum ?? throw new Exception("Updated points sum cannot be null");
+
+        oldRanking = CalculateOldRanking(oldRanking, oldPointsSum, ratingsWithUpdatedPoints, selectedRatingId);
+        int updatedRanking = CalculateRanking(selectedRatingId, SortByPoints(ratingsWithUpdatedPoints));
+
+        var rankingDifference = CalculateRankingDifference(oldRanking, updatedRanking);
+        // no need to update rankings when they are unchanged
+        if (rankingDifference == RankingDifference.NONE)
+        {
+            await _repository.UpdateRating(updatedPointsRating);
+            return;
+        }
+
+        int minRankingToUpdate;
+        int maxRankingToUpdate;
+        if (oldRanking == null)
+        {
+            minRankingToUpdate = updatedRanking;
+            maxRankingToUpdate = 26;
+        }
+        else
+        {
+            minRankingToUpdate = Math.Min((int)oldRanking, updatedRanking);
+            maxRankingToUpdate = Math.Max((int)oldRanking, updatedRanking);
+        }
+
+        foreach (var rating in ratingsWithUpdatedPoints)
+        {
+            var pointsSum = rating.PointsSum;
+            // overwrite ranking for the selected rating
+            if (rating.Id == selectedRatingId)
+            {
+                rating.Ranking = updatedRanking;
+            }
+            // no need to update null ranking
+            else if (pointsSum == null)
+            {
+                continue;
+            }
+            // overwrite ranking for ratings with the same new points sum
+            else if (pointsSum == updatedPointsSum)
+            {
+                rating.Ranking = updatedRanking;
+            }
+            // reset ranking for ratings with the same old points sum
+            else if (pointsSum == oldPointsSum)
+            {
+                rating.Ranking = oldRanking;
+            }
+            // push the effected ratings one up or one down
+            else if (rating.Ranking >= minRankingToUpdate &&
+                rating.Ranking <= maxRankingToUpdate)
+            {
+                rating.Ranking += ((int)rankingDifference);
+            }
+            else
+            {
+                continue;
+            }
+
+            await _repository.UpdateRating(rating);
+        }
     }
 
-    private ImmutableList<Rating> SetRankings(ImmutableList<Rating> ratings)
+    private int? CalculateOldRanking(
+        int? oldRanking, 
+        int? oldPointsSum, 
+        ImmutableList<Rating> ratingsWithUpdatedPoints, 
+        int selectedRatingId
+        )
     {
-        var sortedRatings = ratings.Sort((r1, r2) => (r2.PointsSum ?? 0).CompareTo(r1.PointsSum ??  0))
-            .ToList();
+        if (oldRanking is null)
+        {
+            return oldRanking;
+        }
 
-        int? previousPoints = -1; // initiated to ensure first currentPoints is different
+        if (oldPointsSum is null)
+        {
+            throw new Exception("Old ranking is nonnull, thus old points sum should be nonnull");
+        }
+
+        // recalculating old ranking in case it has been overwritten
+        return CalculateRanking
+            (selectedRatingId,
+            SortByPointsConsiderOldPoints((int)oldPointsSum, selectedRatingId, ratingsWithUpdatedPoints));
+    }
+
+    private RankingDifference CalculateRankingDifference(int? oldRanking, int newRanking)
+    {
+        if (oldRanking == null || newRanking < oldRanking)
+        {
+            return RankingDifference.POSITIVE;
+        }
+        else if (newRanking == oldRanking)
+        {
+            return RankingDifference.NONE;
+        }
+        return RankingDifference.NEGATIVE;
+    }
+
+    private enum RankingDifference
+    {
+        POSITIVE = 1,
+        NEGATIVE = -1,
+        NONE = 0
+    }
+
+    private List<Rating> SortByPointsConsiderOldPoints(
+        int oldPointsSum,
+        int selectedRatingId,
+        ImmutableList<Rating> ratings
+        )
+    {
+        return ratings
+            .OrderByDescending(r => r.Id == selectedRatingId ? oldPointsSum : (r.PointsSum ?? 0))
+            .ToList();
+    }
+
+    private List<Rating> SortByPoints(ImmutableList<Rating> ratings)
+    {
+        return ratings
+            .OrderByDescending(r => r.PointsSum ?? 0)
+            .ToList();
+    }
+
+    private int CalculateRanking(int selectedRatingId, List<Rating> ratingsSortedByDescendigPoints)
+    {
+        int? previousPoints = -1; // initiated to ensure it is different from currentPoints the first iteration
         int? currentPoints;
         int ranking = 0;
         int sameRankingCount = 1;
-        foreach (var rating in sortedRatings)
+        foreach (var rating in ratingsSortedByDescendigPoints)
         {
             currentPoints = rating.PointsSum;
-
-            // will not set ranking for countries that have not been voted on yet
-            if (currentPoints == null)
-            {
-                break;
-            }
 
             if (currentPoints == previousPoints)
             {
@@ -147,10 +263,13 @@ public class RatingService : IRatingService
                 sameRankingCount = 1;
             }
 
-            rating.Ranking = ranking;
+            if (rating.Id == selectedRatingId)
+            {
+                return ranking;
+            }
             previousPoints = currentPoints;
         }
-        return sortedRatings.ToImmutableList();
+        throw new Exception("Error in ranking calculation");
     }
 
     private void ValidatePoints(Rating rating, ImmutableList<Rating> existingRatings)
@@ -175,7 +294,7 @@ public class RatingService : IRatingService
     {
         if (!ValidatePointsAmountForCategory(rating, categoryPointsGetter))
         {
-            throw new ArgumentException("Invalid points amount");
+            throw new ArgumentException("Invalid points amount"); // TODO: refactor
         }
 
         if (!ValidateSpecialPointsForCategory(rating, existingRatings, categoryPointsGetter))
