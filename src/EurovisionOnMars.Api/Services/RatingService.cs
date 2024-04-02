@@ -118,17 +118,17 @@ public class RatingService : IRatingService
     {
         var selectedRatingId = updatedPointsRating.Id;
         int updatedPointsSum = updatedPointsRating.PointsSum ?? throw new Exception("Updated points sum cannot be null");
-
-        oldRanking = CalculateOldRanking(oldRanking, oldPointsSum, ratingsWithUpdatedPoints, selectedRatingId);
-        int updatedRanking = CalculateRanking(selectedRatingId, SortByPoints(ratingsWithUpdatedPoints));
-
-        var rankingDifference = CalculateRankingDifference(oldRanking, updatedRanking);
-        // no need to update rankings when they are unchanged
-        if (rankingDifference == RankingDifference.NONE)
+        // no need to update rankings if points sum is unchanged
+        if (oldPointsSum == updatedPointsSum)
         {
             await _repository.UpdateRating(updatedPointsRating);
             return;
         }
+
+        oldRanking = CalculateOldRanking(oldRanking, oldPointsSum, ratingsWithUpdatedPoints, selectedRatingId);
+        int updatedRanking = CalculateRanking(updatedPointsSum, selectedRatingId, SortByPoints(ratingsWithUpdatedPoints));
+
+        var rankingDifference = CalculateRankingDifference(oldRanking, updatedRanking);
 
         int minRankingToUpdate;
         int maxRankingToUpdate;
@@ -164,7 +164,14 @@ public class RatingService : IRatingService
             // reset ranking for ratings with the same old points sum
             else if (pointsSum == oldPointsSum)
             {
-                rating.Ranking = oldRanking;
+                if (rankingDifference == RankingDifference.NEGATIVE)
+                {
+                    rating.Ranking = oldRanking;
+                }
+                else
+                {
+                    rating.Ranking = oldRanking + 1;
+                }
             }
             // push the effected ratings one up or one down
             else if (rating.Ranking >= minRankingToUpdate &&
@@ -200,7 +207,8 @@ public class RatingService : IRatingService
 
         // recalculating old ranking in case it has been overwritten
         return CalculateRanking
-            (selectedRatingId,
+            (oldPointsSum,
+            selectedRatingId,
             SortByPointsConsiderOldPoints((int)oldPointsSum, selectedRatingId, ratingsWithUpdatedPoints));
     }
 
@@ -242,7 +250,12 @@ public class RatingService : IRatingService
             .ToList();
     }
 
-    private int CalculateRanking(int selectedRatingId, List<Rating> ratingsSortedByDescendigPoints)
+    private int CalculateRanking
+        (
+        int? selectedPointsSum,
+        int selectedRatingId, 
+        List<Rating> ratingsSortedByDescendigPoints
+        )
     {
         int? previousPoints = -1; // initiated to ensure it is different from currentPoints the first iteration
         int? currentPoints;
@@ -250,7 +263,14 @@ public class RatingService : IRatingService
         int sameRankingCount = 1;
         foreach (var rating in ratingsSortedByDescendigPoints)
         {
-            currentPoints = rating.PointsSum;
+            if (rating.Id == selectedRatingId)
+            {
+                currentPoints = selectedPointsSum;
+            }
+            else
+            {
+                currentPoints = rating.PointsSum;
+            }
 
             if (currentPoints == previousPoints)
             {

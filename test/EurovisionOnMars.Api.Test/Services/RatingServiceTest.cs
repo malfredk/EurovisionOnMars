@@ -249,7 +249,9 @@ public class RatingServiceTest
 
     public static IEnumerable<object[]> GetTestDataRanking()
     {
-        // first rating, taking 1st place - moving all one down
+        // 1
+        // first rating, taking 1st place
+        // moving all one down
         yield return new object[] {
             CreateInitialRating(RATING_ID),
             new List<Rating>()
@@ -274,6 +276,7 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(666, 25, 7)
             }
         };
+        // 2
         // first rating, taking 4th (last) place
         // no changes to the other's ranking
         yield return new object[] {
@@ -282,6 +285,7 @@ public class RatingServiceTest
             {
                 CreateRatingWithPointsSumAndRanking(111, 32, 1),
                 CreateRatingWithPointsSumAndRanking(222, 25, 2),
+                CreateInitialRating(1000),
                 CreateRatingWithPointsSumAndRanking(333, 20, 3)
             },
             CreateRatingRequest(1, 1, 1),
@@ -290,6 +294,7 @@ public class RatingServiceTest
                 CreateRatingWithPointsAndRanking(RATING_ID, 1, 1, 1, 3, 4)
             }
         };
+        // 3
         // first rating, taking shared 2nd place
         // resetting 2nd and moving all, but 1st and 2nd, one down
         yield return new object[] {
@@ -315,7 +320,9 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(666, 25, 7)
             }
         };
-        // first rating, taking shared 4th place - resetting 4th and moving 6th one down
+        // 4
+        // first rating, taking shared 4th place
+        // resetting 4th and moving 6th one down
         yield return new object[] {
             CreateInitialRating(RATING_ID),
             new List<Rating>()
@@ -337,8 +344,9 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(666, 25, 7)
             }
         };
+        // 5
         // changing rating, from shared 4th (set to 5th) to 2nd
-        // resetting 4th and moving 2nd and 3rd one down
+        // resetting 4th and moving 2nd, 3rd and 4th one down
         yield return new object[] {
             CreateRatingWithPointsSumAndRanking(RATING_ID, 30, 5),
             new List<Rating>()
@@ -361,8 +369,9 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(44466, 30, 5)
             }
         };
+        // 6
         // changing rating, from 2nd to shared 3rd
-        // resetting 4th and moving 3rd one up
+        // resetting 4th and moving 3rd and 4th one up
         yield return new object[] {
             CreateRatingWithPointsSumAndRanking(RATING_ID, 33, 2),
             new List<Rating>()
@@ -372,8 +381,7 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(44455, 30, 5),
                 CreateRatingWithPointsSumAndRanking(444, 30, 4),
                 CreateRatingWithPointsSumAndRanking(111, 35, 1),
-                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
-                CreateRatingWithPointsSumAndRanking(777, 20, 7)
+                CreateRatingWithPointsSumAndRanking(666, 20, 6)
             },
             CreateRatingRequest(10, 10, 10),
             new List<Rating>()
@@ -381,10 +389,10 @@ public class RatingServiceTest
                 CreateRatingWithPointsAndRanking(RATING_ID, 10, 10, 10, 30, 3),
                 CreateRatingWithPointsSumAndRanking(333, 31, 2),
                 CreateRatingWithPointsSumAndRanking(44455, 30, 3),
-                CreateRatingWithPointsSumAndRanking(444, 30, 3),
-                CreateRatingWithPointsSumAndRanking(44466, 30, 3)
+                CreateRatingWithPointsSumAndRanking(444, 30, 3)
             }
         };
+        // 7
         // changing rating, from 1st to 7th (last)
         // moving all one up
         yield return new object[] {
@@ -411,7 +419,8 @@ public class RatingServiceTest
                 CreateRatingWithPointsSumAndRanking(777, 20, 6)
             }
         };
-        // changing rating, points sum has changed but not ranking
+        // 8
+        // changing rating, points sum has decreased but no change in ranking
         // no change in ranking
         yield return new object[] {
             CreateRatingWithPointsSumAndRanking(RATING_ID, 33, 3),
@@ -429,6 +438,71 @@ public class RatingServiceTest
             new List<Rating>()
             {
                 CreateRatingWithPointsAndRanking(RATING_ID, 12, 10, 10, 32, 3)
+            }
+        };
+        // 9
+        // changing rating, points sum is unchanged
+        // no change in ranking
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 32, 3),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(222, 34, 2),
+                CreateRatingWithPointsSumAndRanking(44455, 30, 5),
+                CreateRatingWithPointsSumAndRanking(444, 30, 4),
+                CreateRatingWithPointsSumAndRanking(44466, 30, 6),
+                CreateRatingWithPointsSumAndRanking(777, 20, 7)
+            },
+            CreateRatingRequest(12, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 12, 10, 10, 32, 3)
+            }
+        };
+        // 10
+        // changing rating, from shared 3rd place to not shared 3rd place
+        // points sum has increased but not ranking
+        // should not share ranking anymore, move other 3rd rating one down
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 30, 3),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(222, 34, 2),
+                CreateRatingWithPointsSumAndRanking(333, 30, 3),
+                CreateRatingWithPointsSumAndRanking(555, 20, 5)
+            },
+            CreateRatingRequest(12, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 12, 10, 10, 32, 3),
+                CreateRatingWithPointsSumAndRanking(333, 30, 4)
+            }
+        };
+        // 11
+        // changing rating, from shared 3rd place to not shared 3rd place
+        // points sum has decreased and so has ranking
+        // should not share ranking anymore, move down and reset other 3rd ratings
+        yield return new object[] {
+            CreateRatingWithPointsSumAndRanking(RATING_ID, 30, 3),
+            new List<Rating>()
+            {
+                CreateInitialRating(1000),
+                CreateRatingWithPointsSumAndRanking(111, 35, 1),
+                CreateRatingWithPointsSumAndRanking(222, 34, 2),
+                CreateRatingWithPointsSumAndRanking(333, 30, 3),
+                CreateRatingWithPointsSumAndRanking(666, 20, 6),
+                CreateRatingWithPointsSumAndRanking(33344, 30, 4)
+            },
+            CreateRatingRequest(8, 10, 10),
+            new List<Rating>()
+            {
+                CreateRatingWithPointsAndRanking(RATING_ID, 8, 10, 10, 28, 5),
+                CreateRatingWithPointsSumAndRanking(333, 30, 3),
+                CreateRatingWithPointsSumAndRanking(33344, 30, 3)
             }
         };
     }
