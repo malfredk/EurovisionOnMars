@@ -3,18 +3,11 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
-<style>
-    .scrollable-table {
-        height: calc(100vh - 90px);
-    }
-</style>
-
 <NavigationBar></NavigationBar>
 
 <MudTable 
     Items="@Players"
-    Breakpoint="Breakpoint.None"
-    FixedHeader="true" Height="100%" Class="scrollable-table">
+    Breakpoint="Breakpoint.None">
     <HeaderContent>
         <MudTh>plassering</MudTh>
         <MudTh>poeng</MudTh>
