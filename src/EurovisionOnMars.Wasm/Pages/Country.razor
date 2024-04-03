@@ -17,7 +17,8 @@
     EditTrigger="TableEditTrigger.RowClick"
     OnCommitEditClick="@(async () => await UpdateRanking(selectedCountry))"
     RowEditPreview="BackupRanking"
-    RowEditCancel="ResetCountry">
+    RowEditCancel="ResetCountry"
+    Class="mb-2">
     <ToolBarContent>
         <MudIconButton 
             Icon="@Icons.Material.Filled.Add" 
