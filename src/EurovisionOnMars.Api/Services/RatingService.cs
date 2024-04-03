@@ -312,35 +312,33 @@ public class RatingService : IRatingService
         Func<Rating, int?> categoryPointsGetter
         )
     {
-        if (!ValidatePointsAmountForCategory(rating, categoryPointsGetter))
-        {
-            throw new ArgumentException("Invalid points amount"); // TODO: refactor
-        }
-
-        if (!ValidateSpecialPointsForCategory(rating, existingRatings, categoryPointsGetter))
-        {
-            throw new ArgumentException("Special points already given in category");
-        }
+        ValidatePointsAmountForCategory(rating, categoryPointsGetter);
+        ValidateSpecialPointsForCategory(rating, existingRatings, categoryPointsGetter);
     }
 
-    private bool ValidatePointsAmountForCategory(Rating rating, Func<Rating, int?> categoryPointsGetter)
+    private void ValidatePointsAmountForCategory(Rating rating, Func<Rating, int?> categoryPointsGetter)
     {
         var categoryPoints = categoryPointsGetter(rating);
-        return categoryPoints != null && VALID_POINTS.Contains((int)categoryPoints);
+        var isValid = categoryPoints != null && VALID_POINTS.Contains((int)categoryPoints);
+        if (!isValid)
+        {
+            throw new ArgumentException("Invalid points amount");
+        }
     }
 
-    private bool ValidateSpecialPointsForCategory
+    private void ValidateSpecialPointsForCategory
         (
         Rating rating, 
         ImmutableList<Rating> existingRatings, 
         Func<Rating, int?> categoryPointsGetter
         )
     {
-        var categoryPoints = (int)categoryPointsGetter(rating);
+        // category points are validated as nonnull in previous validation
+        var categoryPoints = (int)categoryPointsGetter(rating)!;
 
         if (!SPECIAL_POINTS.Contains(categoryPoints))
         {
-            return true;
+            return;
         }
 
         foreach (var existingRating in existingRatings)
@@ -353,10 +351,8 @@ public class RatingService : IRatingService
             if (categoryPointsGetter(existingRating) == categoryPoints)
             {
                 _logger.LogDebug($"Rating with id={existingRating.Id} already has {categoryPoints} points");
-                return false;
+                throw new ArgumentException("Special points already given in category");
             }
         }
-
-        return true;
     }
 }

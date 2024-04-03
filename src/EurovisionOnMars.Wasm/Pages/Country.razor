@@ -86,7 +86,7 @@
         var response = await Http.GetAsync("/api/Countries");
         if (response.IsSuccessStatusCode)
         {
-            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>(); // TODO: fix possible issue with no countries
+            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
             disableAddButton = Countries != null && Countries.Count() == 26;
         }
         else

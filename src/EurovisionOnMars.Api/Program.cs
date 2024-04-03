@@ -12,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -38,9 +37,10 @@ builder.Services.AddScoped<IRatingResultService, RatingResultService>();
 builder.Services.AddScoped<IPlayerResultService, PlayerResultService>();
 builder.Services.AddScoped<IResultService, ResultService>();
 builder.Services.AddScoped<IRateClosingService, RateClosingService>();
+
 builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 
-builder.Services.AddScoped<IPlayerRepository, PlayerRepository>(); // TODO: reconsider type of service
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<IRatingResultRepository, RatingResultRepository>();
@@ -72,8 +72,8 @@ else
     }
 }
 
-app.UseCors(policy => policy // TODO: define for production and development
-    .AllowAnyOrigin() // .WithOrigins("https://localhost:7052") 
+app.UseCors(policy => policy
+    .AllowAnyOrigin()
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
 );
