@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.CustomException;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -18,8 +19,16 @@ public class RateClosingServiceTest
         _dateTimeNowMock = new Mock<IDateTimeNow>();
         _loggerMock = new Mock<ILogger<RateClosingService>>();
 
+        var inMemorySettings = new Dictionary<string, string> {
+            {"CLOSE_RATING_TIME", "2024-05-11T23:50:00"}
+        };
+        IConfiguration _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings!)
+            .Build();
+
         _service = new RateClosingService(
             _dateTimeNowMock.Object,
+            _configuration,
             _loggerMock.Object);
     }
 

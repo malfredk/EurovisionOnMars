@@ -11,23 +11,39 @@ public interface IRateClosingService
 public class RateClosingService : IRateClosingService
 {
     public readonly IDateTimeNow _dateTimeNow;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<RateClosingService> _logger;
 
-    public RateClosingService(IDateTimeNow dateTimeNow, ILogger<RateClosingService> logger)
+    public RateClosingService(
+        IDateTimeNow dateTimeNow, 
+        IConfiguration configuration,
+        ILogger<RateClosingService> logger)
     {
         _dateTimeNow = dateTimeNow;
+        _configuration = configuration;
         _logger = logger;
     }
 
     public void ValidateRatingTime()
     {
-        var closingTime = new DateTime(2024, 5, 11, 23, 50, 00);
+        var closingTime = GetClosingTime();
         var closingTimeOffset = new DateTimeOffset(closingTime, _dateTimeNow.OsloTimeZone.GetUtcOffset(closingTime));
 
         if (_dateTimeNow.Now > closingTimeOffset)
         {
             throw new RatingIsClosedException();
         }
+    }
+
+    private DateTime GetClosingTime()
+    {
+        var closingTimeString = _configuration.GetValue<string>("CLOSE_RATING_TIME");
+        if (string.IsNullOrEmpty(closingTimeString))
+        {
+            throw new Exception("Unable to get close rating time");
+        }
+        var closingTime = DateTime.Parse(closingTimeString!);
+        return closingTime;
     }
 }
 
