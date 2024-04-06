@@ -44,9 +44,13 @@ Create a web app with the following settings:
 * Enable public access: On
 * Enable network injection: Off
 
-Add connection string for the SQL database. 
+Add connection string for the SQL database: 
 * Name: Default
 * Value: Server=xxxx,xxxx;Initial Catalog=xxxx;Persist Security Info=False;User ID=xxxx;Password=xxxx;
+
+Add application settings:
+* Name: CLOSE_RATING_TIME
+* Value: when you want the rating to close (Oslo time zone), for instance 2024-05-11T23:50:00
 
 In *Configuration* go to *General Settings* and set
 * Startup Command: dotnet EurovisionOnMars.Api.dll
