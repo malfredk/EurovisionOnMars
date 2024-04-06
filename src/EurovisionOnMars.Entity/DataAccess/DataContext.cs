@@ -19,5 +19,8 @@ public class DataContext : DbContext
         modelBuilder.Entity<Country>()
             .HasIndex(e => e.Number)
             .IsUnique();
+        modelBuilder.Entity<Player>()
+            .HasIndex(p => p.Username)
+            .IsUnique();
     }
 }
