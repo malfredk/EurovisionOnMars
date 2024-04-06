@@ -2,9 +2,12 @@
 
 This is a simple game web app for Eurovision Song Contest. It is a gamification of the classic scorecard used when watching Eurovision with friends. 
 
-All players are entered in the same game. Instead of filling out a paper sheet, each player can rate the different countries in this web app. The rating closes before the results are revealed to prevent cheating. The host will need to manually enter the participating countries and their order. When the Eurovision results are ready, the host can enter the rankings and trigger calculation of the game result.   
+All players are entered in the same game. Instead of filling out a paper sheet, each player can rate the different countries in this web app. The rating closes before the results are revealed to prevent cheating. The host will need to manually enter the participating countries and their order*. When the Eurovision results are ready, the host can enter the rankings* and trigger calculation of the game result**.
 
 A player gets points based on the (absolute) difference between their predicted ranking and the actual ranking. In addition, a player is rewarded (negative) bonus points if a ranking is perfect. (The bonus points amounts are inspired by the Formula 1 points system.) The player with the least amount of points wins. 
+
+<sub>*This can be done in the database directly or through the country API which is accessible on the country page (/land).  
+**This can be done through the result API which is accessible through the calculation button on the country page (/land).</sub>
 
 ## Development 
 
