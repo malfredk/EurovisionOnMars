@@ -15,7 +15,7 @@
     </main>
 </div>
 
-<MudThemeProvider />
+<MudThemeProvider Theme="Eurovision2024Theme"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -26,4 +26,17 @@
     {
         errorBoundary?.Recover();
     }
+
+    MudTheme Eurovision2024Theme = new MudTheme()
+    {
+        Palette = new PaletteLight()
+        {
+            Primary = "#FE45DE", // pink
+            Secondary = "#F4DD15", // yellow
+            Tertiary = "#1EC1E0", // blue
+            Error = "#FF7713", // red
+            Success = "#84CE7F", // green
+            TableLines = "#FE45DE"
+        }
+    };
 }

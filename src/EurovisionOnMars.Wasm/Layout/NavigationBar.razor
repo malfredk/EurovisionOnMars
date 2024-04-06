@@ -1,27 +1,25 @@
 ﻿@inject NavigationManager NavigationManager
 
-<MudPaper Class="mb-1">
-    <MudToolBar>
-        <MudIconButton 
-            Icon="@Icons.Material.Filled.Home"
-            OnClick="NavigateHome">
-        </MudIconButton>
-        <MudIconButton 
-            Icon="@Icons.Material.Filled.HowToVote"
-            Disabled="disablePlayerPages"
-            OnClick="NavigateToPlayer">
-        </MudIconButton>
-        <MudIconButton 
-            Icon="@Icons.Material.Filled.Grading"
-            Disabled="disablePlayerPages"
-            OnClick="NavigateToPlayerResult">
-        </MudIconButton>
-        <MudIconButton 
-            Icon="@TROPHY_ICON"
-            OnClick="NavigateToResult">
-        </MudIconButton>
-    </MudToolBar>
-</MudPaper>
+<MudAppBar Class="mb-1" Color="Color.Primary" Fixed=false>
+    <MudIconButton Color="Color.Secondary"
+        Icon="@Icons.Material.Filled.Home"
+        OnClick="NavigateHome">
+    </MudIconButton>
+    <MudIconButton Color="Color.Secondary" 
+        Icon="@Icons.Material.Filled.HowToVote"
+        Disabled="disablePlayerPages"
+        OnClick="NavigateToPlayer">
+    </MudIconButton>
+    <MudIconButton Color="Color.Secondary"
+        Icon="@Icons.Material.Filled.Grading"
+        Disabled="disablePlayerPages"
+        OnClick="NavigateToPlayerResult">
+    </MudIconButton>
+    <MudIconButton Color="Color.Secondary"
+        Icon="@TROPHY_ICON"
+        OnClick="NavigateToResult">
+    </MudIconButton>
+</MudAppBar>
 
 @code {
     [Parameter]

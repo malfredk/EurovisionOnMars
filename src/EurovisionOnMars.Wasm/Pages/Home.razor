@@ -11,7 +11,11 @@
         <MudTextField @bind-Value="newUsername" OnKeyDown="HandleEnterNew" Label="ny spiller"></MudTextField>
     </MudItem>
     <MudItem>
-        <MudButton Variant="Variant.Filled" OnClick="CreatePlayer">spill</MudButton>
+        <MudButton 
+            Variant="Variant.Filled" Color="Color.Secondary" 
+            OnClick="CreatePlayer">
+                spill
+        </MudButton>
     </MudItem>
 </MudGrid>
 <MudGrid Spacing="1" Class="align-end">
@@ -19,7 +23,11 @@
         <MudTextField @bind-Value="existingUsername" OnKeyDown="HandleEnterExisting" Label="eksisterende spiller"></MudTextField>
     </MudItem>
     <MudItem>
-        <MudButton Variant="Variant.Filled" OnClick="GetPlayer">spill</MudButton>
+        <MudButton 
+            Variant="Variant.Filled" Color="Color.Secondary"
+            OnClick="GetPlayer">
+                spill
+        </MudButton>
     </MudItem>
 </MudGrid>
 
