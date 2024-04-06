@@ -19,6 +19,10 @@
         Icon="@TROPHY_ICON"
         OnClick="NavigateToResult">
     </MudIconButton>
+    <MudIconButton Color="Color.Secondary"
+        Icon="@Icons.Material.Outlined.Info"
+        OnClick="NavigateToInfo">
+    </MudIconButton>
 </MudAppBar>
 
 @code {
@@ -49,5 +53,10 @@
     private void NavigateToResult()
     {
         NavigationManager.NavigateTo("/resultat");
+    }
+
+    private void NavigateToInfo()
+    {
+        NavigationManager.NavigateTo("/regler");
     }
 }
