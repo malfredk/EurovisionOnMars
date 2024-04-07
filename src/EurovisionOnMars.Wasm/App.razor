@@ -6,7 +6,10 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <NavigationBar></NavigationBar>
+            <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+                som en islandsk eurovision-seier så finnes ikke denne siden
+            </MudAlert>
         </LayoutView>
     </NotFound>
 </Router>
