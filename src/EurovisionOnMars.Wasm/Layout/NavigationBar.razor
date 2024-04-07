@@ -1,25 +1,32 @@
 ﻿@inject NavigationManager NavigationManager
 
-<MudAppBar Class="mb-1" Color="Color.Primary" Fixed=false>
-    <MudIconButton Color="Color.Secondary"
+<style>
+    .gradient-background {
+        background-image: linear-gradient(to right, #F4DD15, #FE45DE, #F4DD15);
+        margin-bottom: 4px;
+    }
+</style>
+
+<MudAppBar Class="gradient-background" Color="Color.Primary" Fixed=false>
+    <MudIconButton Color="Color.Inherit"
         Icon="@Icons.Material.Filled.Home"
         OnClick="NavigateHome">
     </MudIconButton>
-    <MudIconButton Color="Color.Secondary" 
+    <MudIconButton Color="Color.Inherit" 
         Icon="@Icons.Material.Filled.HowToVote"
         Disabled="disablePlayerPages"
         OnClick="NavigateToPlayer">
     </MudIconButton>
-    <MudIconButton Color="Color.Secondary"
+    <MudIconButton Color="Color.Inherit"
         Icon="@Icons.Material.Filled.Grading"
         Disabled="disablePlayerPages"
         OnClick="NavigateToPlayerResult">
     </MudIconButton>
-    <MudIconButton Color="Color.Secondary"
+    <MudIconButton Color="Color.Inherit"
         Icon="@TROPHY_ICON"
         OnClick="NavigateToResult">
     </MudIconButton>
-    <MudIconButton Color="Color.Secondary"
+    <MudIconButton Color="Color.Inherit"
         Icon="@Icons.Material.Outlined.Info"
         OnClick="NavigateToInfo">
     </MudIconButton>
