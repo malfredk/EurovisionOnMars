@@ -5,6 +5,8 @@ using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using Serilog;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,11 @@ builder.Services.AddTransient<ICountryMapper, CountryMapper>();
 builder.Services.AddTransient<IPlayerResultMapper, PlayerResultMapper>();
 builder.Services.AddTransient<IRatingResultMapper, RatingResultMapper>();
 
+Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,6 +84,8 @@ app.UseCors(policy => policy
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
 );
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
