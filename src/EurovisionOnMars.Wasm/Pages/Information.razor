@@ -5,22 +5,27 @@
 <style>
     .extra-small-icon {
         font-size: 12px;
-        color: #F4DD15
+    }
+</style>
+
+<style>
+    .colored-header {
+        background-color: #F4D41F;
     }
 </style>
 
 <MudCard Class="ma-2">
-    <MudCardHeader Style="background-color: #F4DD15">
+    <MudCardHeader Class="colored-header">
         <CardHeaderContent>
             <MudText Typo="Typo.subtitle2">Stemming</MudText>
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
         <MudText Typo="Typo.body2" Class="mb-2">
-            Man kan gi 1-8, 10 og 12 poeng. I hver kategori kan man gi én 10-er og én 12-er. De landene som har fått 10-ere eller 12-ere vil være markert med henholdsvis <MudIcon Icon="@Icons.Material.Filled.StarHalf"  Class="extra-small-icon"></MudIcon> og <MudIcon Icon="@Icons.Material.Filled.Star"  Class="extra-small-icon"></MudIcon>. 
+            Man kan gi 1-8, 10 og 12 poeng. I hver kategori kan man gi én 10-er og én 12-er. De landene som har fått 10-ere eller 12-ere vil være markert med henholdsvis <MudIcon Icon="@Icons.Material.Filled.StarHalf" Class="extra-small-icon" Color="Color.Secondary"></MudIcon> og <MudIcon Icon="@Icons.Material.Filled.Star" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>.
         </MudText>
         <MudText Typo="Typo.body2" Class="mb-2">
-            Når man har stemt på alle landene får man muligheten til å rangere de landene som har fått samme plassering. <MudIcon Icon="@Icons.Material.Filled.WarningAmber" Class="extra-small-icon"></MudIcon> Dersom man etterpå endrer på poengene til et land så risikerer man å tilbakestille rangeringer man har gjort.
+            Når man har stemt på alle landene får man muligheten til å rangere de landene som har fått samme plassering. <MudIcon Icon="@Icons.Material.Filled.WarningAmber" Class="extra-small-icon" Color="Color.Secondary"></MudIcon> Dersom man etterpå endrer på poengene til et land så risikerer man å tilbakestille rangeringer man har gjort.
         </MudText>
         <MudText Typo="Typo.body2">
             Avstemning stenger før resultatet i Eurovision er avslørt.
@@ -29,7 +34,7 @@
 </MudCard>
 
 <MudCard Class="ma-2">
-    <MudCardHeader Style="background-color: #F4DD15">
+    <MudCardHeader Class="colored-header">
         <CardHeaderContent>
             <MudText Typo="Typo.subtitle2">Poeng</MudText>
         </CardHeaderContent>

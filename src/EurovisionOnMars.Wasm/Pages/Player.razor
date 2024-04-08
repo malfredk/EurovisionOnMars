@@ -9,7 +9,6 @@
 <style>
     .extra-small-icon {
         font-size: 12px;
-        color: #F4DD15
     }
 </style>
 
@@ -55,11 +54,11 @@
             @rating.PointsSum
             @for (int tenPointer = 0; tenPointer < NumberOfSpecialPoints(rating, 10); tenPointer++)
             {
-                <MudIcon Icon="@Icons.Material.Filled.StarHalf" Class="extra-small-icon"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.StarHalf" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>
             }
             @for (int twelvePointer = 0; twelvePointer < NumberOfSpecialPoints(rating, 12); twelvePointer++)
             {
-                <MudIcon Icon="@Icons.Material.Filled.Star" Class="extra-small-icon"></MudIcon>
+                <MudIcon Icon="@Icons.Material.Filled.Star" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>
             }
         </MudTd>
     </RowTemplate>
