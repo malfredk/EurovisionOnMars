@@ -6,7 +6,6 @@ using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Serilog;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

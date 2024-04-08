@@ -2,6 +2,7 @@
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Repositories;
 
@@ -24,7 +25,7 @@ public class RatingResultRepository : IRatingResultRepository
 
     public async Task<ImmutableList<RatingResult>> GetRatingResultsForPlayer(int playerId)
     {
-        _logger.LogDebug($"Getting rating results for player with id={playerId}");
+        _logger.LogDebug("Getting rating results for player with id={playerId}.", playerId);
         var ratingResults = await _context.Players
             .Where(p => p.Id == playerId)
             .SelectMany(p => p.Ratings)
@@ -35,7 +36,7 @@ public class RatingResultRepository : IRatingResultRepository
 
     public async Task<RatingResult> UpdateRatingResult(RatingResult ratingResult)
     {
-        _logger.LogDebug($"Updating rating result with id={ratingResult.Id}");
+        _logger.LogDebug("Updating rating result: {ratingResult}.", JsonSerializer.Serialize(ratingResult));
         var updatedRatingResult = _context.RatingResults.Update(ratingResult);
         await _context.SaveChangesAsync();
         return updatedRatingResult.Entity;

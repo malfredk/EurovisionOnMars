@@ -2,6 +2,7 @@
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Repositories;
 
@@ -26,20 +27,20 @@ public class CountryRepository : ICountryRepository
 
     public async Task<ImmutableList<Country>> GetCountries()
     {
-        _logger.LogDebug("Getting all countries");
+        _logger.LogDebug("Getting all countries.");
         var countries = await _context.Countries.ToListAsync();
         return countries.ToImmutableList();
     }
 
     public async Task<Country?> GetCountry(int id)
     {
-        _logger.LogDebug($"Getting country with id={id}");
+        _logger.LogDebug("Getting country with id={id}.", id);
         return await _context.Countries.FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Country> CreateCountry(Country country)
     {
-        _logger.LogDebug($"Creating country number {country.Number}");
+        _logger.LogDebug("Creating country: {country}.", JsonSerializer.Serialize(country));
         _context.Countries.Add(country);
         await _context.SaveChangesAsync();
         return country;
@@ -47,7 +48,7 @@ public class CountryRepository : ICountryRepository
 
     public async Task<Country> UpdateCountry(Country country)
     {
-        _logger.LogDebug($"Updating country with id={country.Id}");
+        _logger.LogDebug("Updating country: {country}.", JsonSerializer.Serialize(country));
         var updatedCountry = _context.Countries.Update(country);
         await _context.SaveChangesAsync();
         return updatedCountry.Entity;

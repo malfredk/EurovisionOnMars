@@ -298,11 +298,12 @@ public class RatingService : IRatingService
         Func<Rating, int?> category2PointsGetter = r => r.Category2Points;
         Func<Rating, int?> category3PointsGetter = r => r.Category3Points;
 
-        _logger.LogDebug($"Validating points in rating with id={rating.Id} for category 1");
+        var id = rating.Id;
+        _logger.LogDebug("Validating points in rating with id={id} for category 1.", id);
         ValidatePointsForCategory(rating, existingRatings, category1PointsGetter);
-        _logger.LogDebug($"Validating points in rating with id={rating.Id} for category 2");
+        _logger.LogDebug("Validating points in rating with id={id} for category 2.", id);
         ValidatePointsForCategory(rating, existingRatings, category2PointsGetter);
-        _logger.LogDebug($"Validating points in rating with id={rating.Id} for category 3");
+        _logger.LogDebug("Validating points in rating with id={id} for category 3.", id);
         ValidatePointsForCategory(rating, existingRatings, category3PointsGetter);
     }
 
@@ -350,8 +351,8 @@ public class RatingService : IRatingService
             
             if (categoryPointsGetter(existingRating) == categoryPoints)
             {
-                _logger.LogDebug($"Rating with id={existingRating.Id} already has {categoryPoints} points");
-                throw new ArgumentException("Special points already given in category");
+                _logger.LogWarning("Antoher rating, with id={id}, already has {categoryPoints} points in this category.", existingRating.Id, categoryPoints);
+                throw new ArgumentException("Special points has already been given in category.");
             }
         }
     }

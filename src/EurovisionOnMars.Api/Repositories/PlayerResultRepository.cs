@@ -2,6 +2,7 @@
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Repositories;
 
@@ -25,14 +26,14 @@ public class PlayerResultRepository : IPlayerResultRepository
 
     public async Task<ImmutableList<PlayerResult>> GetPlayerResults()
     {
-        _logger.LogDebug($"Getting all player results");
+        _logger.LogDebug("Getting all player results.");
         var playerResults = await _context.PlayerResults.ToListAsync();
         return playerResults.ToImmutableList();
     }
 
     public async Task<PlayerResult?> GetPlayerResult(int playerId)
     {
-        _logger.LogDebug($"Getting player result for player with id={playerId}");
+        _logger.LogDebug("Getting player result for player with id={playerId}", playerId);
         return await _context.Players
             .Where(p => p.Id == playerId)
             .Select(p => p.PlayerResult)
@@ -41,7 +42,7 @@ public class PlayerResultRepository : IPlayerResultRepository
 
     public async Task<PlayerResult> UpdatePlayerResult(PlayerResult playerResult)
     {
-        _logger.LogDebug($"Updating player result with id={playerResult.Id}");
+        _logger.LogDebug("Updating player result: {playerResult}.", JsonSerializer.Serialize(playerResult));
         var updatedPlayerResult = _context.PlayerResults.Update(playerResult);
         await _context.SaveChangesAsync();
         return updatedPlayerResult.Entity;

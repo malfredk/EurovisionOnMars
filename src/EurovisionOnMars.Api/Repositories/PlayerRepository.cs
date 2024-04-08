@@ -2,6 +2,7 @@
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Repositories;
 
@@ -27,7 +28,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<ImmutableList<Player>> GetPlayers()
     {
-        _logger.LogDebug("Getting all players");
+        _logger.LogDebug("Getting all players.");
         var players = await _context.Players
             .Include(p => p.PlayerResult)
             .ToListAsync();
@@ -36,19 +37,19 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<Player?> GetPlayer(int id)
     {
-        _logger.LogDebug($"Getting player with id={id}");
+        _logger.LogDebug("Getting player with id={id}.", id);
         return await _context.Players.FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<Player?> GetPlayer(string username)
     {
-        _logger.LogDebug($"Getting player with username={username}");
+        _logger.LogDebug("Getting player with username={username}.", username);
         return await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
     }
 
     public async Task<Player> CreatePlayer(Player player)
     {
-        _logger.LogDebug($"Creating player with username={player.Username}");
+        _logger.LogDebug("Creating player: {player}.", JsonSerializer.Serialize(player));
         _context.Players.Add(player);
         await _context.SaveChangesAsync();
         return player;
@@ -56,7 +57,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<Player> UpdatePlayer(Player player)
     {
-        _logger.LogDebug($"Updating player with id={player.Id}");
+        _logger.LogDebug("Updating player: {player}.", JsonSerializer.Serialize(player));
         var updatedPlayer = _context.Update(player);
         await _context.SaveChangesAsync();
         return updatedPlayer.Entity;
