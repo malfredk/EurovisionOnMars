@@ -1,9 +1,9 @@
-﻿@page "/resultat"
+﻿@page "/resultat/{playerId:int?}"
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
-<NavigationBar></NavigationBar>
+<NavigationBar PlayerId="playerId"></NavigationBar>
 
 <MudTable 
     Items="@Players"
@@ -36,6 +36,8 @@
 </MudTable>
 
 @code {
+    [Parameter] public int? playerId { get; set; }
+
     public List<PlayerDto> Players { get; set; }
 
     const string MEDAL_ICON = @"<svg style=""width:24px;height:24px"" viewBox=""0 0 512 512"">

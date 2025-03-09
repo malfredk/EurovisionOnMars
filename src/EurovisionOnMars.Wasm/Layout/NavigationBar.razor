@@ -59,11 +59,11 @@
 
     private void NavigateToResult()
     {
-        NavigationManager.NavigateTo("/resultat");
+        NavigationManager.NavigateTo($"/resultat/{PlayerId}");
     }
 
     private void NavigateToInfo()
     {
-        NavigationManager.NavigateTo("/regler");
+        NavigationManager.NavigateTo($"/regler/{PlayerId}");
     }
 }

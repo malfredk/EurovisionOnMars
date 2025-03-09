@@ -1,6 +1,6 @@
-﻿@page "/regler"
+﻿@page "/regler/{playerId:int?}"
 
-<NavigationBar></NavigationBar>
+<NavigationBar PlayerId="playerId"></NavigationBar>
 
 <style>
     .extra-small-icon {
@@ -63,6 +63,8 @@
 </MudCard>
 
 @code {
+    [Parameter] public int? playerId { get; set; }
+
     private record BonusPoints(string ranking, int pointsAmount);
 
     private List<BonusPoints> bonusPoints = new List<BonusPoints>()
