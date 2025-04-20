@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.CustomException;
-using TimeZoneConverter;
+using System.Globalization;
 
 namespace EurovisionOnMars.Api.Services;
 
@@ -26,36 +26,46 @@ public class RateClosingService : IRateClosingService
 
     public void ValidateRatingTime()
     {
-        var closingTime = GetClosingTime();
-        var closingTimeOffset = new DateTimeOffset(closingTime, _dateTimeNow.OsloTimeZone.GetUtcOffset(closingTime));
+        if (!GetClosingTime(out DateTimeOffset closingTime))
+        {
+            throw new FormatException("Invalid format of CLOSE_RATING_TIME");
+        }
 
-        if (_dateTimeNow.Now > closingTimeOffset)
+        if (_dateTimeNow.Now > closingTime)
         {
             throw new RatingIsClosedException();
         }
     }
 
-    private DateTime GetClosingTime()
+    private bool GetClosingTime(out DateTimeOffset result)
     {
         var closingTimeString = _configuration.GetValue<string>("CLOSE_RATING_TIME");
+
         if (string.IsNullOrEmpty(closingTimeString))
         {
             throw new Exception("Unable to get close rating time");
         }
-        var closingTime = DateTime.Parse(closingTimeString!);
-        return closingTime;
+
+        string[] validFormats = {
+            "yyyy-MM-ddTHH:mm:ssZ",
+            "yyyy-MM-ddTHH:mm:sszzz"
+        };
+        return DateTimeOffset.TryParseExact(
+            closingTimeString,
+            validFormats,
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+            out result
+        );
     }
 }
 
 public interface IDateTimeNow
 {
     public DateTimeOffset Now { get; }
-    public TimeZoneInfo OsloTimeZone { get; }
 }
 
 public class DateTimeNow : IDateTimeNow
 {
-    public TimeZoneInfo OsloTimeZone => TZConvert.GetTimeZoneInfo("Europe/Oslo");
-
-    public DateTimeOffset Now => TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, OsloTimeZone);
+    public DateTimeOffset Now => DateTimeOffset.UtcNow;
 }
