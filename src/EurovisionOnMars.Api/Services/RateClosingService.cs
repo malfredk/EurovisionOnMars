@@ -26,18 +26,15 @@ public class RateClosingService : IRateClosingService
 
     public void ValidateRatingTime()
     {
-        if (!GetClosingTime(out DateTimeOffset closingTime))
-        {
-            throw new FormatException("Invalid format of CLOSE_RATING_TIME");
-        }
-
+        var closingTime = GetClosingTime();
+        
         if (_dateTimeNow.Now > closingTime)
         {
             throw new RatingIsClosedException();
         }
     }
 
-    private bool GetClosingTime(out DateTimeOffset result)
+    private DateTimeOffset GetClosingTime()
     {
         var closingTimeString = _configuration.GetValue<string>("CLOSE_RATING_TIME");
 
@@ -50,12 +47,11 @@ public class RateClosingService : IRateClosingService
             "yyyy-MM-ddTHH:mm:ssZ",
             "yyyy-MM-ddTHH:mm:sszzz"
         };
-        return DateTimeOffset.TryParseExact(
+        return DateTimeOffset.ParseExact(
             closingTimeString,
             validFormats,
             CultureInfo.InvariantCulture,
-            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
-            out result
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
         );
     }
 }
