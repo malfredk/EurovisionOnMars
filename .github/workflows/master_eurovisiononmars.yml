@@ -12,15 +12,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-          include-prerelease: true
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -29,7 +30,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -42,23 +43,24 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: .net-app
       
       - name: Login to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7EC7B60895224032AAACEDC849F528B4 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6E7141A2C2C14527B16520FC9B97A5A3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_63D991AE01D34560A113CC83B2A19D06 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4BA2B91BDF164A56BCB3A67C571990BA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3A8243102DE94B8AA65AD873C015BEC7 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2CF11501E0D243149E45A5E2574C1397 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'eurovisiononmars'
           slot-name: 'Production'
