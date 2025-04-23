@@ -64,5 +64,5 @@ jobs:
         with:
           app-name: 'eurovisiononmars'
           slot-name: 'Production'
-          package: .
+          package: ./.net-app
           
