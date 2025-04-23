@@ -63,11 +63,15 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3A8243102DE94B8AA65AD873C015BEC7 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_2CF11501E0D243149E45A5E2574C1397 }}
 
+      - name: Zip artifact contents for deployment
+        run: zip -r app.zip .  # Zip everything in the current dir (which is ./.net-app)
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'eurovisiononmars'
           slot-name: 'Production'
-          package: ./.net-app
+          package: app.zip
+
           
