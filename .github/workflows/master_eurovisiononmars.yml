@@ -29,6 +29,11 @@ jobs:
       - name: dotnet publish
         run: dotnet publish src/EurovisionOnMars.Api/EurovisionOnMars.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      - name: List published files
+        run: |
+          echo "Checking contents of publish directory..."
+          ls -la ${{env.DOTNET_ROOT}}/myapp
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
