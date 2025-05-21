@@ -52,8 +52,8 @@ Add connection string for the SQL database:
 * Value: Server=xxxx,xxxx;Initial Catalog=xxxx;Persist Security Info=False;User ID=xxxx;Password=xxxx;
 
 Add application settings:
-* Name: CLOSE_RATING_TIME
-* Value: when you want the rating to close (Oslo time zone), for instance 2024-05-11T23:50:00
+* Name: RATING_CLOSING_TIME
+* Value: when you want the rating to close on the format yyyy-MM-ddTHH:mm:ssZ (UTC time) or yyyy-MM-ddTHH:mm:sszzz (with timezone offset)
 
 In *Configuration* go to *General Settings* and set
 * Startup Command: dotnet EurovisionOnMars.Api.dll

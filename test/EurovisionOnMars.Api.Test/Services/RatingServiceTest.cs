@@ -15,19 +15,19 @@ public class RatingServiceTest
     private const int PLAYER_ID = 657;
 
     private readonly Mock<IRatingRepository> _repositoryMock;
-    private readonly Mock<IRateClosingService> _rateClosingServiceMock;
+    private readonly Mock<IRatingClosingService> _ratingClosingServiceMock;
     private readonly Mock<ILogger<RatingService>> _loggerMock;
     private readonly RatingService _service;
 
     public RatingServiceTest()
     {
         _repositoryMock = new Mock<IRatingRepository>();
-        _rateClosingServiceMock = new Mock<IRateClosingService>();
+        _ratingClosingServiceMock = new Mock<IRatingClosingService>();
         _loggerMock = new Mock<ILogger<RatingService>>();
 
         _service = new RatingService(
             _repositoryMock.Object, 
-            _rateClosingServiceMock.Object,
+            _ratingClosingServiceMock.Object,
             _loggerMock.Object);
     }
 
@@ -72,7 +72,7 @@ public class RatingServiceTest
         // assert
         Assert.Equal(expectedSortedRatings, actualRatings);
 
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
@@ -90,7 +90,7 @@ public class RatingServiceTest
             async () => await _service.GetRatingsByPlayer(PLAYER_ID)
             );
         
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
     }
 
@@ -111,7 +111,7 @@ public class RatingServiceTest
         // assert
         Assert.Equal(actualRating, expectedRating);
 
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
@@ -129,7 +129,7 @@ public class RatingServiceTest
             async () => await _service.GetRating(RATING_ID)
             );
 
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
@@ -155,7 +155,7 @@ public class RatingServiceTest
         await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
@@ -205,7 +205,7 @@ public class RatingServiceTest
         await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
@@ -235,7 +235,7 @@ public class RatingServiceTest
         await _service.UpdateRating(RATING_ID, ratingRequest);
 
         // assert
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once);
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
@@ -524,7 +524,7 @@ public class RatingServiceTest
             async () => await _service.UpdateRating(RATING_ID, ratingRequest)
             );
 
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
@@ -583,7 +583,7 @@ public class RatingServiceTest
     {
         // arrange
         var ratingRequest = CreateRatingRequest(1, 2, 3);
-        _rateClosingServiceMock.Setup(m => m.ValidateRatingTime())
+        _ratingClosingServiceMock.Setup(m => m.ValidateRatingTime())
             .Throws<RatingIsClosedException>();
 
         // act and assert
@@ -591,7 +591,7 @@ public class RatingServiceTest
             async () => await _service.UpdateRating(RATING_ID, ratingRequest)
             );
 
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.GetRatingsByPlayer(It.IsAny<int>()), Times.Never());
@@ -617,7 +617,7 @@ public class RatingServiceTest
         await _service.UpdateRating(RATING_ID, rankingRequest);
 
         // assert
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
 
@@ -638,7 +638,7 @@ public class RatingServiceTest
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, rankingRequest));
  
-        _rateClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Never);
