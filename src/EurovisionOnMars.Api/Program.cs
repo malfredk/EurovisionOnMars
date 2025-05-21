@@ -1,3 +1,4 @@
+using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Mappers;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Api.Repositories;
@@ -15,6 +16,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Validate and register CLOSE_RATING_TIME
+var closingRatingTime = ConfigurationValidator.GetAndValidateRatingClosingTime(builder.Configuration);
+builder.Services.AddSingleton(typeof(DateTimeOffset), closingRatingTime);
 
 if (builder.Environment.IsDevelopment())
 {
@@ -37,7 +42,7 @@ builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRatingResultService, RatingResultService>();
 builder.Services.AddScoped<IPlayerResultService, PlayerResultService>();
 builder.Services.AddScoped<IResultService, ResultService>();
-builder.Services.AddScoped<IRateClosingService, RateClosingService>();
+builder.Services.AddScoped<IRatingClosingService, RatingClosingService>();
 
 builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 

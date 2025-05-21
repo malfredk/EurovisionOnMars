@@ -19,16 +19,16 @@ public class RatingService : IRatingService
     private static List<int> SPECIAL_POINTS = new List<int>() { 10, 12 };
 
     private readonly IRatingRepository _repository;
-    private readonly IRateClosingService _rateClosingService;
+    private readonly IRatingClosingService _ratingClosingService;
     private readonly ILogger<RatingService> _logger;
 
     public RatingService(
         IRatingRepository repository,
-        IRateClosingService rateClosingService,
+        IRatingClosingService ratingClosingService,
         ILogger<RatingService> logger)
     {
         _repository = repository;
-        _rateClosingService = rateClosingService;
+        _ratingClosingService = ratingClosingService;
         _logger = logger;
     }
 
@@ -54,7 +54,7 @@ public class RatingService : IRatingService
 
     public async Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto)
     {
-        _rateClosingService.ValidateRatingTime();
+        _ratingClosingService.ValidateRatingTime();
 
         var existingRating = await GetRating(id);
         var oldRanking = existingRating.Ranking;
@@ -70,7 +70,7 @@ public class RatingService : IRatingService
 
     public async Task UpdateRating(int id, int ranking)
     {
-        _rateClosingService.ValidateRatingTime();
+        _ratingClosingService.ValidateRatingTime();
         ValidateRanking(ranking);
 
         var existingRating = await GetRating(id);
