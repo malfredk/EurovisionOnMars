@@ -20,7 +20,7 @@ public class CountryMapperTest
         Assert.Equal(entity.Id, dto.Id);
         Assert.Equal(entity.Number, dto.Number);
         Assert.Equal(entity.Name, dto.Name);
-        Assert.Equal(entity.Ranking, dto.Ranking);
+        Assert.Equal(entity.ActualRank, dto.ActualRank);
     }
 
     private Country CreateEntity()
@@ -30,7 +30,7 @@ public class CountryMapperTest
             Id = 34,
             Number = 45,
             Name = "noreg",
-            Ranking = 6383
+            ActualRank = 6383
         };
     }
 }

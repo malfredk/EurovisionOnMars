@@ -171,9 +171,9 @@ public class PlayerServiceTest
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
         Assert.Equal(username, capturedNewPlayer.Username);
-        Assert.Equal(rating1, capturedNewPlayer.Ratings[0]);
-        Assert.Equal(rating2, capturedNewPlayer.Ratings[1]);
-        Assert.Equal(2, capturedNewPlayer.Ratings.Count);
+        Assert.Equal(rating1, capturedNewPlayer.PlayerRatings[0]);
+        Assert.Equal(rating2, capturedNewPlayer.PlayerRatings[1]);
+        Assert.Equal(2, capturedNewPlayer.PlayerRatings.Count);
 
         _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
         _countryRepositoryMock.Verify(r => r.GetCountries(), Times.Once);
@@ -213,15 +213,15 @@ public class PlayerServiceTest
         _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
     }
 
-    private static Player CreatePlayer(string username, int? ranking)
+    private static Player CreatePlayer(string username, int? rank)
     {
         return new Player
         {
             Username = username,
-            PlayerResult = new PlayerResult 
+            PlayerGameResult = new PlayerGameResult 
             { 
                 PlayerId = 1000,
-                Ranking = ranking
+                Rank = rank
             }
         };
     }
@@ -236,13 +236,13 @@ public class PlayerServiceTest
         };
     }
 
-    private static Rating CreateRating(int countryId, Country country)
+    private static PlayerRating CreateRating(int countryId, Country country)
     {
-        return new Rating
+        return new PlayerRating
         {
             CountryId = countryId,
             Country = country,
-            RatingResult = new RatingResult()
+            RatingGameResult = new RatingGameResult()
         };
     }
 }

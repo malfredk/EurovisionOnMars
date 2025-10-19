@@ -10,10 +10,10 @@ public interface IPlayerMapper
 
 public class PlayerMapper : IPlayerMapper
 {
-    private readonly IRatingMapper _ratingMapper;
-    private readonly IPlayerResultMapper _playerResultMapper;
+    private readonly IPlayerRatingMapper _ratingMapper;
+    private readonly IPlayerGameResultMapper _playerResultMapper;
 
-    public PlayerMapper(IRatingMapper ratingMapper, IPlayerResultMapper playerResultMapper)
+    public PlayerMapper(IPlayerRatingMapper ratingMapper, IPlayerGameResultMapper playerResultMapper)
     {
         _ratingMapper = ratingMapper;
         _playerResultMapper = playerResultMapper;
@@ -21,14 +21,14 @@ public class PlayerMapper : IPlayerMapper
 
     public PlayerDto ToDto(Player entity)
     {
-        var playerResult = entity.PlayerResult is null ? 
-            null : _playerResultMapper.ToDto(entity.PlayerResult!);
+        var playerResult = entity.PlayerGameResult is null ? 
+            null : _playerResultMapper.ToDto(entity.PlayerGameResult!);
         return new PlayerDto
         {
             Id = entity.Id,
             Username = entity.Username,
-            Ratings = Utils.MapList(entity.Ratings, _ratingMapper.ToDto),
-            PlayerResult = playerResult
+            PlayerRatings = Utils.MapList(entity.PlayerRatings, _ratingMapper.ToDto),
+            PlayerGameResult = playerResult
         };
     }
 }

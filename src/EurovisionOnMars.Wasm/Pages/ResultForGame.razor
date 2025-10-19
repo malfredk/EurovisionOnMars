@@ -16,21 +16,21 @@
     </HeaderContent>
     <RowTemplate Context="player">
         <MudTd DataLabel="plassering">
-            @player.PlayerResult.Ranking
-            @if(player.PlayerResult.Ranking == 1)
+            @player.PlayerGameResult.Rank
+            @if(player.PlayerGameResult.Rank == 1)
             {
                 <MudIcon Icon="@MEDAL_ICON" Style="color: #d4af37;"></MudIcon>
             }
-            @if (player.PlayerResult.Ranking == 2)
+            @if (player.PlayerGameResult.Rank == 2)
             {
                 <MudIcon Icon="@MEDAL_ICON" Style="color: #c0c0c0"></MudIcon>
             }
-            @if (player.PlayerResult.Ranking == 3)
+            @if (player.PlayerGameResult.Rank == 3)
             {
                 <MudIcon Icon="@MEDAL_ICON" Style="color: #cd7f32"></MudIcon>
             }
         </MudTd>
-        <MudTd DataLabel="poeng">@player.PlayerResult.Score</MudTd>
+        <MudTd DataLabel="poeng">@player.PlayerGameResult.TotalPoints</MudTd>
         <MudTd DataLabel="spiller">@player.Username</MudTd>
     </RowTemplate>
 </MudTable>

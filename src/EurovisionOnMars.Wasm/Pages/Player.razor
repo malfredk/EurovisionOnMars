@@ -15,8 +15,8 @@
 <NavigationBar PlayerId="Id"></NavigationBar>
 
 <MudTable 
-    T="RatingDto" 
-    Items="@Ratings" 
+    T="PlayerRatingDto" 
+    Items="@PlayerRatings" 
     OnRowClick="HandleSelectRating"
     Breakpoint="Breakpoint.None" 
     Hover=true RowClass="cursor-pointer"
@@ -24,14 +24,14 @@
     <HeaderContent>
         <MudTh>
             <MudTableSortLabel 
-                SortBy="new Func<RatingDto, object>(r => r.Country.Number)">
+                SortBy="new Func<PlayerRatingDto, object>(r => r.Country.Number)">
                     #
             </MudTableSortLabel>
         </MudTh>
         <MudTh>land</MudTh>
         <MudTh>
             <MudTableSortLabel 
-                SortBy="new Func<RatingDto, object>(r => (r.Ranking ?? 0))">
+                SortBy="new Func<PlayerRatingDto, object>(r => (r.Prediction.CalculatedRank ?? 0))">
                     <MudIcon Icon="@PODIUM_ICON"></MudIcon>
             </MudTableSortLabel>
         </MudTh>
@@ -41,17 +41,17 @@
         <MudTd DataLabel="nummer">@rating.Country.Number</MudTd>
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
         <MudTd DataLabel="plassering">
-            @rating.Ranking
+            @rating.Prediction.CalculatedRank
             @if (hasFinishedRating && !HasUniquePointsSum(rating))
             {
                 <MudIconButton 
                     Icon="@Icons.Material.Filled.SwapVert"
-                    OnClick="@(async () => await HandleRanking(rating))">
+                    OnClick="@(async () => await HandleRank(rating))">
                 </MudIconButton>
             }
         </MudTd>
         <MudTd DataLabel="poengsum">
-            @rating.PointsSum
+            @rating.Prediction.TotalGivenPoints
             @for (int tenPointer = 0; tenPointer < NumberOfSpecialPoints(rating, 10); tenPointer++)
             {
                 <MudIcon Icon="@Icons.Material.Filled.StarHalf" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>
@@ -66,7 +66,7 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    public List<RatingDto> Ratings { get; set; } = new List<RatingDto>();
+    public List<PlayerRatingDto> PlayerRatings { get; set; } = new List<PlayerRatingDto>();
 
     private bool hasFinishedRating;
 
@@ -80,7 +80,7 @@
         SetHasFinishedRating();
     }
 
-    private async Task HandleSelectRating(TableRowClickEventArgs<RatingDto> tableRowClickEventArgs)
+    private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
         var parameters = new DialogParameters<RatingDialog>();
@@ -99,9 +99,9 @@
     private void SetHasFinishedRating()
     {
         hasFinishedRating = true;
-        foreach (var rating in Ratings)
+        foreach (var rating in PlayerRatings)
         {
-            if (rating.Ranking == null)
+            if (rating.Prediction.CalculatedRank == null)
             {
                 hasFinishedRating = false;
                 return;
@@ -114,7 +114,7 @@
         var response = await Http.GetAsync($"/api/Ratings/{Id}");
         if (response.IsSuccessStatusCode)
         {
-            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
+            PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingDto>>();
             Console.WriteLine($"Got ratings for player with id={Id}");
         }
         else
@@ -124,7 +124,7 @@
         }
     }
 
-    private int NumberOfSpecialPoints(RatingDto rating, int specialPoints)
+    private int NumberOfSpecialPoints(PlayerRatingDto rating, int specialPoints)
     {
         return ConvertBoolToInt(HasGivenSpecialPoints(rating.Category1Points, specialPoints))
         + ConvertBoolToInt(HasGivenSpecialPoints(rating.Category2Points, specialPoints))
@@ -141,17 +141,17 @@
         return categoryPoints != null && categoryPoints == specialPoints;
     }
 
-    private bool HasUniquePointsSum(RatingDto rating)
+    private bool HasUniquePointsSum(PlayerRatingDto rating)
     {
-        var pointsSum = rating.PointsSum;
+        var pointsSum = rating.Prediction.TotalGivenPoints;
         if (pointsSum == null)
         {
             return true;
         }
 
-        foreach (var otherRating in Ratings)
+        foreach (var otherRating in PlayerRatings)
         {
-            var otherPointsSum = otherRating.PointsSum;
+            var otherPointsSum = otherRating.Prediction.TotalGivenPoints;
             if (otherRating.Id != rating.Id
                 && otherPointsSum != null
                 && pointsSum == otherPointsSum)
@@ -162,13 +162,13 @@
         return true;
     }
 
-    private async Task HandleRanking(RatingDto rating)
+    private async Task HandleRank(PlayerRatingDto rating)
     {
-        var parameters = new DialogParameters<RankingDialog>();
+        var parameters = new DialogParameters<RankDialog>();
         parameters.Add(x => x.Rating, rating);
-        parameters.Add(x => x.Ratings, Ratings);
+        parameters.Add(x => x.Ratings, PlayerRatings);
 
-        var dialogResponse = await DialogService.ShowAsync<RankingDialog>($"{rating.Country.Name}", parameters);
+        var dialogResponse = await DialogService.ShowAsync<RankDialog>($"{rating.Country.Name}", parameters);
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {

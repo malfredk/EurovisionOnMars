@@ -35,7 +35,7 @@ public class PlayerService : IPlayerService
     {
         var players = await _playerRepository.GetPlayers();
         return players
-            .OrderBy(p => p.PlayerResult.Ranking ?? int.MaxValue)
+            .OrderBy(p => p.PlayerGameResult.Rank ?? int.MaxValue)
             .ToImmutableList();
     }
 
@@ -80,14 +80,14 @@ public class PlayerService : IPlayerService
         return new Player
         {
             Username = username,
-            Ratings = await CreateInitialRatings(),
-            PlayerResult = new PlayerResult()
+            PlayerRatings = await CreateInitialRatings(),
+            PlayerGameResult = new PlayerGameResult()
         };
     }
 
-    private async Task<List<Rating>> CreateInitialRatings()
+    private async Task<List<PlayerRating>> CreateInitialRatings()
     {
-        var ratings = new List<Rating>();
+        var ratings = new List<PlayerRating>();
         var countries = await _countryRepository.GetCountries();
         foreach (var country in countries)
         {
@@ -96,13 +96,13 @@ public class PlayerService : IPlayerService
         return ratings;
     }
 
-    private Rating CreateInitialRating(Country country)
+    private PlayerRating CreateInitialRating(Country country)
     {
-        return new Rating
+        return new PlayerRating
         {
             CountryId = country.Id,
             Country = country,
-            RatingResult = new RatingResult()
+            RatingGameResult = new RatingGameResult()
         };
     }
 

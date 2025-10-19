@@ -5,17 +5,17 @@ namespace EurovisionOnMars.Api.Test.Mappers;
 
 public class PlayerResultMapperTest
 {
-    private readonly PlayerResultMapper _mapper = new PlayerResultMapper();
+    private readonly PlayerGameResultMapper _mapper = new PlayerGameResultMapper();
 
     [Fact]
     public void ToDto()
     {
         // arrange
-        var entity = new PlayerResult
+        var entity = new PlayerGameResult
         {
             Id = 82,
-            Ranking = 28,
-            Score = -23,
+            Rank = 28,
+            TotalPoints = -23,
             PlayerId = 1,
             Player = new Player { Id = 2, Username = "te" }
         };
@@ -25,7 +25,7 @@ public class PlayerResultMapperTest
 
         // assert
         Assert.Equal(entity.Id, dto.Id);
-        Assert.Equal(entity.Ranking, dto.Ranking);
-        Assert.Equal(entity.Score, dto.Score);
+        Assert.Equal(entity.Rank, dto.Rank);
+        Assert.Equal(entity.TotalPoints, dto.TotalPoints);
     }
 }

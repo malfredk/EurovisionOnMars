@@ -103,12 +103,12 @@ public class CountryServiceTest
     [InlineData(1)]
     [InlineData(26)]
     [InlineData(13)]
-    public async void UpdateCountry_Valid(int ranking)
+    public async void UpdateCountry_Valid(int rank)
     {
         // arrange
         var id = 974678;
         var existingCountry = CreateCountry(null);
-        var updatedCountry = CreateCountry(ranking);
+        var updatedCountry = CreateCountry(rank);
         var expectedCountry = CreateCountry("dska", 90);
 
         _countryRepositoryMock.Setup(m => m.GetCountry(id))
@@ -117,7 +117,7 @@ public class CountryServiceTest
             .ReturnsAsync(expectedCountry);
 
         // act
-        var actualCountry = await _service.UpdateCountry(id, ranking);
+        var actualCountry = await _service.UpdateCountry(id, rank);
 
         // assert
         Assert.Equal(expectedCountry, actualCountry);
@@ -130,13 +130,13 @@ public class CountryServiceTest
     [InlineData(0)]
     [InlineData(-10)]
     [InlineData(27)]
-    public async void UpdateCountry_Invalid(int ranking)
+    public async void UpdateCountry_Invalid(int rank)
     {
         // arrange
         var id = 974678;
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateCountry(id, ranking));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateCountry(id, rank));
 
         _countryRepositoryMock.Verify(m => m.GetCountry(It.IsAny<int>()), Times.Never);
         _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
@@ -176,13 +176,13 @@ public class CountryServiceTest
         };
     }
 
-    private Country CreateCountry(int? ranking)
+    private Country CreateCountry(int? rank)
     {
         return new Country
         {
             Name = "danmark",
             Number = 1,
-            Ranking = ranking
+            ActualRank = rank
         };
     }
 }

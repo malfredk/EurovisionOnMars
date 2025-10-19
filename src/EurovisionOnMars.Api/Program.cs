@@ -55,10 +55,10 @@ builder.Services.AddScoped<IPlayerResultRepository, PlayerResultRepository>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
-builder.Services.AddTransient<IRatingMapper, RatingMapper>();
+builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
-builder.Services.AddTransient<IPlayerResultMapper, PlayerResultMapper>();
-builder.Services.AddTransient<IRatingResultMapper, RatingResultMapper>();
+builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
+builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
 
 Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)

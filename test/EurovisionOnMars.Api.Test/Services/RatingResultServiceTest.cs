@@ -49,7 +49,7 @@ public class RatingResultServiceTest
         var ratingNull = CreateRating(country20thPlace, null);
 
         _ratingRepositoryMock.Setup(m => m.GetRatingsByPlayer(playerId))
-            .ReturnsAsync(new List<Rating>()
+            .ReturnsAsync(new List<PlayerRating>()
             { 
                 rating1stPlace,
                 ratingShared2ndPlace1,
@@ -66,38 +66,38 @@ public class RatingResultServiceTest
         // assert
 
         // correct 1st place rating
-        Assert.Equal(0, rating1stPlace.RatingResult.RankingDifference);
-        Assert.Equal(-25, rating1stPlace.RatingResult.BonusPoints);
+        Assert.Equal(0, rating1stPlace.RatingGameResult.RankDifference);
+        Assert.Equal(-25, rating1stPlace.RatingGameResult.BonusPoints);
 
         // correct shared 2nd place rating
-        Assert.Equal(0, ratingShared2ndPlace1.RatingResult.RankingDifference);
-        Assert.Equal(0, ratingShared2ndPlace1.RatingResult.BonusPoints);
+        Assert.Equal(0, ratingShared2ndPlace1.RatingGameResult.RankDifference);
+        Assert.Equal(0, ratingShared2ndPlace1.RatingGameResult.BonusPoints);
 
         // wrong shared 2nd place rating
-        Assert.Equal(1, ratingShared2ndPlace2.RatingResult.RankingDifference);
-        Assert.Equal(0, ratingShared2ndPlace2.RatingResult.BonusPoints);
+        Assert.Equal(1, ratingShared2ndPlace2.RatingGameResult.RankDifference);
+        Assert.Equal(0, ratingShared2ndPlace2.RatingGameResult.BonusPoints);
 
         // correct 11th place rating
-        Assert.Equal(0, rating11thPlace.RatingResult.RankingDifference);
-        Assert.Equal(0, rating11thPlace.RatingResult.BonusPoints);
+        Assert.Equal(0, rating11thPlace.RatingGameResult.RankDifference);
+        Assert.Equal(0, rating11thPlace.RatingGameResult.BonusPoints);
 
         // wrong 6th place rating
-        Assert.Equal(8, rating6thPlace.RatingResult.RankingDifference);
-        Assert.Equal(0, rating6thPlace.RatingResult.BonusPoints);
+        Assert.Equal(8, rating6thPlace.RatingGameResult.RankDifference);
+        Assert.Equal(0, rating6thPlace.RatingGameResult.BonusPoints);
 
         // wrong 17th place rating
-        Assert.Equal(-12, rating17thPlace.RatingResult.RankingDifference);
-        Assert.Equal(0, rating17thPlace.RatingResult.BonusPoints);
+        Assert.Equal(-12, rating17thPlace.RatingGameResult.RankDifference);
+        Assert.Equal(0, rating17thPlace.RatingGameResult.BonusPoints);
 
         // no rating
-        Assert.Equal(26, ratingNull.RatingResult.RankingDifference);
-        Assert.Equal(0, ratingNull.RatingResult.BonusPoints);
+        Assert.Equal(26, ratingNull.RatingGameResult.RankDifference);
+        Assert.Equal(0, ratingNull.RatingGameResult.BonusPoints);
 
-        _ratingResultRepositoryMock.Verify(m => m.UpdateRatingResult(It.IsAny<RatingResult>()), Times.Exactly(7));
+        _ratingResultRepositoryMock.Verify(m => m.UpdateRatingResult(It.IsAny<RatingGameResult>()), Times.Exactly(7));
     }
 
     [Fact]
-    public async void CalculateRatingResults_MissingCountryRanking()
+    public async void CalculateRatingResults_MissingCountryRank()
     {
         // arrange
         var playerId = 67;
@@ -105,29 +105,37 @@ public class RatingResultServiceTest
         var rating = CreateRating(country, 26);
 
         _ratingRepositoryMock.Setup(m => m.GetRatingsByPlayer(playerId))
-            .ReturnsAsync(new List<Rating>() { rating }.ToImmutableList());
+            .ReturnsAsync(new List<PlayerRating>() { rating }.ToImmutableList());
 
         // act and assert
         await Assert.ThrowsAsync<Exception>(async () => await _service.CalculateRatingResults(playerId));
     }
 
-    private static Country CreateCountry(int? ranking)
+    private static Country CreateCountry(int? rank)
     {
         return new Country
         {
             Number = 45,
             Name = "tets",
-            Ranking = ranking,
+            ActualRank = rank,
         };
     }
     
-    private static Rating CreateRating(Country country, int? ranking)
+    private static PlayerRating CreateRating(Country country, int? rank)
     {
-        return new Rating
+        return new PlayerRating
         {
-            Ranking = ranking,
+            Prediction = CreatePrediction(rank),
             Country = country,
-            RatingResult = new RatingResult()
+            RatingGameResult = new RatingGameResult()
+        };
+    }
+
+    private static Prediction CreatePrediction(int? calculatedRank)
+    {
+        return new Prediction
+        {
+            CalculatedRank = calculatedRank
         };
     }
 }

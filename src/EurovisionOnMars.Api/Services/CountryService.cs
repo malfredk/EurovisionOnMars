@@ -10,7 +10,7 @@ public interface ICountryService
 {
     Task<ImmutableList<Country>> GetCountries();
     Task<Country> CreateCountry(NewCountryRequestDto country);
-    Task<Country> UpdateCountry(int id, int ranking);
+    Task<Country> UpdateCountry(int id, int rank);
 }
 
 public class CountryService : ICountryService
@@ -95,11 +95,11 @@ public class CountryService : ICountryService
         return await _countryRepository.CreateCountry(country);
     }
 
-    public async Task<Country> UpdateCountry(int id, int ranking)
+    public async Task<Country> UpdateCountry(int id, int rank)
     {
-        ValidateNumber(ranking);
+        ValidateNumber(rank);
         var country = await GetCountry(id);
-        var updatedCountry = UpdateEntity(country, ranking);
+        var updatedCountry = UpdateEntity(country, rank);
         return await _countryRepository.UpdateCountry(updatedCountry);
     }
 
@@ -121,7 +121,7 @@ public class CountryService : ICountryService
 
         if (!isValid)
         {
-            throw new ArgumentException("Invalid number or ranking for country");
+            throw new ArgumentException("Invalid number or rank for country");
         }
     }
 
@@ -147,9 +147,9 @@ public class CountryService : ICountryService
         };
     }
 
-    private Country UpdateEntity(Country entity, int ranking)
+    private Country UpdateEntity(Country entity, int rank)
     {
-        entity.Ranking = ranking;
+        entity.ActualRank = rank;
         return entity;
     }
 }

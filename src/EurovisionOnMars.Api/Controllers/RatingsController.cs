@@ -12,13 +12,13 @@ public class RatingsController : ControllerBase
 {
     private readonly IRatingService _service;
     private readonly ILogger<RatingsController> _logger;
-    private readonly IRatingMapper _mapper;
+    private readonly IPlayerRatingMapper _mapper;
 
     public RatingsController
         (
         IRatingService service,
         ILogger<RatingsController> logger,
-        IRatingMapper mapper
+        IPlayerRatingMapper mapper
         )
     {
         _service = service;
@@ -27,7 +27,7 @@ public class RatingsController : ControllerBase
     }
 
     [HttpGet("{playerId:int}")]
-    public async Task<ActionResult<IEnumerable<RatingDto>>> GetRatings(int playerId)
+    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetRatings(int playerId)
     {
         var ratings = await _service.GetRatingsByPlayer(playerId);
         var ratingDtos = Utils.MapList(ratings.ToList(), _mapper.ToDto);
@@ -41,10 +41,10 @@ public class RatingsController : ControllerBase
         return Ok();
     }
 
-    [HttpPatch("{id:int}/Ranking")]
-    public async Task<ActionResult> UpdateRating(int id, [FromBody] int ranking)
+    [HttpPatch("{id:int}/Rank")]
+    public async Task<ActionResult> UpdateRating(int id, [FromBody] int rank)
     {
-        await _service.UpdateRating(id, ranking);
+        await _service.UpdateRating(id, rank);
         return Ok();
     }
 }

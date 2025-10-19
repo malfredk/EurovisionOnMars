@@ -17,7 +17,7 @@ public class CountryMapper : ICountryMapper
             Id = entity.Id,
             Number = entity.Number,
             Name = entity.Name,
-            Ranking = entity.Ranking
+            ActualRank = entity.ActualRank
         };
     }
 }

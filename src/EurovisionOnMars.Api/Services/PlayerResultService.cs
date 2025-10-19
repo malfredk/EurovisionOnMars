@@ -6,8 +6,8 @@ namespace EurovisionOnMars.Api.Services;
 
 public interface IPlayerResultService
 {
-    Task<PlayerResult> CalculatePlayerScore(int playerId);
-    Task CalculatePlayerRankings();
+    Task<PlayerGameResult> CalculatePlayerScore(int playerId);
+    Task CalculatePlayerRanks();
 }
 
 public class PlayerResultService : IPlayerResultService
@@ -28,17 +28,17 @@ public class PlayerResultService : IPlayerResultService
         _logger = logger;
     }
 
-    public async Task<PlayerResult> CalculatePlayerScore(int playerId)
+    public async Task<PlayerGameResult> CalculatePlayerScore(int playerId)
     {
         var playerResult = await _playerResultRepository.GetPlayerResult(playerId);
-        playerResult.Score = await CalculateScore(playerId);
+        playerResult.TotalPoints = await CalculateScore(playerId);
         return await _playerResultRepository.UpdatePlayerResult(playerResult);
     }
 
-    public async Task CalculatePlayerRankings()
+    public async Task CalculatePlayerRanks()
     {
         var playerResults = await _playerResultRepository.GetPlayerResults();
-        playerResults = SetRankings(playerResults);
+        playerResults = SetRanks(playerResults);
 
         foreach (var playerResult in playerResults)
         {
@@ -46,18 +46,18 @@ public class PlayerResultService : IPlayerResultService
         }
     }
 
-    private ImmutableList<PlayerResult> SetRankings(ImmutableList<PlayerResult> playerResults)
+    private ImmutableList<PlayerGameResult> SetRanks(ImmutableList<PlayerGameResult> playerResults)
     {
-        var sortedPlayerResults = playerResults.Sort((r1, r2) => (r1.Score ?? 0).CompareTo(r2.Score ?? 0))
+        var sortedPlayerResults = playerResults.Sort((r1, r2) => (r1.TotalPoints ?? 0).CompareTo(r2.TotalPoints ?? 0))
             .ToList();
 
         int? previousScore = null; // initiated to ensure first currentScore is different
         int? currentScore;
-        int ranking = 0;
-        int sameRankingCount = 1;
+        int rank = 0;
+        int sameRankCount = 1;
         foreach (var playerResult in sortedPlayerResults)
         {
-            currentScore = playerResult.Score;
+            currentScore = playerResult.TotalPoints;
 
             if (currentScore == null)
             {
@@ -66,16 +66,16 @@ public class PlayerResultService : IPlayerResultService
 
             if (currentScore == previousScore)
             {
-                sameRankingCount++;
+                sameRankCount++;
             }
             else
             {
 
-                ranking += sameRankingCount;
-                sameRankingCount = 1;
+                rank += sameRankCount;
+                sameRankCount = 1;
             }
 
-            playerResult.Ranking = ranking;
+            playerResult.Rank = rank;
             previousScore = currentScore;
         }
         return sortedPlayerResults.ToImmutableList();
@@ -85,6 +85,6 @@ public class PlayerResultService : IPlayerResultService
     {
         var ratingResults = await _ratingResultRepository.GetRatingResultsForPlayer(playerId);
         return ratingResults.Sum(r => r.BonusPoints ?? throw new Exception("Missing bonus points"))
-            + ratingResults.Sum(r => Math.Abs(r.RankingDifference ?? throw new Exception("Missing ranking difference")));
+            + ratingResults.Sum(r => Math.Abs(r.RankDifference ?? throw new Exception("Missing rank difference")));
     }
 }

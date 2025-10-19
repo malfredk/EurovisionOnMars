@@ -52,7 +52,7 @@ public class ResultServiceTest
         int loop2Call2Order = -1;
         int finalCallOrder = -1;
 
-        _playerResultServiceMock.Setup(m => m.CalculatePlayerRankings())
+        _playerResultServiceMock.Setup(m => m.CalculatePlayerRanks())
             .Callback(() => finalCallOrder = previousCallOrder++);
 
         _ratingResultServiceMock.Setup(m => m.CalculateRatingResults(player1Id))
@@ -81,7 +81,7 @@ public class ResultServiceTest
         _playerResultServiceMock.Verify(m => m.CalculatePlayerScore(player2Id), Times.Once);
         Assert.Equal(3, loop2Call2Order);
 
-        _playerResultServiceMock.Verify(m => m.CalculatePlayerRankings(), Times.Once);
+        _playerResultServiceMock.Verify(m => m.CalculatePlayerRanks(), Times.Once);
         Assert.Equal(4, finalCallOrder);
     }
 

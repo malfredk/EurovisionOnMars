@@ -41,7 +41,7 @@ public class ResultService : IResultService
             await _playerResultService.CalculatePlayerScore(playerId);
         }
 
-        // calculate ranking among players
-        await _playerResultService.CalculatePlayerRankings();
+        // calculate rank among players
+        await _playerResultService.CalculatePlayerRanks();
     }
 }

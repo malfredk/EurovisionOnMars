@@ -7,10 +7,10 @@
             <MudGrid>
                 <MudItem>
                     <MudNumericField 
-                        @bind-Value="ranking"
+                        @bind-Value="rank"
                         Label="plassering"
                         Variant="Variant.Outlined"
-                        Step="1" Min="minRanking" Max="maxRanking"/>
+                        Step="1" Min="minRank" Max="maxRank"/>
                 </MudItem>
             </MudGrid>
         </MudForm>
@@ -33,18 +33,18 @@
 @code {
     [CascadingParameter] MudDialogInstance Dialog { get; set; }
 
-    [Parameter] public RatingDto Rating { get; set; }
-    [Parameter] public List<RatingDto> Ratings { get; set; }
+    [Parameter] public PlayerRatingDto Rating { get; set; }
+    [Parameter] public List<PlayerRatingDto> Ratings { get; set; }
 
-    private int ranking;
-    private int minRanking;
-    private int maxRanking;
+    private int rank;
+    private int minRank;
+    private int maxRank;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        this.ranking = (int)Rating.Ranking!;
-        SetRankingLimits();
+        this.rank = (int)Rating.Prediction.CalculatedRank!;
+        SetRankLimits();
     }
 
     private void Cancel()
@@ -54,7 +54,7 @@
 
     private async Task UpdateRating()
     {
-        var response = await Http.PatchAsJsonAsync<int>($"/api/Ratings/{Rating.Id}/Ranking", ranking);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Ratings/{Rating.Id}/Rank", rank);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("plassering lagret", Severity.Success);
@@ -73,15 +73,15 @@
         }
     }
 
-    private void SetRankingLimits()
+    private void SetRankLimits()
     {
         var samePointsSumCount = 0;
-        var ratingsWithBetterRankingCount = 0;
+        var ratingsWithBetterRankCount = 0;
 
-        var pointsSum = Rating.PointsSum;
+        var pointsSum = Rating.Prediction.TotalGivenPoints;
         foreach (var otherRating in Ratings)
         {
-            var otherPointsSum = otherRating.PointsSum;
+            var otherPointsSum = otherRating.Prediction.TotalGivenPoints;
             if (otherPointsSum != null
                 && pointsSum == otherPointsSum)
             {
@@ -89,11 +89,11 @@
             }
             if (otherPointsSum > pointsSum)
             {
-                ratingsWithBetterRankingCount++;
+                ratingsWithBetterRankCount++;
             }
         }
 
-        minRanking = ratingsWithBetterRankingCount + 1;
-        maxRanking = minRanking + samePointsSumCount - 1;
+        minRank = ratingsWithBetterRankCount + 1;
+        maxRank = minRank + samePointsSumCount - 1;
     }
 }

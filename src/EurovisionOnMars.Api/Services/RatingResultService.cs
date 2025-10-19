@@ -35,74 +35,74 @@ public class RatingResultService : IRatingResultService
             throw new KeyNotFoundException($"Player with id={playerId} is missing ratings");
         }
 
-        int rankingDifference;
+        int rankDifference;
         int bonusPoints;
         foreach (var rating in ratings)
         {
-            rankingDifference = CalculateRankingDifference(rating);
-            bonusPoints = CalculateBonusPoints(rating, ratings, rankingDifference);
-            await UpdateRatingResult(rating, rankingDifference, bonusPoints);
+            rankDifference = CalculateRankDifference(rating);
+            bonusPoints = CalculateBonusPoints(rating, ratings, rankDifference);
+            await UpdateRatingResult(rating, rankDifference, bonusPoints);
         }
     }
 
-    private async Task UpdateRatingResult(Rating rating, int? rankingDifference, int? bonusPoints)
+    private async Task UpdateRatingResult(PlayerRating rating, int? rankDifference, int? bonusPoints)
     {
-        if (rankingDifference == null)
+        if (rankDifference == null)
         {
             return;
         }
 
-        var ratingResult = rating.RatingResult;
-        ratingResult.RankingDifference = rankingDifference;
+        var ratingResult = rating.RatingGameResult;
+        ratingResult.RankDifference = rankDifference;
         ratingResult.BonusPoints = bonusPoints;
 
         await _ratingResultRepository.UpdateRatingResult(ratingResult);
         return;
     }
 
-    private int CalculateRankingDifference(Rating rating)
+    private int CalculateRankDifference(PlayerRating rating)
     {
-        var actualRanking = rating.Country.Ranking;
-        var expectedRanking = rating.Ranking;
+        var actualRank = rating.Country.ActualRank;
+        var expectedRank = rating.Prediction.CalculatedRank;
 
-        if (actualRanking == null)
+        if (actualRank == null)
         {
-            throw new Exception("Country is missing ranking");
+            throw new Exception("Country is missing rank");
         }
         // player is penalized for not rating a country
-        else if (expectedRanking == null)
+        else if (expectedRank == null)
         {
             return 26;
         }
         else
         {
-            return (int)(actualRanking - expectedRanking);
+            return (int)(actualRank - expectedRank);
         }
     }
 
-    private int CalculateBonusPoints(Rating rating, ImmutableList<Rating> ratings, int rankingDifference)
+    private int CalculateBonusPoints(PlayerRating rating, ImmutableList<PlayerRating> ratings, int rankDifference)
     {
-        if (rankingDifference == 0 && HasUniqueRanking(rating, ratings))
+        if (rankDifference == 0 && HasUniqueRank(rating, ratings))
         {
-            return DetermineBonusPoints((int)rating.Ranking!);
+            return DetermineBonusPoints((int)rating.Prediction.CalculatedRank!);
         }
 
         return 0;
     }
 
-    private bool HasUniqueRanking(Rating rating, ImmutableList<Rating> ratings)
+    private bool HasUniqueRank(PlayerRating rating, ImmutableList<PlayerRating> ratings)
     {
-        var sameRankingList = ratings.Where(r => r.Ranking == rating.Ranking);
-        if (sameRankingList.Count() == 1)
+        var sameRankList = ratings.Where(r => r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank);
+        if (sameRankList.Count() == 1)
         {
             return true;
         }
         return false;
     }
 
-    private int DetermineBonusPoints(int ranking)
+    private int DetermineBonusPoints(int rank)
     {
-        switch (ranking)
+        switch (rank)
         {
             case 1:
                 return -25;

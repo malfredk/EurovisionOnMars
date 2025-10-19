@@ -8,9 +8,9 @@ namespace EurovisionOnMars.Api.Repositories;
 
 public interface IPlayerResultRepository
 {
-    Task<ImmutableList<PlayerResult>> GetPlayerResults();
-    Task<PlayerResult?> GetPlayerResult(int playerId);
-    Task<PlayerResult> UpdatePlayerResult(PlayerResult playerResult);
+    Task<ImmutableList<PlayerGameResult>> GetPlayerResults();
+    Task<PlayerGameResult?> GetPlayerResult(int playerId);
+    Task<PlayerGameResult> UpdatePlayerResult(PlayerGameResult playerResult);
 }
 
 public class PlayerResultRepository : IPlayerResultRepository
@@ -24,23 +24,23 @@ public class PlayerResultRepository : IPlayerResultRepository
         _logger = logger;
     }
 
-    public async Task<ImmutableList<PlayerResult>> GetPlayerResults()
+    public async Task<ImmutableList<PlayerGameResult>> GetPlayerResults()
     {
         _logger.LogDebug("Getting all player results.");
         var playerResults = await _context.PlayerResults.ToListAsync();
         return playerResults.ToImmutableList();
     }
 
-    public async Task<PlayerResult?> GetPlayerResult(int playerId)
+    public async Task<PlayerGameResult?> GetPlayerResult(int playerId)
     {
         _logger.LogDebug("Getting player result for player with id={playerId}", playerId);
         return await _context.Players
             .Where(p => p.Id == playerId)
-            .Select(p => p.PlayerResult)
+            .Select(p => p.PlayerGameResult)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<PlayerResult> UpdatePlayerResult(PlayerResult playerResult)
+    public async Task<PlayerGameResult> UpdatePlayerResult(PlayerGameResult playerResult)
     {
         _logger.LogDebug("Updating player result: {playerResult}.", JsonSerializer.Serialize(playerResult));
         var updatedPlayerResult = _context.PlayerResults.Update(playerResult);

@@ -8,10 +8,10 @@ namespace EurovisionOnMars.Api.Repositories;
 
 public interface IRatingRepository
 {
-    Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId);
-    Task<Rating?> GetRating(int id);
-    Task<Rating> CreateRating(Rating rating);
-    Task<Rating> UpdateRating(Rating rating);
+    Task<ImmutableList<PlayerRating>> GetRatingsByPlayer(int playerId);
+    Task<PlayerRating?> GetRating(int id);
+    Task<PlayerRating> CreateRating(PlayerRating rating);
+    Task<PlayerRating> UpdateRating(PlayerRating rating);
 }
 
 public class RatingRepository : IRatingRepository
@@ -25,18 +25,18 @@ public class RatingRepository : IRatingRepository
         _logger = logger;
     }
 
-    public async Task<ImmutableList<Rating>> GetRatingsByPlayer(int playerId)
+    public async Task<ImmutableList<PlayerRating>> GetRatingsByPlayer(int playerId)
     {
         _logger.LogDebug("Getting all ratings for player with id={playerId}.", playerId);
         var ratings = await _context.Ratings
             .Where(r => r.PlayerId == playerId)
             .Include(r => r.Country)
-            .Include(r => r.RatingResult)
+            .Include(r => r.RatingGameResult)
             .ToListAsync();
         return ratings.ToImmutableList();
     }
 
-    public async Task<Rating?> GetRating(int id)
+    public async Task<PlayerRating?> GetRating(int id)
     {
         _logger.LogDebug("Getting rating with id={id}.", id);
         return await _context.Ratings
@@ -44,7 +44,7 @@ public class RatingRepository : IRatingRepository
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
-    public async Task<Rating> CreateRating(Rating rating)
+    public async Task<PlayerRating> CreateRating(PlayerRating rating)
     {
         _logger.LogDebug("Creating rating: {rating}.", JsonSerializer.Serialize(rating));
         _context.Ratings.Add(rating);
@@ -52,7 +52,7 @@ public class RatingRepository : IRatingRepository
         return rating;
     }
 
-    public async Task<Rating> UpdateRating(Rating rating)
+    public async Task<PlayerRating> UpdateRating(PlayerRating rating)
     {
         _logger.LogDebug("Updating rating: {rating}.", JsonSerializer.Serialize(rating));
         var updatedRating = _context.Ratings.Update(rating);

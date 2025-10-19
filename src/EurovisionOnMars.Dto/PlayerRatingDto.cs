@@ -1,12 +1,11 @@
 ﻿namespace EurovisionOnMars.Dto;
 
-public record RatingDto : IdBaseDto
+public record PlayerRatingDto : IdBaseDto
 {
     public int? Category1Points { get; set; }
     public int? Category2Points { get; set; }
     public int? Category3Points { get; set; }
-    public int? PointsSum { get; set; }
-    public int? Ranking { get; set; }
+    public PredictionDto? Prediction { get; set; }
     public CountryDto? Country { get; set; }
-    public RatingResultDto? RatingResult { get; set; }
+    public RatingGameResultDto? RatingGameResult { get; set; }
 }

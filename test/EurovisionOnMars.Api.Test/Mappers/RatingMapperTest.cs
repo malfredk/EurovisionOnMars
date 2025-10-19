@@ -8,16 +8,18 @@ namespace EurovisionOnMars.Api.Test.Mappers;
 public class RatingMapperTest
 {
     private readonly Mock<ICountryMapper> _countryMapperMock;
-    private readonly Mock<IRatingResultMapper> _ratingResultMapperMock;
+    private readonly Mock<IRatingGameResultMapper> _ratingResultMapperMock;
+    private readonly Mock<IPredictionMapper> _predictionMapperMock;
 
-    private readonly RatingMapper _mapper;
+    private readonly PlayerRatingMapper _mapper;
 
     public RatingMapperTest()
     {
         _countryMapperMock = new Mock<ICountryMapper>();
-        _ratingResultMapperMock = new Mock<IRatingResultMapper>();
+        _ratingResultMapperMock = new Mock<IRatingGameResultMapper>();
+        _predictionMapperMock = new Mock<IPredictionMapper>();
 
-        _mapper = new RatingMapper(_countryMapperMock.Object, _ratingResultMapperMock.Object);
+        _mapper = new PlayerRatingMapper(_countryMapperMock.Object, _ratingResultMapperMock.Object, _predictionMapperMock.Object);
     }
     
     [Fact]
@@ -27,17 +29,23 @@ public class RatingMapperTest
         var countryEntity = CreateCountryEntity();
         var countryDto = CreateCountryDto();
 
-        var resultEntity = new RatingResult { Id = 567892 };
-        var resultDto = new RatingResultDto { Id = 29 };
+        var resultEntity = new RatingGameResult { Id = 567892 };
+        var resultDto = new RatingGameResultDto { Id = 29 };
+
+        var predictionEntity = new Prediction { Id = 100689 };
+        var predictionDto = new PredictionDto { Id = 689 };
 
         var entity = CreateRatingEntity();
         entity.Country = countryEntity;
-        entity.RatingResult = resultEntity;
+        entity.RatingGameResult = resultEntity;
+        entity.Prediction = predictionEntity;
 
         _countryMapperMock.Setup(c => c.ToDto(countryEntity))
             .Returns(countryDto);
         _ratingResultMapperMock.Setup(m => m.ToDto(resultEntity))
             .Returns(resultDto);
+        _predictionMapperMock.Setup(m => m.ToDto(predictionEntity))
+            .Returns(predictionDto);
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -47,19 +55,18 @@ public class RatingMapperTest
         Assert.Equal(entity.Category1Points, dto.Category1Points);
         Assert.Equal(entity.Category2Points, dto.Category2Points);
         Assert.Equal(entity.Category3Points, dto.Category3Points);
-        Assert.Equal(entity.PointsSum, dto.PointsSum);
-        Assert.Equal(entity.Ranking, dto.Ranking);
+        Assert.Equal(predictionDto, dto.Prediction);
         Assert.Equal(countryDto, dto.Country);
-        Assert.Equal(resultDto, dto.RatingResult);
+        Assert.Equal(resultDto, dto.RatingGameResult);
 
         _countryMapperMock.Verify(c => c.ToDto(countryEntity), Times.Once());
         _ratingResultMapperMock.Verify(m => m.ToDto(resultEntity), Times.Once());
     }
 
-    private Rating CreateRatingEntity()
+    private PlayerRating CreateRatingEntity()
     {
         var playerEntity = new Player { Username = "jadda" };
-        return new Rating
+        return new PlayerRating
         {
             Id = 34,
             Category1Points = 1,
@@ -67,8 +74,6 @@ public class RatingMapperTest
             Category3Points = 3,
             PlayerId = 788888,
             Player = playerEntity,
-            PointsSum = 9000,
-            Ranking = 26,
             CountryId = 5678
         };
     }

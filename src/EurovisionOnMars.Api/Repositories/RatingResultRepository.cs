@@ -8,8 +8,8 @@ namespace EurovisionOnMars.Api.Repositories;
 
 public interface IRatingResultRepository
 {
-    Task<ImmutableList<RatingResult>> GetRatingResultsForPlayer(int playerId);
-    Task<RatingResult> UpdateRatingResult(RatingResult ratingResult);
+    Task<ImmutableList<RatingGameResult>> GetRatingResultsForPlayer(int playerId);
+    Task<RatingGameResult> UpdateRatingResult(RatingGameResult ratingResult);
 }
 
 public class RatingResultRepository : IRatingResultRepository
@@ -23,18 +23,18 @@ public class RatingResultRepository : IRatingResultRepository
         _logger = logger;
     }
 
-    public async Task<ImmutableList<RatingResult>> GetRatingResultsForPlayer(int playerId)
+    public async Task<ImmutableList<RatingGameResult>> GetRatingResultsForPlayer(int playerId)
     {
         _logger.LogDebug("Getting rating results for player with id={playerId}.", playerId);
         var ratingResults = await _context.Players
             .Where(p => p.Id == playerId)
-            .SelectMany(p => p.Ratings)
-            .Select(r => r.RatingResult)
+            .SelectMany(p => p.PlayerRatings)
+            .Select(r => r.RatingGameResult)
             .ToListAsync();
         return ratingResults.ToImmutableList();
     }
 
-    public async Task<RatingResult> UpdateRatingResult(RatingResult ratingResult)
+    public async Task<RatingGameResult> UpdateRatingResult(RatingGameResult ratingResult)
     {
         _logger.LogDebug("Updating rating result: {ratingResult}.", JsonSerializer.Serialize(ratingResult));
         var updatedRatingResult = _context.RatingResults.Update(ratingResult);

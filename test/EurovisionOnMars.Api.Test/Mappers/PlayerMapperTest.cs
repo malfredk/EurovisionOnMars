@@ -7,14 +7,14 @@ namespace EurovisionOnMars.Api.Test.Mappers;
 
 public class PlayerMapperTest
 {    
-    private readonly Mock<IRatingMapper> _ratingMapperMock;
-    private readonly Mock<IPlayerResultMapper> _playerResultMapperMock;
+    private readonly Mock<IPlayerRatingMapper> _ratingMapperMock;
+    private readonly Mock<IPlayerGameResultMapper> _playerResultMapperMock;
     private readonly PlayerMapper _mapper;
 
     public PlayerMapperTest()
     {
-        _ratingMapperMock = new Mock<IRatingMapper>();
-        _playerResultMapperMock = new Mock<IPlayerResultMapper>();
+        _ratingMapperMock = new Mock<IPlayerRatingMapper>();
+        _playerResultMapperMock = new Mock<IPlayerGameResultMapper>();
 
         _mapper = new PlayerMapper(_ratingMapperMock.Object, _playerResultMapperMock.Object);
     }
@@ -28,15 +28,15 @@ public class PlayerMapperTest
         var ratingEntity1 = CreateRatingEntity(5666, playerEntity);
         var ratingEntity2 = CreateRatingEntity(28, playerEntity);
 
-        var resultEntity = new PlayerResult { Id = 12738 };
+        var resultEntity = new PlayerGameResult { Id = 12738 };
 
-        playerEntity.Ratings = new List<Rating> { ratingEntity1, ratingEntity2 };
-        playerEntity.PlayerResult = resultEntity;
+        playerEntity.PlayerRatings = new List<PlayerRating> { ratingEntity1, ratingEntity2 };
+        playerEntity.PlayerGameResult = resultEntity;
 
         var ratingDto1 = CreateRatingDto(5666);
         var ratingDto2 = CreateRatingDto(28);
 
-        var resultDto = new PlayerResultDto { Id = 673 };
+        var resultDto = new PlayerGameResultDto { Id = 673 };
 
         _ratingMapperMock.Setup(m => m.ToDto(ratingEntity1))
             .Returns(ratingDto1);
@@ -52,9 +52,9 @@ public class PlayerMapperTest
         // assert
         Assert.Equal(playerEntity.Username, playerDto.Username);
         Assert.Equal(playerEntity.Id, playerDto.Id);
-        Assert.Equal(ratingDto1, playerDto.Ratings[0]);
-        Assert.Equal(ratingDto2, playerDto.Ratings[1]);
-        Assert.Equal(resultDto, playerDto.PlayerResult);
+        Assert.Equal(ratingDto1, playerDto.PlayerRatings[0]);
+        Assert.Equal(ratingDto2, playerDto.PlayerRatings[1]);
+        Assert.Equal(resultDto, playerDto.PlayerGameResult);
 
         _ratingMapperMock.Verify(m => m.ToDto(ratingEntity1), Times.Once);
         _ratingMapperMock.Verify(m => m.ToDto(ratingEntity2), Times.Once);
@@ -70,9 +70,9 @@ public class PlayerMapperTest
         };
     }
 
-    private static Rating CreateRatingEntity(int id, Player playerEntity)
+    private static PlayerRating CreateRatingEntity(int id, Player playerEntity)
     {
-        return new Rating
+        return new PlayerRating
         {
             Id = id,
             Category1Points = 1,
@@ -84,9 +84,9 @@ public class PlayerMapperTest
         };
     }
 
-    private static RatingDto CreateRatingDto(int id)
+    private static PlayerRatingDto CreateRatingDto(int id)
     {
-        return new RatingDto
+        return new PlayerRatingDto
         {
             Id = id,
             Category1Points = 100,

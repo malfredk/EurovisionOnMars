@@ -30,7 +30,7 @@ public class PlayerRepository : IPlayerRepository
     {
         _logger.LogDebug("Getting all players.");
         var players = await _context.Players
-            .Include(p => p.PlayerResult)
+            .Include(p => p.PlayerGameResult)
             .ToListAsync();
         return players.ToImmutableList();
     }
