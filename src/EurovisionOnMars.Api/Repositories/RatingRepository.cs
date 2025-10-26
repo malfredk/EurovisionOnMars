@@ -32,6 +32,7 @@ public class RatingRepository : IRatingRepository
             .Where(r => r.PlayerId == playerId)
             .Include(r => r.Country)
             .Include(r => r.RatingGameResult)
+            .Include(r => r.Prediction)
             .ToListAsync();
         return ratings.ToImmutableList();
     }
@@ -41,6 +42,7 @@ public class RatingRepository : IRatingRepository
         _logger.LogDebug("Getting rating with id={id}.", id);
         return await _context.Ratings
             .Include(r => r.Country)
+            .Include(r => r.Prediction)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 

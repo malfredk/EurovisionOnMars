@@ -59,6 +59,7 @@ builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
 builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
 builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
+builder.Services.AddTransient<IPredictionMapper, PredictionMapper>();
 
 Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)

@@ -13,6 +13,7 @@ public class DataContext : DbContext
     public DbSet<Country> Countries => Set<Country>();
     public DbSet<RatingGameResult> RatingResults => Set<RatingGameResult>();
     public DbSet<PlayerGameResult> PlayerResults => Set<PlayerGameResult>();
+    public DbSet<Prediction> Predictions => Set<Prediction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

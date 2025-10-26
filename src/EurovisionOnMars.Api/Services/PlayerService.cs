@@ -102,7 +102,8 @@ public class PlayerService : IPlayerService
         {
             CountryId = country.Id,
             Country = country,
-            RatingGameResult = new RatingGameResult()
+            RatingGameResult = new RatingGameResult(),
+            Prediction = new Prediction()
         };
     }
 
