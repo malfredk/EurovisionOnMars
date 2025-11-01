@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Common;
 using EurovisionOnMars.Dto;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +27,7 @@ public class PlayerRatingsController : ControllerBase
     }
 
     [HttpGet("{playerId:int}")]
-    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetRatings(int playerId)
+    public async Task<ActionResult<IEnumerable<PlayerRatingResponseDto>>> GetRatings(int playerId)
     {
         var ratings = await _service.GetRatingsByPlayer(playerId);
         var ratingDtos = Utils.MapList(ratings.ToList(), _mapper.ToDto);

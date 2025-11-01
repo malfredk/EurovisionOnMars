@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.RatingClosing;
-using EurovisionOnMars.Dto.Requests;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 

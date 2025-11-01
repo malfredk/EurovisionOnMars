@@ -1,13 +1,14 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Dto;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IPlayerRatingMapper
 {
-    public PlayerRatingDto ToDto(PlayerRating entity);
+    public PlayerRatingResponseDto ToDto(PlayerRating entity);
 }
 
 public class PlayerRatingMapper : IPlayerRatingMapper
@@ -27,9 +28,9 @@ public class PlayerRatingMapper : IPlayerRatingMapper
         _predictionMapper = predictionMapper;
     }
 
-    public PlayerRatingDto ToDto(PlayerRating entity)
+    public PlayerRatingResponseDto ToDto(PlayerRating entity)
     {
-        return new PlayerRatingDto
+        return new PlayerRatingResponseDto
         {
             Id = entity.Id,
             Category1Points = entity.Category1Points,
