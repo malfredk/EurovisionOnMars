@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Dto.RatingGameResults;
+using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;
 

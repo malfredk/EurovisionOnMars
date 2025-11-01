@@ -1,6 +1,6 @@
-﻿namespace EurovisionOnMars.Dto;
+﻿namespace EurovisionOnMars.Dto.PlayerRatings;
 
-public record PredictionDto : IdBaseDto
+public record PredictionResponseDto : IdBaseDto
 {
     public int? TotalGivenPoints { get; set; }
     public int? CalculatedRank { get; set; }

@@ -1,6 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.Common;
-
-namespace EurovisionOnMars.Api.Features.RatingGameResults;
+﻿namespace EurovisionOnMars.Dto.RatingGameResults;
 
 public record RatingGameResultDto : IdBaseDto
 {

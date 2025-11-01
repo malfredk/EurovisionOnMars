@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.Requests;
+﻿namespace EurovisionOnMars.Dto.PlayerRatings;
 
 public record RatingPointsRequestDto
 {
