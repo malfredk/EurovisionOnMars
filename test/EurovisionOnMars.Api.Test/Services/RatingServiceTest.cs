@@ -16,16 +16,16 @@ public class RatingServiceTest
 
     private readonly Mock<IRatingRepository> _repositoryMock;
     private readonly Mock<IRatingClosingService> _ratingClosingServiceMock;
-    private readonly Mock<ILogger<RatingService>> _loggerMock;
-    private readonly RatingService _service;
+    private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
+    private readonly PlayerRatingService _service;
 
     public RatingServiceTest()
     {
         _repositoryMock = new Mock<IRatingRepository>();
         _ratingClosingServiceMock = new Mock<IRatingClosingService>();
-        _loggerMock = new Mock<ILogger<RatingService>>();
+        _loggerMock = new Mock<ILogger<PlayerRatingService>>();
 
-        _service = new RatingService(
+        _service = new PlayerRatingService(
             _repositoryMock.Object, 
             _ratingClosingServiceMock.Object,
             _loggerMock.Object);

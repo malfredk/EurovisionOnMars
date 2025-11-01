@@ -6,13 +6,13 @@ namespace EurovisionOnMars.Api.Features.PlayerGameResults;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PlayerGameResultsController : ControllerBase
+public class GameResultsController : ControllerBase
 {
     private readonly IPlayerGameResultService _service;
-    private readonly ILogger<PlayerGameResultsController> _logger;
+    private readonly ILogger<GameResultsController> _logger;
     private readonly IPlayerGameResultMapper _mapper = new PlayerGameResultMapper();
 
-    public PlayerGameResultsController(IPlayerGameResultService service, ILogger<PlayerGameResultsController> logger)
+    public GameResultsController(IPlayerGameResultService service, ILogger<GameResultsController> logger)
     {
         _service = service;
         _logger = logger;
@@ -24,12 +24,5 @@ public class PlayerGameResultsController : ControllerBase
         var playerGameResults = await _service.GetPlayerGameResults();
         var playerGameResultDtos = Utils.MapList(playerGameResults.ToList(), _mapper.ToDto);
         return Ok(playerGameResultDtos);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> CalculatePlayerGameResults()
-    {
-        await _service.CalculatePlayerGameResults();
-        return Ok();
     }
 }

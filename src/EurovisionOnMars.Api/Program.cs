@@ -41,7 +41,7 @@ else
 }
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
-builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
 builder.Services.AddScoped<IPlayerResultService, TempService>();
@@ -53,7 +53,7 @@ builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
-builder.Services.AddScoped<IRatingResultRepository, RatingResultRepository>();
+builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
 builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();

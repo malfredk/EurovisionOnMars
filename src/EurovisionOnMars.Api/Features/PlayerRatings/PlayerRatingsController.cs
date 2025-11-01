@@ -9,13 +9,13 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 [ApiController]
 public class PlayerRatingsController : ControllerBase
 {
-    private readonly IRatingService _service;
+    private readonly IPlayerRatingService _service;
     private readonly ILogger<PlayerRatingsController> _logger;
     private readonly IPlayerRatingMapper _mapper;
 
     public PlayerRatingsController
         (
-        IRatingService service,
+        IPlayerRatingService service,
         ILogger<PlayerRatingsController> logger,
         IPlayerRatingMapper mapper
         )

@@ -38,37 +38,35 @@ public class PlayerGameResultService : IPlayerGameResultService
 
     public async Task CalculatePlayerGameResults()
     {
-        _ratingGameResultService.CalculateRatingGameResult();
-
         var playerGameResults = await _playerGameResultRepository.GetPlayerGameResults();
-        CalculateTotalPoints(playerGameResults);
+        await CalculateTotalPoints(playerGameResults);
         CalculateRanks(playerGameResults);
         SavePlayerGameResults(playerGameResults);
     }
 
-    private void CalculateTotalPoints(IReadOnlyList<PlayerGameResult> playerGameResults)
+    private async Task CalculateTotalPoints(IReadOnlyList<PlayerGameResult> playerGameResults)
     {
         foreach (var playerGameResult in playerGameResults)
         {
-            CalculateTotalPoints(playerGameResult);
+            await CalculateTotalPoints(playerGameResult);
         }
     }
 
-    private void CalculateTotalPoints(PlayerGameResult playerGameResult)
+    private async Task CalculateTotalPoints(PlayerGameResult playerGameResult)
     {
-        var ratingGameResults = _ratingGameResultService
-            .GetRatingGameResultsByPlayerId(playerGameResult.PlayerId);
+        var ratingGameResults = await _ratingGameResultService
+            .GetRatingGameResults(playerGameResult.PlayerId);
 
         playerGameResult.TotalPoints = SumBonusPoints(ratingGameResults) + SumRankDifferences(ratingGameResults);
     }
 
-    private int SumBonusPoints(IReadOnlyList<RatingGameResult> ratingGameResults)
+    private int SumBonusPoints(ImmutableList<RatingGameResult> ratingGameResults)
     {
         return ratingGameResults
             .Sum(r => r.BonusPoints ?? throw new Exception("Missing bonus points"));
     }
 
-    private int SumRankDifferences(IReadOnlyList<RatingGameResult> ratingGameResults)
+    private int SumRankDifferences(ImmutableList<RatingGameResult> ratingGameResults)
     {
         return ratingGameResults
             .Sum(r => Math.Abs(r.RankDifference ?? throw new Exception("Missing ranking difference")));

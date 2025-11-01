@@ -6,95 +6,96 @@ namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
 public interface IRatingGameResultService
 {
-    void CalculateRatingGameResult();
-    Task CalculateRatingResults(int playerId);
-    List<RatingGameResult> GetRatingGameResultsByPlayerId(int playerId);
+    Task<ImmutableList<RatingGameResult>> GetRatingGameResults(int playerId);
+    Task CalculateRatingGameResults();
 }
 
 public class RatingGameResultService : IRatingGameResultService
 {
-    private readonly IRatingRepository _ratingRepository;
-    private readonly IRatingResultRepository _ratingResultRepository;
+    private readonly IRatingGameResultRepository _ratingGameResultRepository;
+    private readonly IPlayerRatingService _playerRatingService;
     private readonly ILogger<RatingGameResultService> _logger;
 
     public RatingGameResultService
         (
-        IRatingRepository ratingRepository, 
-        IRatingResultRepository ratingResultRepository,
+        IRatingGameResultRepository ratingResultRepository,
+        IPlayerRatingService playerRatingService,
         ILogger<RatingGameResultService> logger
         )
     {
-        _ratingRepository = ratingRepository;
-        _ratingResultRepository = ratingResultRepository;
+        _ratingGameResultRepository = ratingResultRepository;
+        _playerRatingService = playerRatingService;
         _logger = logger;
     }
 
-    public async Task CalculateRatingResults(int playerId)
+    public async Task<ImmutableList<RatingGameResult>> GetRatingGameResults(int playerId)
     {
-        var ratings = await _ratingRepository.GetRatingsByPlayer(playerId);
-        if (!ratings.Any())
-        {
-            throw new KeyNotFoundException($"Player with id={playerId} is missing ratings");
-        }
+        return await _ratingGameResultRepository.GetRatingGameResults(playerId);
+    }
 
-        int rankDifference;
-        int bonusPoints;
-        foreach (var rating in ratings)
+    public async Task CalculateRatingGameResults()
+    {
+        var playerRatings = await _playerRatingService.GetPlayerRatings();
+        foreach (var playerRating in playerRatings)
         {
-            rankDifference = CalculateRankDifference(rating);
-            bonusPoints = CalculateBonusPoints(rating, ratings, rankDifference);
-            await UpdateRatingResult(rating, rankDifference, bonusPoints);
+            var ratingGameResult = await CalculateRatingGameResult(playerRating, playerRatings);
+            await UpdateRatingGameResult(ratingGameResult);
         }
     }
 
-    private async Task UpdateRatingResult(PlayerRating rating, int? rankDifference, int? bonusPoints)
+    public async Task<RatingGameResult> CalculateRatingGameResult(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
     {
-        if (rankDifference == null)
-        {
-            return;
-        }
+        int rankDifference = CalculateRankDifference(rating);
+        int bonusPoints = CalculateBonusPoints(rating, ratings, rankDifference);
 
-        var ratingResult = rating.RatingGameResult;
-        ratingResult.RankDifference = rankDifference;
-        ratingResult.BonusPoints = bonusPoints;
+        var ratingGameResult = rating.RatingGameResult;
+        ratingGameResult.RankDifference = rankDifference;
+        ratingGameResult.BonusPoints = bonusPoints;
+        return ratingGameResult;
+    }
 
-        await _ratingResultRepository.UpdateRatingResult(ratingResult);
-        return;
+    private async Task UpdateRatingGameResult(RatingGameResult ratingGameResult)
+    {
+         await _ratingGameResultRepository.UpdateRatingGameResult(ratingGameResult);
     }
 
     private int CalculateRankDifference(PlayerRating rating)
     {
         var actualRank = rating.Country.ActualRank;
-        var expectedRank = rating.Prediction.CalculatedRank;
+        var predictedRank = rating.Prediction.CalculatedRank;
 
         if (actualRank == null)
         {
             throw new Exception("Country is missing rank");
         }
-        // player is penalized for not rating a country
-        else if (expectedRank == null)
+        else if (predictedRank == null)
         {
+            // player is penalized for not rating a country
             return 26;
         }
         else
         {
-            return (int)(actualRank - expectedRank);
+            return (int)(actualRank - predictedRank);
         }
     }
 
-    private int CalculateBonusPoints(PlayerRating rating, ImmutableList<PlayerRating> ratings, int rankDifference)
+    private int CalculateBonusPoints(
+        PlayerRating rating,
+        IReadOnlyList<PlayerRating> ratings,
+        int rankDifference
+    )
     {
         if (rankDifference == 0 && HasUniqueRank(rating, ratings))
         {
-            return DetermineBonusPoints((int)rating.Prediction.CalculatedRank!);
+            return DetermineBonusPoints((int)rating.Prediction.CalculatedRank);
         }
-
         return 0;
     }
 
-    private bool HasUniqueRank(PlayerRating rating, ImmutableList<PlayerRating> ratings)
+    private bool HasUniqueRank(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
     {
-        var sameRankList = ratings.Where(r => r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank);
+        var sameRankList = ratings
+            .Where(r => r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank);
         if (sameRankList.Count() == 1)
         {
             return true;

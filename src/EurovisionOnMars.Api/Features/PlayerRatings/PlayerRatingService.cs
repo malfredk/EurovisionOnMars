@@ -5,27 +5,28 @@ using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
-public interface IRatingService
+public interface IPlayerRatingService
 {
+    Task<IReadOnlyList<PlayerRating>> GetPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetRatingsByPlayer(int playerId);
     Task<PlayerRating> GetRating(int id);
     Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto);
     Task UpdateRating(int id, int rank);
 }
 
-public class RatingService : IRatingService
+public class PlayerRatingService : IPlayerRatingService
 {
     private static List<int> VALID_POINTS = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12 };
     private static List<int> SPECIAL_POINTS = new List<int>() { 10, 12 };
 
     private readonly IRatingRepository _repository;
     private readonly IRatingClosingService _ratingClosingService;
-    private readonly ILogger<RatingService> _logger;
+    private readonly ILogger<PlayerRatingService> _logger;
 
-    public RatingService(
+    public PlayerRatingService(
         IRatingRepository repository,
         IRatingClosingService ratingClosingService,
-        ILogger<RatingService> logger)
+        ILogger<PlayerRatingService> logger)
     {
         _repository = repository;
         _ratingClosingService = ratingClosingService;

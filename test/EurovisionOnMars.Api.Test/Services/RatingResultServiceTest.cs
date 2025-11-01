@@ -10,14 +10,14 @@ namespace EurovisionOnMars.Api.Test.Services;
 public class RatingResultServiceTest
 {
     private readonly Mock<IRatingRepository> _ratingRepositoryMock;
-    private readonly Mock<IRatingResultRepository> _ratingResultRepositoryMock;
+    private readonly Mock<IRatingGameResultRepository> _ratingResultRepositoryMock;
     private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
     private readonly RatingGameResultService _service;
 
     public RatingResultServiceTest()
     {
         _ratingRepositoryMock = new Mock<IRatingRepository>();
-        _ratingResultRepositoryMock = new Mock<IRatingResultRepository>();
+        _ratingResultRepositoryMock = new Mock<IRatingGameResultRepository>();
         _loggerMock = new Mock<ILogger<RatingGameResultService>>();
 
         _service = new RatingGameResultService(
@@ -93,7 +93,7 @@ public class RatingResultServiceTest
         Assert.Equal(26, ratingNull.RatingGameResult.RankDifference);
         Assert.Equal(0, ratingNull.RatingGameResult.BonusPoints);
 
-        _ratingResultRepositoryMock.Verify(m => m.UpdateRatingResult(It.IsAny<RatingGameResult>()), Times.Exactly(7));
+        _ratingResultRepositoryMock.Verify(m => m.UpdateRatingGameResult(It.IsAny<RatingGameResult>()), Times.Exactly(7));
     }
 
     [Fact]
