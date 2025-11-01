@@ -1,5 +1,6 @@
-﻿using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
+using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,19 +11,19 @@ namespace EurovisionOnMars.Api.Test.Services;
 public class ResultServiceTest
 {
     private readonly Mock<IPlayerRepository> _playerRepositoryMock;
-    private readonly Mock<IRatingResultService> _ratingResultServiceMock;
+    private readonly Mock<IRatingGameResultService> _ratingResultServiceMock;
     private readonly Mock<IPlayerResultService> _playerResultServiceMock;
-    private readonly Mock<ILogger<ResultService>> _loggerMock;
-    private readonly ResultService _service;
+    private readonly Mock<ILogger<PlayerGameResultService>> _loggerMock;
+    private readonly PlayerGameResultService _service;
 
     public ResultServiceTest()
     {
         _playerRepositoryMock = new Mock<IPlayerRepository>();
-        _ratingResultServiceMock = new Mock<IRatingResultService>();
+        _ratingResultServiceMock = new Mock<IRatingGameResultService>();
         _playerResultServiceMock = new Mock<IPlayerResultService>();
-        _loggerMock = new Mock<ILogger<ResultService>>();
+        _loggerMock = new Mock<ILogger<PlayerGameResultService>>();
 
-        _service = new ResultService(
+        _service = new PlayerGameResultService(
             _playerRepositoryMock.Object,
             _ratingResultServiceMock.Object,
             _playerResultServiceMock.Object,
@@ -66,7 +67,7 @@ public class ResultServiceTest
             .Callback(() => loop2Call2Order = previousCallOrder++);
 
         // act
-        await _service.CalculateResults();
+        await _service.CalculatePlayerGameResults();
 
         // assert
         _playerRepositoryMock.Verify(m => m.GetPlayers(), Times.Once);

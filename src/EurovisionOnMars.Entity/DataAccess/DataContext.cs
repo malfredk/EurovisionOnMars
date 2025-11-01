@@ -9,10 +9,10 @@ public class DataContext : DbContext
     }
 
     public DbSet<Player> Players => Set<Player>();
-    public DbSet<PlayerRating> Ratings => Set<PlayerRating>();
+    public DbSet<PlayerRating> PlayerRatings => Set<PlayerRating>();
     public DbSet<Country> Countries => Set<Country>();
-    public DbSet<RatingGameResult> RatingResults => Set<RatingGameResult>();
-    public DbSet<PlayerGameResult> PlayerResults => Set<PlayerGameResult>();
+    public DbSet<RatingGameResult> RatingGameResults => Set<RatingGameResult>();
+    public DbSet<PlayerGameResult> PlayerGameResults => Set<PlayerGameResult>();
     public DbSet<Prediction> Predictions => Set<Prediction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;

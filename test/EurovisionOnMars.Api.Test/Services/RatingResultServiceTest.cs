@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,16 +11,16 @@ public class RatingResultServiceTest
 {
     private readonly Mock<IRatingRepository> _ratingRepositoryMock;
     private readonly Mock<IRatingResultRepository> _ratingResultRepositoryMock;
-    private readonly Mock<ILogger<RatingResultService>> _loggerMock;
-    private readonly RatingResultService _service;
+    private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
+    private readonly RatingGameResultService _service;
 
     public RatingResultServiceTest()
     {
         _ratingRepositoryMock = new Mock<IRatingRepository>();
         _ratingResultRepositoryMock = new Mock<IRatingResultRepository>();
-        _loggerMock = new Mock<ILogger<RatingResultService>>();
+        _loggerMock = new Mock<ILogger<RatingGameResultService>>();
 
-        _service = new RatingResultService(
+        _service = new RatingGameResultService(
             _ratingRepositoryMock.Object,
             _ratingResultRepositoryMock.Object,
             _loggerMock.Object);

@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.Country;
+using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
