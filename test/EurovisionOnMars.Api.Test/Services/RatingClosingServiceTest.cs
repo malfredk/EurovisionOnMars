@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;

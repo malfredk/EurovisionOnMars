@@ -55,7 +55,7 @@
                 <MudTh>bonuspoeng</MudTh>
             </HeaderContent>
             <RowTemplate Context="row">
-                <MudTd>@row.ranking</MudTd>
+                <MudTd>@row.rank</MudTd>
                 <MudTd>@row.pointsAmount</MudTd>
             </RowTemplate>
         </MudTable>
@@ -65,7 +65,7 @@
 @code {
     [Parameter] public int? playerId { get; set; }
 
-    private record BonusPoints(string ranking, int pointsAmount);
+    private record BonusPoints(string rank, int pointsAmount);
 
     private List<BonusPoints> bonusPoints = new List<BonusPoints>()
     {

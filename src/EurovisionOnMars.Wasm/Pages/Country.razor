@@ -15,8 +15,8 @@
     CanCancelEdit=true
     @bind-SelectedItem="selectedCountry"
     EditTrigger="TableEditTrigger.RowClick"
-    OnCommitEditClick="@(async () => await UpdateRanking(selectedCountry))"
-    RowEditPreview="BackupRanking"
+    OnCommitEditClick="@(async () => await UpdateRank(selectedCountry))"
+    RowEditPreview="BackupRank"
     RowEditCancel="ResetCountry"
     Class="mb-2">
     <ToolBarContent>
@@ -38,13 +38,13 @@
     <RowTemplate Context="country">
         <MudTd DataLabel="#">@country.Number</MudTd>
         <MudTd DataLabel="land">@country.Name</MudTd>
-        <MudTd DataLabel="plassering">@country.Ranking</MudTd>
+        <MudTd DataLabel="plassering">@country.ActualRank</MudTd>
     </RowTemplate>
     <RowEditingTemplate Context="country">
         <MudTd DataLabel="#">@country.Number</MudTd>
         <MudTd DataLabel="land">@country.Name</MudTd>
         <MudTd DataLabel="plassering">
-            <MudNumericField @bind-Value="@country.Ranking" Min="1" Max="26"></MudNumericField>
+            <MudNumericField @bind-Value="@country.ActualRank" Min="1" Max="26"></MudNumericField>
         </MudTd>
     </RowEditingTemplate>
 </MudTable>
@@ -52,7 +52,7 @@
     @code {
     public List<CountryDto> Countries = new List<CountryDto>();
     private CountryDto? selectedCountry = null;
-    private int? backupRanking;
+    private int? backupRank;
     private bool disableAddButton = false;
 
     protected override async Task OnInitializedAsync()
@@ -60,16 +60,16 @@
         await FetchCountries();
     }
 
-    private async Task UpdateRanking(CountryDto country)
+    private async Task UpdateRank(CountryDto country)
     {
-        var ranking = country.Ranking;
-        if (ranking == null)
+        var rank = country.ActualRank;
+        if (rank == null)
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
-            Console.WriteLine("Ranking is null");
+            Console.WriteLine("Rank is null");
         }
 
-        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)country.Ranking!);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)country.ActualRank!);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("resultat lagret", Severity.Success);
@@ -96,14 +96,14 @@
         }
     }
 
-    private void BackupRanking(object country)
+    private void BackupRank(object country)
     {
-        backupRanking = ((CountryDto)country).Ranking;
+        backupRank = ((CountryDto)country).ActualRank;
     }
 
     private void ResetCountry(object country)
     {
-        ((CountryDto)country).Ranking = backupRanking;
+        ((CountryDto)country).ActualRank = backupRank;
     }
 
     private async Task CreateCountry()

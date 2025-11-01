@@ -16,10 +16,10 @@
         <MudTh>bonus</MudTh>
     </HeaderContent>
     <RowTemplate Context="rating">
-        <MudTd DataLabel="faktisk plassering">@rating.Country.Ranking</MudTd>
+        <MudTd DataLabel="faktisk plassering">@rating.Country.ActualRank</MudTd>
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
         <MudTd DataLabel="differanse i plassering">
-            @GetAbsoluteRankingDifference(rating)
+            @GetAbsoluteRankDifference(rating)
             @if (GetArrowDirection(rating) == ArrowDirection.UP)
             {
                 <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small"></MudIcon>
@@ -29,21 +29,21 @@
                 <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small"></MudIcon>
             }
         </MudTd>
-        <MudTd DataLabel="bonuspoeng">@rating.RatingResult.BonusPoints</MudTd>
+        <MudTd DataLabel="bonuspoeng">@rating.RatingGameResult.BonusPoints</MudTd>
     </RowTemplate>
 </MudTable>
 
     @code {
     [Parameter] public int Id { get; set; }
-    public List<RatingDto> Ratings { get; set; }
+    public List<PlayerRatingDto> Ratings { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync($"/api/Ratings/{Id}");
         if (response.IsSuccessStatusCode)
         {
-            Ratings = await response.Content.ReadFromJsonAsync<List<RatingDto>>();
-            Ratings = Ratings.OrderBy(r => r.Country.Ranking).ToList();
+            Ratings = await response.Content.ReadFromJsonAsync<List<PlayerRatingDto>>();
+            Ratings = Ratings.OrderBy(r => r.Country.ActualRank).ToList();
             Console.WriteLine($"Got ratings for player with id={Id}");
         }
         else
@@ -53,26 +53,26 @@
         }
     }
 
-    private int? GetAbsoluteRankingDifference(RatingDto rating)
+    private int? GetAbsoluteRankDifference(PlayerRatingDto rating)
     {
-        var rankingDifference = rating.RatingResult?.RankingDifference;
-        if (rankingDifference is null)
+        var rankDifference = rating.RatingGameResult?.RankDifference;
+        if (rankDifference is null)
         {
             return null;
         }
-        return Math.Abs((int)rating.RatingResult!.RankingDifference!);
+        return Math.Abs((int)rating.RatingGameResult!.RankDifference!);
     }
 
-    private ArrowDirection GetArrowDirection(RatingDto rating)
+    private ArrowDirection GetArrowDirection(PlayerRatingDto rating)
     {
-        var rankingDifference = rating.RatingResult!.RankingDifference!;
-        if (rankingDifference is null || 
-            rankingDifference == 0 ||
-            rankingDifference == 26)
+        var rankDifference = rating.RatingGameResult!.RankDifference!;
+        if (rankDifference is null || 
+            rankDifference == 0 ||
+            rankDifference == 26)
         {
             return ArrowDirection.NONE;
         }
-        else if (rankingDifference > 0)
+        else if (rankDifference > 0)
         {
             return ArrowDirection.DOWN;
         }

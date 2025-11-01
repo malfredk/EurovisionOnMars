@@ -1,8 +1,12 @@
 using EurovisionOnMars.Api.Configurations;
-using EurovisionOnMars.Api.Mappers;
+using EurovisionOnMars.Api.Features.Countries;
+using EurovisionOnMars.Api.Features.Country;
+using EurovisionOnMars.Api.Features.PlayerGameResults;
+using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.RatingClosing;
+using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Api.Middlewares;
-using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
@@ -37,11 +41,11 @@ else
 }
 
 builder.Services.AddScoped<IPlayerService, PlayerService>();
-builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
-builder.Services.AddScoped<IRatingResultService, RatingResultService>();
-builder.Services.AddScoped<IPlayerResultService, PlayerResultService>();
-builder.Services.AddScoped<IResultService, ResultService>();
+builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
+builder.Services.AddScoped<IPlayerResultService, TempService>();
+builder.Services.AddScoped<IPlayerGameResultService, PlayerGameResultService>();
 builder.Services.AddScoped<IRatingClosingService, RatingClosingService>();
 
 builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
@@ -49,16 +53,18 @@ builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
-builder.Services.AddScoped<IRatingResultRepository, RatingResultRepository>();
-builder.Services.AddScoped<IPlayerResultRepository, PlayerResultRepository>();
+builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
+builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
-builder.Services.AddTransient<IRatingMapper, RatingMapper>();
+builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
-builder.Services.AddTransient<IPlayerResultMapper, PlayerResultMapper>();
-builder.Services.AddTransient<IRatingResultMapper, RatingResultMapper>();
+builder.Services.AddTransient<ICountryResponseMapper, CountryResponseMapper>();
+builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
+builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
+builder.Services.AddTransient<IPredictionMapper, PredictionMapper>();
 
 Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)

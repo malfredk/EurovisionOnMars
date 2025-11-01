@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Api.Repositories;
-using EurovisionOnMars.Api.Services;
+﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
+using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
@@ -10,18 +10,18 @@ namespace EurovisionOnMars.Api.Test.Services;
 
 public class PlayerResultServiceTest
 {
-    private readonly Mock<IRatingResultRepository> _ratingResultRepositoryMock;
-    private readonly Mock<IPlayerResultRepository> _playerResultRepositoryMock;
-    private readonly Mock<ILogger<PlayerResultService>> _loggerMock;
-    private readonly PlayerResultService _service;
+    private readonly Mock<IRatingGameResultRepository> _ratingResultRepositoryMock;
+    private readonly Mock<IPlayerGameResultRepository> _playerResultRepositoryMock;
+    private readonly Mock<ILogger<TempService>> _loggerMock;
+    private readonly TempService _service;
 
     public PlayerResultServiceTest()
     {
-        _ratingResultRepositoryMock = new Mock<IRatingResultRepository>();
-        _playerResultRepositoryMock = new Mock<IPlayerResultRepository>();
-        _loggerMock = new Mock<ILogger<PlayerResultService>>();
+        _ratingResultRepositoryMock = new Mock<IRatingGameResultRepository>();
+        _playerResultRepositoryMock = new Mock<IPlayerGameResultRepository>();
+        _loggerMock = new Mock<ILogger<TempService>>();
 
-        _service = new PlayerResultService(
+        _service = new TempService(
             _ratingResultRepositoryMock.Object,
             _playerResultRepositoryMock.Object,
             _loggerMock.Object
@@ -43,11 +43,11 @@ public class PlayerResultServiceTest
         var expectedPlayerResult = CreatePlayerResult(900, expectedScore);
         var expectedReturnedPlayerResult = CreatePlayerResult(56, 77);
 
-        _playerResultRepositoryMock.Setup(m => m.GetPlayerResult(playerId))
+        _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResult(playerId))
             .ReturnsAsync(initialPlayerResult);
-        _ratingResultRepositoryMock.Setup(m => m.GetRatingResultsForPlayer(playerId))
-            .ReturnsAsync(new List<RatingResult> { ratingResult1, ratingResult2, ratingResult3 }.ToImmutableList());
-        _playerResultRepositoryMock.Setup(m => m.UpdatePlayerResult(expectedPlayerResult))
+        _ratingResultRepositoryMock.Setup(m => m.GetRatingGameResults(playerId))
+            .ReturnsAsync(new List<RatingGameResult> { ratingResult1, ratingResult2, ratingResult3 }.ToImmutableList());
+        _playerResultRepositoryMock.Setup(m => m.UpdatePlayerGameResult(expectedPlayerResult))
             .ReturnsAsync(expectedReturnedPlayerResult);
 
         // act
@@ -56,9 +56,9 @@ public class PlayerResultServiceTest
         // assert
         Assert.Equal(expectedReturnedPlayerResult, actualPlayerResult);
 
-        _playerResultRepositoryMock.Verify(m => m.GetPlayerResult(playerId), Times.Once);
-        _ratingResultRepositoryMock.Verify(m => m.GetRatingResultsForPlayer(playerId), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.GetPlayerGameResult(playerId), Times.Once);
+        _ratingResultRepositoryMock.Verify(m => m.GetRatingGameResults(playerId), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult), Times.Once);
     }
 
     [Theory]
@@ -74,21 +74,21 @@ public class PlayerResultServiceTest
         var ratingResult2 = CreateRatingResult(difference, bonusPoints);
         var ratingResult3 = CreateRatingResult(0, -5);
 
-        _playerResultRepositoryMock.Setup(m => m.GetPlayerResult(playerId))
+        _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResult(playerId))
             .ReturnsAsync(initialPlayerResult);
-        _ratingResultRepositoryMock.Setup(m => m.GetRatingResultsForPlayer(playerId))
-            .ReturnsAsync(new List<RatingResult> { ratingResult1, ratingResult2, ratingResult3 }.ToImmutableList());
+        _ratingResultRepositoryMock.Setup(m => m.GetRatingGameResults(playerId))
+            .ReturnsAsync(new List<RatingGameResult> { ratingResult1, ratingResult2, ratingResult3 }.ToImmutableList());
 
         // act and assert
         await Assert.ThrowsAsync<Exception>(async () => await _service.CalculatePlayerScore(playerId));
 
-        _playerResultRepositoryMock.Verify(m => m.GetPlayerResult(playerId), Times.Once);
-        _ratingResultRepositoryMock.Verify(m => m.GetRatingResultsForPlayer(playerId), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(It.IsAny<PlayerResult>()), Times.Never);
+        _playerResultRepositoryMock.Verify(m => m.GetPlayerGameResult(playerId), Times.Once);
+        _ratingResultRepositoryMock.Verify(m => m.GetRatingGameResults(playerId), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(It.IsAny<PlayerGameResult>()), Times.Never);
     }
 
     [Fact]
-    public async void CalculatePlayerRankings()
+    public async void CalculatePlayerRanks()
     {
         // arrange
         var initialPlayerResult1 = CreatePlayerResult(1, 100);
@@ -103,8 +103,8 @@ public class PlayerResultServiceTest
         var expectedPlayerResult4 = CreatePlayerResult(4, 0, 2);
         var expectedPlayerResult5 = CreatePlayerResult(5, 10, 3);
 
-        _playerResultRepositoryMock.Setup(m => m.GetPlayerResults())
-            .ReturnsAsync(new List<PlayerResult> 
+        _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
+            .ReturnsAsync(new List<PlayerGameResult> 
             { 
                 initialPlayerResult1,
                 initialPlayerResult2,
@@ -114,60 +114,60 @@ public class PlayerResultServiceTest
             }.ToImmutableList());
 
         // act
-        await _service.CalculatePlayerRankings();
+        await _service.CalculatePlayerRanks();
 
         // assert
-        _playerResultRepositoryMock.Verify(m => m.GetPlayerResults(), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.GetPlayerGameResults(), Times.Once);
 
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult1), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult2), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult3), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult4), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(expectedPlayerResult5), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(It.IsAny<PlayerResult>()), Times.Exactly(5));
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult1), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult2), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult3), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult4), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(expectedPlayerResult5), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(It.IsAny<PlayerGameResult>()), Times.Exactly(5));
     }
 
     [Fact]
-    public async void CalculatePlayerRankings_Invalid()
+    public async void CalculatePlayerRanks_Invalid()
     {
         // arrange
         var initialPlayerResult1 = CreatePlayerResult(1, 100);
         var initialPlayerResult2 = CreatePlayerResult(2, null);
 
-        _playerResultRepositoryMock.Setup(m => m.GetPlayerResults())
-            .ReturnsAsync(new List<PlayerResult>
+        _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
+            .ReturnsAsync(new List<PlayerGameResult>
             {
                 initialPlayerResult1,
                 initialPlayerResult2
             }.ToImmutableList());
 
         // act and assert
-        await Assert.ThrowsAsync<Exception>(async () => await _service.CalculatePlayerRankings());
+        await Assert.ThrowsAsync<Exception>(async () => await _service.CalculatePlayerRanks());
 
-        _playerResultRepositoryMock.Verify(m => m.GetPlayerResults(), Times.Once);
-        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerResult(It.IsAny<PlayerResult>()), Times.Never);
+        _playerResultRepositoryMock.Verify(m => m.GetPlayerGameResults(), Times.Once);
+        _playerResultRepositoryMock.Verify(m => m.UpdatePlayerGameResult(It.IsAny<PlayerGameResult>()), Times.Never);
     }
 
-    private PlayerResult CreatePlayerResult(int id, int? score)
+    private PlayerGameResult CreatePlayerResult(int id, int? score)
     {
         return CreatePlayerResult(id, score, null);
     }
 
-    private PlayerResult CreatePlayerResult(int id, int? score, int? ranking)
+    private PlayerGameResult CreatePlayerResult(int id, int? score, int? rank)
     {
-        return new PlayerResult()
+        return new PlayerGameResult()
         {
             Id = id,
-            Score = score,
-            Ranking = ranking
+            TotalPoints = score,
+            Rank = rank
         };
     }
 
-    private RatingResult CreateRatingResult(int? difference, int? bonusPoints)
+    private RatingGameResult CreateRatingResult(int? difference, int? bonusPoints)
     {
-        return new RatingResult()
+        return new RatingGameResult()
         {
-            RankingDifference = difference,
+            RankDifference = difference,
             BonusPoints = bonusPoints
         };
     }

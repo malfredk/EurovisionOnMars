@@ -6,7 +6,7 @@ public record Country : IdBase
 {
     public required int Number { get; set; }
     public required string Name { get; set; }
-    public int? Ranking { get; set; }
+    public int? ActualRank { get; set; }
     [JsonIgnore]
-    public List<Rating>? Ratings { get; set; }
+    public List<PlayerRating>? PlayerRatings { get; set; }
 }
