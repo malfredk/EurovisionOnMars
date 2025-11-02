@@ -10,7 +10,7 @@ public interface IPlayerRatingService
     Task<IReadOnlyList<PlayerRating>> GetPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetRatingsByPlayer(int playerId);
     Task<PlayerRating> GetRating(int id);
-    Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto);
+    Task UpdateRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto);
     Task UpdateRating(int id, int rank);
 }
 
@@ -53,7 +53,7 @@ public class PlayerRatingService : IPlayerRatingService
         return rating;
     }
 
-    public async Task UpdateRating(int id, RatingPointsRequestDto ratingRequestDto)
+    public async Task UpdateRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto)
     {
         _ratingClosingService.ValidateRatingTime();
 
@@ -93,7 +93,7 @@ public class PlayerRatingService : IPlayerRatingService
         return entity;
     }
 
-    private PlayerRating UpdateEntity(PlayerRating entity, RatingPointsRequestDto dto)
+    private PlayerRating UpdateEntity(PlayerRating entity, UpdatePlayerRatingRequestDto dto)
     {
         entity.Category1Points = dto.Category1Points;
         entity.Category2Points = dto.Category2Points;

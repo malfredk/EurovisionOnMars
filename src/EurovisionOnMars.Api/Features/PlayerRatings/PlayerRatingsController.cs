@@ -1,7 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.Common;
-using EurovisionOnMars.Dto;
 using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Dto.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
@@ -35,7 +33,9 @@ public class PlayerRatingsController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult> UpdateRating(int id, [FromBody] RatingPointsRequestDto ratingRequestDto)
+    public async Task<ActionResult> UpdateRating(
+        int id, [FromBody] UpdatePlayerRatingRequestDto ratingRequestDto
+        )
     {
         await _service.UpdateRating(id, ratingRequestDto);
         return Ok();

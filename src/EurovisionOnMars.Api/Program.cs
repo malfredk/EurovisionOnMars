@@ -1,6 +1,5 @@
 using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.Country;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.Players;
@@ -44,7 +43,6 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
-builder.Services.AddScoped<IPlayerResultService, TempService>();
 builder.Services.AddScoped<IPlayerGameResultService, PlayerGameResultService>();
 builder.Services.AddScoped<IRatingClosingService, RatingClosingService>();
 
@@ -61,7 +59,7 @@ builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
 builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
-builder.Services.AddTransient<ICountryResponseMapper, CountryResponseMapper>();
+builder.Services.AddTransient<ICountryMapper, CountryMapper>();
 builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
 builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
 builder.Services.AddTransient<IPredictionMapper, PredictionMapper>();

@@ -1,6 +1,6 @@
 ﻿namespace EurovisionOnMars.Dto.PlayerRatings;
 
-public record RatingPointsRequestDto
+public record UpdatePlayerRatingRequestDto
 {
     public int Category1Points { get; set; }
     public int Category2Points { get; set; }

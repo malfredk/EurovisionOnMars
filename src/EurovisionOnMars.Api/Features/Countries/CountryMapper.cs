@@ -3,12 +3,12 @@ using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 
-public interface ICountryResponseMapper
+public interface ICountryMapper
 {
     public CountryResponseDto ToDto(Country entity);
 }
 
-public class CountryResponseMapper : ICountryResponseMapper
+public class CountryMapper : ICountryMapper
 {
     public CountryResponseDto ToDto(Country entity)
     {

@@ -10,12 +10,12 @@ public class CountriesController : ControllerBase
 {
     private readonly ICountryService _service;
     private readonly ILogger<CountriesController> _logger;
-    private readonly ICountryResponseMapper _mapper;
+    private readonly ICountryMapper _mapper;
 
     public CountriesController(
         ICountryService service,
         ILogger<CountriesController> logger,
-        ICountryResponseMapper mapper
+        ICountryMapper mapper
         )
     {
         _service = service;
