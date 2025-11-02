@@ -9,14 +9,14 @@ namespace EurovisionOnMars.Api.Test.Services;
 
 public class RatingResultServiceTest
 {
-    private readonly Mock<IRatingRepository> _ratingRepositoryMock;
+    private readonly Mock<IPlayerRatingRepository> _ratingRepositoryMock;
     private readonly Mock<IRatingGameResultRepository> _ratingResultRepositoryMock;
     private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
     private readonly RatingGameResultService _service;
 
     public RatingResultServiceTest()
     {
-        _ratingRepositoryMock = new Mock<IRatingRepository>();
+        _ratingRepositoryMock = new Mock<IPlayerRatingRepository>();
         _ratingResultRepositoryMock = new Mock<IRatingGameResultRepository>();
         _loggerMock = new Mock<ILogger<RatingGameResultService>>();
 
@@ -48,7 +48,7 @@ public class RatingResultServiceTest
         var rating17thPlace = CreateRating(country5thPlace, 17);
         var ratingNull = CreateRating(country20thPlace, null);
 
-        _ratingRepositoryMock.Setup(m => m.GetRatingsByPlayer(playerId))
+        _ratingRepositoryMock.Setup(m => m.GetPlayerRatingsByPlayerId(playerId))
             .ReturnsAsync(new List<PlayerRating>()
             { 
                 rating1stPlace,
@@ -104,7 +104,7 @@ public class RatingResultServiceTest
         var country = CreateCountry(null);
         var rating = CreateRating(country, 26);
 
-        _ratingRepositoryMock.Setup(m => m.GetRatingsByPlayer(playerId))
+        _ratingRepositoryMock.Setup(m => m.GetPlayerRatingsByPlayerId(playerId))
             .ReturnsAsync(new List<PlayerRating>() { rating }.ToImmutableList());
 
         // act and assert

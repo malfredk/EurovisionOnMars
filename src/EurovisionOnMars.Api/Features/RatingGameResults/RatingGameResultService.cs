@@ -35,7 +35,7 @@ public class RatingGameResultService : IRatingGameResultService
 
     public async Task CalculateRatingGameResults()
     {
-        var playerRatings = await _playerRatingService.GetPlayerRatings();
+        var playerRatings = await _playerRatingService.GetAllPlayerRatings();
         foreach (var playerRating in playerRatings)
         {
             var ratingGameResult = await CalculateRatingGameResult(playerRating, playerRatings);
@@ -94,9 +94,12 @@ public class RatingGameResultService : IRatingGameResultService
 
     private bool HasUniqueRank(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
     {
-        var sameRankList = ratings
-            .Where(r => r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank);
-        if (sameRankList.Count() == 1)
+        var sameRankAndPlayerList = ratings
+            .Where(r => 
+            r.PlayerId == rating.PlayerId && 
+            r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank
+            );
+        if (sameRankAndPlayerList.Count() == 1)
         {
             return true;
         }

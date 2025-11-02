@@ -2,6 +2,7 @@ using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.PlayerRatings.Mapper;
 using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.Api.Features.RatingGameResults;
@@ -49,7 +50,7 @@ builder.Services.AddScoped<IRatingClosingService, RatingClosingService>();
 builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
-builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IPlayerRatingRepository, PlayerRatingRepository>();
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
 builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();

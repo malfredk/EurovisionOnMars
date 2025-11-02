@@ -1,7 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.RatingGameResults;
-using EurovisionOnMars.Dto;
-using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
@@ -13,21 +10,6 @@ public interface IPlayerRatingMapper
 
 public class PlayerRatingMapper : IPlayerRatingMapper
 {
-    private readonly ICountryMapper _countryMapper;
-    private readonly IRatingGameResultMapper _ratingResultMapper;
-    private readonly IPredictionMapper _predictionMapper;
-
-    public PlayerRatingMapper(
-        ICountryMapper countryMapper, 
-        IRatingGameResultMapper ratingResultMapper,
-        IPredictionMapper predictionMapper
-        )
-    {
-        _countryMapper = countryMapper;
-        _ratingResultMapper = ratingResultMapper;
-        _predictionMapper = predictionMapper;
-    }
-
     public PlayerRatingResponseDto ToDto(PlayerRating entity)
     {
         return new PlayerRatingResponseDto
@@ -36,9 +18,26 @@ public class PlayerRatingMapper : IPlayerRatingMapper
             Category1Points = entity.Category1Points,
             Category2Points = entity.Category2Points,
             Category3Points = entity.Category3Points,
-            Prediction = entity.Prediction is null ? null : _predictionMapper.ToDto(entity.Prediction),
-            Country = entity.Country is null ? null : _countryMapper.ToDto(entity.Country),
-            RatingGameResult = entity.RatingGameResult is null ? null : _ratingResultMapper.ToDto(entity.RatingGameResult)
+            Prediction = ToPredicitionDto(entity.Prediction),
+            Country = ToCountryDto(entity.Country)
+        };
+    }
+
+    private PredictionResponseDto ToPredicitionDto(Prediction entity)
+    {
+        return new PredictionResponseDto
+        {
+            TotalGivenPoints = entity.TotalGivenPoints,
+            CalculatedRank = entity.CalculatedRank
+        };
+    }
+
+    private CountryResponseDto ToCountryDto(Country entity)
+    {
+        return new CountryResponseDto
+        {
+            Number = entity.Number,
+            Name = entity.Name
         };
     }
 }

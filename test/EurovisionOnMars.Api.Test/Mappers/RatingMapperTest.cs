@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.PlayerRatings.Mapper;
 using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Dto;
 using EurovisionOnMars.Entity;

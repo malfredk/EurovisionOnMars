@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings.Mapper;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Mappers;

@@ -25,26 +25,26 @@ public class PlayerRatingsController : ControllerBase
     }
 
     [HttpGet("{playerId:int}")]
-    public async Task<ActionResult<IEnumerable<PlayerRatingResponseDto>>> GetRatings(int playerId)
+    public async Task<ActionResult<IEnumerable<PlayerRatingResponseDto>>> GetPlayerRatings(int playerId)
     {
-        var ratings = await _service.GetRatingsByPlayer(playerId);
+        var ratings = await _service.GetPlayerRatingsByPlayerId(playerId);
         var ratingDtos = Utils.MapList(ratings.ToList(), _mapper.ToDto);
         return Ok(ratingDtos);
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult> UpdateRating(
+    public async Task<ActionResult> UpdatePlayerRating(
         int id, [FromBody] UpdatePlayerRatingRequestDto ratingRequestDto
         )
     {
-        await _service.UpdateRating(id, ratingRequestDto);
+        await _service.UpdatePlayerRating(id, ratingRequestDto);
         return Ok();
     }
 
     [HttpPatch("{id:int}/Rank")]
-    public async Task<ActionResult> UpdateRating(int id, [FromBody] int rank)
+    public async Task<ActionResult> UpdatePlayerRating(int id, [FromBody] int rank)
     {
-        await _service.UpdateRating(id, rank);
+        await _service.UpdatePlayerRating(id, rank);
         return Ok();
     }
 }

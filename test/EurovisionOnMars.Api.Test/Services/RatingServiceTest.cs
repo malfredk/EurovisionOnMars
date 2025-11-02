@@ -14,14 +14,14 @@ public class RatingServiceTest
     private const int RATING_ID = 821;
     private const int PLAYER_ID = 657;
 
-    private readonly Mock<IRatingRepository> _repositoryMock;
+    private readonly Mock<IPlayerRatingRepository> _repositoryMock;
     private readonly Mock<IRatingClosingService> _ratingClosingServiceMock;
     private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
     private readonly PlayerRatingService _service;
 
     public RatingServiceTest()
     {
-        _repositoryMock = new Mock<IRatingRepository>();
+        _repositoryMock = new Mock<IPlayerRatingRepository>();
         _ratingClosingServiceMock = new Mock<IRatingClosingService>();
         _loggerMock = new Mock<ILogger<PlayerRatingService>>();
 
@@ -63,17 +63,17 @@ public class RatingServiceTest
             rating1
         }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(ratings);
 
         // act
-        var actualRatings = await _service.GetRatingsByPlayer(PLAYER_ID);
+        var actualRatings = await _service.GetPlayerRatingsByPlayerId(PLAYER_ID);
 
         // assert
         Assert.Equal(expectedSortedRatings, actualRatings);
 
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
     }
 
     [Fact]
@@ -82,16 +82,16 @@ public class RatingServiceTest
         // arrange
         var ratings = new List<PlayerRating>() { }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(ratings);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetRatingsByPlayer(PLAYER_ID)
+            async () => await _service.GetPlayerRatingsByPlayerId(PLAYER_ID)
             );
         
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
     }
 
     // tests for getting a rating by id
@@ -106,7 +106,7 @@ public class RatingServiceTest
             .ReturnsAsync(expectedRating);
 
         // act
-        var actualRating = await _service.GetRating(RATING_ID);
+        var actualRating = await _service.GetPlayerRating(RATING_ID);
 
         // assert
         Assert.Equal(actualRating, expectedRating);
@@ -126,7 +126,7 @@ public class RatingServiceTest
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetRating(RATING_ID)
+            async () => await _service.GetPlayerRating(RATING_ID)
             );
 
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
@@ -148,7 +148,7 @@ public class RatingServiceTest
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(new List<PlayerRating>() { otherRating, oldRating }.ToImmutableList());
 
         // act
@@ -158,7 +158,7 @@ public class RatingServiceTest
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<PlayerRating>()), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
@@ -198,7 +198,7 @@ public class RatingServiceTest
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(new List<PlayerRating>() { oldRating }.ToImmutableList());
 
         // act
@@ -208,7 +208,7 @@ public class RatingServiceTest
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<PlayerRating>()), Times.Once);
         _repositoryMock.Verify(r => r.UpdateRating(expectedUpdatedRating), Times.Once());
@@ -228,7 +228,7 @@ public class RatingServiceTest
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(otherRatings.ToImmutableList());
 
         // act
@@ -238,7 +238,7 @@ public class RatingServiceTest
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once);
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
 
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<PlayerRating>()), Times.Exactly(expectedUpdatedRatings.Count()));
         foreach (var expectedUpdatedRating in expectedUpdatedRatings)
@@ -516,7 +516,7 @@ public class RatingServiceTest
 
         _repositoryMock.Setup(m => m.GetRating(RATING_ID))
             .ReturnsAsync(oldRating);
-        _repositoryMock.Setup(r => r.GetRatingsByPlayer(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
             .ReturnsAsync(new List<PlayerRating>() { otherRating }.ToImmutableList());
 
         // act and assert
@@ -527,7 +527,7 @@ public class RatingServiceTest
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<PlayerRating>()), Times.Never());
     }
 
@@ -594,7 +594,7 @@ public class RatingServiceTest
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 
         _repositoryMock.Verify(r => r.GetRating(It.IsAny<int>()), Times.Never());
-        _repositoryMock.Verify(r => r.GetRatingsByPlayer(It.IsAny<int>()), Times.Never());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(It.IsAny<int>()), Times.Never());
         _repositoryMock.Verify(r => r.UpdateRating(It.IsAny<PlayerRating>()), Times.Never());
     }
 
@@ -614,7 +614,7 @@ public class RatingServiceTest
             .ReturnsAsync(oldRating);
 
         // act
-        await _service.UpdateRating(RATING_ID, rankRequest);
+        await _service.UpdatePlayerRating(RATING_ID, rankRequest);
 
         // assert
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
@@ -636,7 +636,7 @@ public class RatingServiceTest
         var expectedUpdatedRating = CreateRatingWithPointsSumAndRank(RATING_ID, 34, rankRequest);
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateRating(RATING_ID, rankRequest));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdatePlayerRating(RATING_ID, rankRequest));
  
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Once());
 

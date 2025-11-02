@@ -1,6 +1,6 @@
 ﻿namespace EurovisionOnMars.Dto.PlayerRatings;
 
-public record CountryDto
+public record CountryResponseDto
 {
     public int Number { get; set; }
     public string Name { get; set; }
