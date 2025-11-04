@@ -52,7 +52,7 @@ public class PlayerGameResultService : IPlayerGameResultService
         }
     }
 
-    private async Task CalculateTotalPoints(PlayerGameResult playerGameResult)
+    internal async Task CalculateTotalPoints(PlayerGameResult playerGameResult)
     {
         var ratingGameResults = await _ratingGameResultService
             .GetRatingGameResults(playerGameResult.PlayerId);
@@ -72,7 +72,7 @@ public class PlayerGameResultService : IPlayerGameResultService
             .Sum(r => Math.Abs(r.RankDifference ?? throw new Exception("Missing ranking difference")));
     }
 
-    private void CalculateRanks(IReadOnlyList<PlayerGameResult> playerGameResults)
+    internal void CalculateRanks(IReadOnlyList<PlayerGameResult> playerGameResults)
     {
         var orderedPlayerGameResults = playerGameResults
             .OrderBy(p => p.TotalPoints)

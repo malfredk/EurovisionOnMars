@@ -1,11 +1,11 @@
-﻿using EurovisionOnMars.Api.Features.Country;
-using EurovisionOnMars.Dto.Requests;
+﻿using EurovisionOnMars.Api.Features.Countries;
+using EurovisionOnMars.Dto.Countries;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Test.Services;
+namespace EurovisionOnMars.Api.Test.Features.Countries;
 
 public class CountryServiceTest
 {

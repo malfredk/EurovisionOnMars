@@ -1,15 +1,14 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.CustomException;
-using EurovisionOnMars.Dto.Requests;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Test.Services;
+namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
-public class RatingServiceTest
+public class PlayerRatingServiceTest
 {
     private const int RATING_ID = 821;
     private const int PLAYER_ID = 657;
@@ -19,7 +18,7 @@ public class RatingServiceTest
     private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
     private readonly PlayerRatingService _service;
 
-    public RatingServiceTest()
+    public PlayerRatingServiceTest()
     {
         _repositoryMock = new Mock<IPlayerRatingRepository>();
         _ratingClosingServiceMock = new Mock<IRatingClosingService>();
@@ -31,18 +30,40 @@ public class RatingServiceTest
             _loggerMock.Object);
     }
 
-    // tests for getting ratings by player
-
+    // tests for getting all ratings
     [Fact]
-    public async void GetRatingsByPlayer()
+    public async void GetAllPlayerRatings()
     {
         // arrange
-        var rating1 = CreateRatingForSorting(1, null, 100);
-        var rating2 = CreateRatingForSorting(2, 5, 5);
-        var rating3 = CreateRatingForSorting(3, 7, 10);
-        var rating4 = CreateRatingForSorting(4, 1, 19);
-        var rating5 = CreateRatingForSorting(5, 5, 6);
-        var rating6 = CreateRatingForSorting(6, null, 89);
+        var expectedRatings = new List<PlayerRating>()
+        {
+            CreateInitialRating(1),
+            CreateInitialRating(2),
+        }.ToImmutableList();
+        _repositoryMock.Setup(r => r.GetAllPlayerRatings())
+            .ReturnsAsync(expectedRatings);
+
+        // act
+        var actualRatings = await _service.GetAllPlayerRatings();
+
+        // assert
+        Assert.Equal(expectedRatings, actualRatings);
+        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _repositoryMock.Verify(r => r.GetAllPlayerRatings(), Times.Once());
+    }
+
+    // tests for getting ratings by player id
+
+    [Fact]
+    public async void GetRatingsByPlayerId()
+    {
+        // arrange
+        var rating1 = CreateRatingWithRankAndCountryNumber(1, null, 100);
+        var rating2 = CreateRatingWithRankAndCountryNumber(2, 5, 5);
+        var rating3 = CreateRatingWithRankAndCountryNumber(3, 7, 10);
+        var rating4 = CreateRatingWithRankAndCountryNumber(4, 1, 19);
+        var rating5 = CreateRatingWithRankAndCountryNumber(5, 5, 6);
+        var rating6 = CreateRatingWithRankAndCountryNumber(6, null, 89);
 
         var ratings = new List<PlayerRating>() 
         { 
@@ -53,7 +74,7 @@ public class RatingServiceTest
             rating5,
             rating6
         }.ToImmutableList();
-        var expectedSortedRatings = new List<PlayerRating>()
+        var expectedRatings = new List<PlayerRating>()
         {
             rating4,
             rating2, 
@@ -70,7 +91,7 @@ public class RatingServiceTest
         var actualRatings = await _service.GetPlayerRatingsByPlayerId(PLAYER_ID);
 
         // assert
-        Assert.Equal(expectedSortedRatings, actualRatings);
+        Assert.Equal(expectedRatings, actualRatings);
 
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
@@ -88,49 +109,10 @@ public class RatingServiceTest
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
             async () => await _service.GetPlayerRatingsByPlayerId(PLAYER_ID)
-            );
+        );
         
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
-    }
-
-    // tests for getting a rating by id
-
-    [Fact]
-    public async void GetRating()
-    {
-        // arrange
-        var expectedRating = CreateInitialRating(RATING_ID);
-
-        _repositoryMock.Setup(r => r.GetRating(RATING_ID))
-            .ReturnsAsync(expectedRating);
-
-        // act
-        var actualRating = await _service.GetPlayerRating(RATING_ID);
-
-        // assert
-        Assert.Equal(actualRating, expectedRating);
-
-        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
-    }
-
-    [Fact]
-    public async void GetRating_InvalidId()
-    {
-        // arrange
-        var expectedRating = (PlayerRating)null;
-
-        _repositoryMock.Setup(r => r.GetRating(RATING_ID))
-            .ReturnsAsync(expectedRating);
-
-        // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetPlayerRating(RATING_ID)
-            );
-
-        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-        _repositoryMock.Verify(r => r.GetRating(RATING_ID), Times.Once());
     }
 
     // tests for updating rating points
@@ -723,7 +705,7 @@ public class RatingServiceTest
             );
     }
 
-    private static PlayerRating CreateRatingForSorting
+    private static PlayerRating CreateRatingWithRankAndCountryNumber
         (
         int id,
         int? rank,

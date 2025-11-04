@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Entity;
 
-namespace EurovisionOnMars.Api.Test.Mappers;
+namespace EurovisionOnMars.Api.Test.Features.PlayerGameResults;
 
 public class PlayerResultMapperTest
 {
@@ -27,5 +27,6 @@ public class PlayerResultMapperTest
         Assert.Equal(entity.Id, dto.Id);
         Assert.Equal(entity.Rank, dto.Rank);
         Assert.Equal(entity.TotalPoints, dto.TotalPoints);
+        Assert.Equal(entity.Player?.Username, dto.PlayerUsername);
     }
 }

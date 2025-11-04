@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Dto.Countries;
+using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 

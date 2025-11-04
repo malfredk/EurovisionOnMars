@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Entity;
 
-namespace EurovisionOnMars.Api.Test.Mappers;
+namespace EurovisionOnMars.Api.Test.Features.Countries;
 
 public class CountryMapperTest
 {
