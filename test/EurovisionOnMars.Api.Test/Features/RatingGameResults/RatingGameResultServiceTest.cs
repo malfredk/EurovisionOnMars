@@ -7,14 +7,14 @@ using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Services;
 
-public class RatingResultServiceTest
+public class RatingGameResultServiceTest
 {
     private readonly Mock<IPlayerRatingRepository> _ratingRepositoryMock;
     private readonly Mock<IRatingGameResultRepository> _ratingResultRepositoryMock;
     private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
     private readonly RatingGameResultService _service;
 
-    public RatingResultServiceTest()
+    public RatingGameResultServiceTest()
     {
         _ratingRepositoryMock = new Mock<IPlayerRatingRepository>();
         _ratingResultRepositoryMock = new Mock<IRatingGameResultRepository>();
