@@ -94,16 +94,12 @@ public class RatingGameResultService : IRatingGameResultService
 
     private bool HasUniqueRank(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
     {
-        var sameRankAndPlayerList = ratings
-            .Where(r => 
+        var sameRankAndPlayerCount = ratings
+            .Count(r => 
             r.PlayerId == rating.PlayerId && 
             r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank
             );
-        if (sameRankAndPlayerList.Count() == 1)
-        {
-            return true;
-        }
-        return false;
+        return sameRankAndPlayerCount == 1;
     }
 
     private int DetermineBonusPoints(int rank)

@@ -3,7 +3,7 @@ using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Services;
+namespace EurovisionOnMars.Api.Test.Features.RatingClosing;
 
 public class RatingClosingServiceTest
 {

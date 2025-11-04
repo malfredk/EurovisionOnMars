@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.Country;
+﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
@@ -6,61 +6,29 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Test.Services;
+namespace EurovisionOnMars.Api.Test.Features.Players;
 
 public class PlayerServiceTest
 {
     private readonly Mock<IPlayerRepository> _playerRepositoryMock;
-    private readonly Mock<ICountryRepository> _countryRepositoryMock;
+    private readonly Mock<ICountryService> _countryServiceMock;
     private readonly Mock<ILogger<PlayerService>> _loggerMock;
     private readonly PlayerService _service;
 
     public PlayerServiceTest()
     {
         _playerRepositoryMock = new Mock<IPlayerRepository>();
-        _countryRepositoryMock = new Mock<ICountryRepository>();
+        _countryServiceMock = new Mock<ICountryService>();
         _loggerMock = new Mock<ILogger<PlayerService>>();
 
         _service = new PlayerService(
             _playerRepositoryMock.Object, 
-            _countryRepositoryMock.Object,
+            _countryServiceMock.Object,
             _loggerMock.Object
             );
     }
 
-    [Fact]
-    public async void GetPlayers()
-    {
-        // arrange
-        var player1 = CreatePlayer("alice", 5);
-        var player2 = CreatePlayer("bob", 1);
-        var player3 = CreatePlayer("chris", null);
-        var player4 = CreatePlayer("krass", 2);
-
-        var players = new List<Player>() { 
-            player1,
-            player2,
-            player3,
-            player4
-        }.ToImmutableList();
-        var expectedPlayers = new List<Player>() {
-            player2,
-            player4,
-            player1,
-            player3
-        }.ToImmutableList();
-
-        _playerRepositoryMock.Setup(r => r.GetPlayers())
-            .ReturnsAsync(players);
-
-        // act
-        var actualPlayers = await _service.GetPlayers();
-
-        // assert
-        Assert.Equal(expectedPlayers, actualPlayers);
-
-        _playerRepositoryMock.Verify(r => r.GetPlayers(), Times.Once);
-    }
+    // tests for getting player by id
 
     [Fact]
     public async void GetPlayer_ValidId()
@@ -91,10 +59,14 @@ public class PlayerServiceTest
             .ReturnsAsync((Player)null);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(id));
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            async () => await _service.GetPlayer(id)
+        );
 
         _playerRepositoryMock.Verify(r => r.GetPlayer(id), Times.Once);
     }
+
+    // tests for getting player by username
 
     [Fact]
     public async void GetPlayer_ValidUsername()
@@ -122,9 +94,12 @@ public class PlayerServiceTest
         var username = "";
 
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.GetPlayer(username));
+        await Assert.ThrowsAsync<ArgumentException>(
+            async () => await _service.GetPlayer(username)
+        );
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
+        _playerRepositoryMock
+            .Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
     }
 
     [Fact]
@@ -137,10 +112,15 @@ public class PlayerServiceTest
             .ReturnsAsync((Player)null);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.GetPlayer(username));
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            async () => await _service.GetPlayer(username)
+        );
         
-        _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
+        _playerRepositoryMock
+            .Verify(r => r.GetPlayer(username), Times.Once);
     }
+
+    // tests for creating player
 
     [Fact]
     public async void CreatePlayer_ValidUsername()
@@ -155,11 +135,11 @@ public class PlayerServiceTest
         var rating2 = CreateRating(45, country2);
 
         var expectedPlayer = new Player { Username = "dasikj" };
-        var capturedNewPlayer = (Player)null;
+        Player capturedNewPlayer = null;
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync((Player)null);
-        _countryRepositoryMock.Setup(r => r.GetCountries())
+        _countryServiceMock.Setup(r => r.GetCountries())
             .ReturnsAsync(new List<Country> { country1, country2 }.ToImmutableList());
         _playerRepositoryMock.Setup(r => r.CreatePlayer(It.IsAny<Player>()))
             .Callback<Player>(input => capturedNewPlayer = input)
@@ -176,7 +156,7 @@ public class PlayerServiceTest
         Assert.Equal(2, capturedNewPlayer.PlayerRatings.Count);
 
         _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
-        _countryRepositoryMock.Verify(r => r.GetCountries(), Times.Once);
+        _countryServiceMock.Verify(r => r.GetCountries(), Times.Once);
         _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Once);
     }
 
@@ -189,10 +169,14 @@ public class PlayerServiceTest
     public async void CreatePlayer_NotValidUsername(string username)
     {
         // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreatePlayer(username));
+        await Assert.ThrowsAsync<ArgumentException>(
+            async () => await _service.CreatePlayer(username)
+        );
         
-        _playerRepositoryMock.Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
-        _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
+        _playerRepositoryMock
+            .Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
+        _playerRepositoryMock
+            .Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
     }
 
     [Fact]
@@ -206,24 +190,16 @@ public class PlayerServiceTest
             .ReturnsAsync(existingPlayer);
 
         // act and assert
-        await Assert.ThrowsAsync<DuplicateUsernameException>(async () => await _service.CreatePlayer(username));
+        await Assert.ThrowsAsync<DuplicateUsernameException>(
+            async () => await _service.CreatePlayer(username)
+        );
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
-        _countryRepositoryMock.Verify(r => r.GetCountries(), Times.Never());
-        _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
-    }
-
-    private static Player CreatePlayer(string username, int? rank)
-    {
-        return new Player
-        {
-            Username = username,
-            PlayerGameResult = new PlayerGameResult 
-            { 
-                PlayerId = 1000,
-                Rank = rank
-            }
-        };
+        _playerRepositoryMock
+            .Verify(r => r.GetPlayer(username), Times.Once);
+        _countryServiceMock
+            .Verify(r => r.GetCountries(), Times.Never());
+        _playerRepositoryMock
+            .Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
     }
 
     private static Country CreateCountry(int id, string name)
