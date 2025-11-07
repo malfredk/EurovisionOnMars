@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.CustomException;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -31,6 +32,7 @@ public class PlayerRatingServiceTest
     }
 
     // tests for getting all ratings
+
     [Fact]
     public async Task GetAllPlayerRatings()
     {
@@ -111,7 +113,6 @@ public class PlayerRatingServiceTest
             async () => await _service.GetPlayerRatingsByPlayerId(PLAYER_ID)
         );
         
-        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
         _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
     }
 
@@ -120,7 +121,7 @@ public class PlayerRatingServiceTest
     [Theory]
     [MemberData(nameof(GetTestData))]
     public async Task UpdateRating_ValidOtherRating(
-        RatingPointsRequestDto ratingRequest, 
+        UpdatePlayerRatingRequestDto ratingRequest, 
         PlayerRating otherRating,
         PlayerRating expectedUpdatedRating
         )

@@ -57,7 +57,7 @@ public class PlayerRatingService : IPlayerRatingService
         
         UpdateCategoryPoints(rating, ratingRequestDto, ratings);
         UpdatePredictions(rating, ratings);
-        SaveUpdatedRatings(ratings);
+        await SaveUpdatedRatings(ratings);
     }
 
     public async Task UpdatePlayerRating(int id, int rank)
