@@ -12,13 +12,13 @@ public class GameResultService : IGameResultService
 {
     private readonly IPlayerGameResultService _playerGameResultService;
     private readonly IRatingGameResultService _ratingGameResultService;
-    private readonly ILogger<PlayerGameResultService> _logger;
+    private readonly ILogger<GameResultService> _logger;
 
     public GameResultService
         (
         IPlayerGameResultService playerGameResultService,
         IRatingGameResultService ratingGameResultService,
-        ILogger<PlayerGameResultService> logger
+        ILogger<GameResultService> logger
         )
     {
         _playerGameResultService = playerGameResultService;
