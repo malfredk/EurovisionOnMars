@@ -24,7 +24,7 @@ public class CountryServiceTest
     }
 
     [Fact]
-    public async void GetCountries()
+    public async Task GetCountries()
     {
         // arrange
         var country1 = CreateCountry("dska", 21);
@@ -59,7 +59,7 @@ public class CountryServiceTest
     [InlineData("østerrike", 1)]
     [InlineData("san marino", 26)]
     [InlineData("bosnia-hercegovina", 13)]
-    public async void CreateCountry_Valid(string name, int number)
+    public async Task CreateCountry_Valid(string name, int number)
     {
         // arrange
         var countryRequest = CreateCountryRequest(name, number);
@@ -87,7 +87,7 @@ public class CountryServiceTest
     [InlineData("danmark",27)]
     [InlineData("danmark_",1)]
     [InlineData("",1)]
-    public async void CreateCountry_Invalid(string name, int number)
+    public async Task CreateCountry_Invalid(string name, int number)
     {
         // arrange
         var countryRequest = CreateCountryRequest(name, number);
@@ -102,7 +102,7 @@ public class CountryServiceTest
     [InlineData(1)]
     [InlineData(26)]
     [InlineData(13)]
-    public async void UpdateCountry_Valid(int rank)
+    public async Task UpdateCountry_Valid(int rank)
     {
         // arrange
         var id = 974678;
@@ -129,7 +129,7 @@ public class CountryServiceTest
     [InlineData(0)]
     [InlineData(-10)]
     [InlineData(27)]
-    public async void UpdateCountry_Invalid(int rank)
+    public async Task UpdateCountry_Invalid(int rank)
     {
         // arrange
         var id = 974678;
@@ -142,7 +142,7 @@ public class CountryServiceTest
     }
 
     [Fact]
-    public async void UpdateCountry_InvalidId()
+    public async Task UpdateCountry_InvalidId()
     {
         // arrange
         var id = 34;

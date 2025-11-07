@@ -32,7 +32,7 @@ public class PlayerRatingServiceTest
 
     // tests for getting all ratings
     [Fact]
-    public async void GetAllPlayerRatings()
+    public async Task GetAllPlayerRatings()
     {
         // arrange
         var expectedRatings = new List<PlayerRating>()
@@ -55,7 +55,7 @@ public class PlayerRatingServiceTest
     // tests for getting ratings by player id
 
     [Fact]
-    public async void GetRatingsByPlayerId()
+    public async Task GetRatingsByPlayerId()
     {
         // arrange
         var rating1 = CreateRatingWithRankAndCountryNumber(1, null, 100);
@@ -98,7 +98,7 @@ public class PlayerRatingServiceTest
     }
 
     [Fact]
-    public async void GetRatingsByPlayer_NoResults()
+    public async Task GetRatingsByPlayer_NoResults()
     {
         // arrange
         var ratings = new List<PlayerRating>() { }.ToImmutableList();
@@ -119,7 +119,7 @@ public class PlayerRatingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestData))]
-    public async void UpdateRating_ValidOtherRating(
+    public async Task UpdateRating_ValidOtherRating(
         RatingPointsRequestDto ratingRequest, 
         PlayerRating otherRating,
         PlayerRating expectedUpdatedRating
@@ -171,7 +171,7 @@ public class PlayerRatingServiceTest
 
     // giving 10 points in category 2, 10 points has already been given in category 2 for the same country
     [Fact]
-    public async void UpdateRating_ValidUpdatedRating()
+    public async Task UpdateRating_ValidUpdatedRating()
     {
         // arrange
         var ratingRequest = CreateRatingRequest(1, 10, 2);
@@ -198,7 +198,7 @@ public class PlayerRatingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestDataRank))]
-    public async void UpdateRating_CorrectRank(
+    public async Task UpdateRating_CorrectRank(
         PlayerRating oldRating,
         List<PlayerRating> otherRatings,
         RatingPointsRequestDto ratingRequest,
@@ -491,7 +491,7 @@ public class PlayerRatingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestData_Invalid))]
-    public async void UpdateRating_Invalid(RatingPointsRequestDto ratingRequest, PlayerRating otherRating)
+    public async Task UpdateRating_Invalid(RatingPointsRequestDto ratingRequest, PlayerRating otherRating)
     {
         // arrange
         var oldRating = CreateRatingWithPointsSumAndRank(RATING_ID, null, null);
@@ -561,7 +561,7 @@ public class PlayerRatingServiceTest
     }
 
     [Fact]
-    public async void UpdateRating_RatingClosed()
+    public async Task UpdateRating_RatingClosed()
     {
         // arrange
         var ratingRequest = CreateRatingRequest(1, 2, 3);
@@ -586,7 +586,7 @@ public class PlayerRatingServiceTest
     [InlineData(1)]
     [InlineData(26)]
     [Theory]
-    public async void UpdateRatingRank_Valid(int rankRequest)
+    public async Task UpdateRatingRank_Valid(int rankRequest)
     {
         // arrange
         var oldRating = CreateRatingWithPointsSumAndRank(RATING_ID, 34, 15);
@@ -611,7 +611,7 @@ public class PlayerRatingServiceTest
     [InlineData(0)]
     [InlineData(27)]
     [Theory]
-    public async void UpdateRatingRank_Invalid(int rankRequest)
+    public async Task UpdateRatingRank_Invalid(int rankRequest)
     {
         // arrange
         var oldRating = CreateRatingWithPointsSumAndRank(RATING_ID, 34, 15);

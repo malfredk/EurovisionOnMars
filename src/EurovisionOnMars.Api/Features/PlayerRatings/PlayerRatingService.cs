@@ -243,7 +243,7 @@ public class PlayerRatingService : IPlayerRatingService
         }
     }
 
-    private async void SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)
+    private async Task SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)
     {
         foreach (var rating in ratings)
         {

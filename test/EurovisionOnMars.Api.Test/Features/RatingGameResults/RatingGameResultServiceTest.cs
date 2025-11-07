@@ -27,7 +27,7 @@ public class RatingGameResultServiceTest
     }
 
     [Fact]
-    public async void CalculateRatingResults()
+    public async Task CalculateRatingResults()
     {
         // arrange
         var playerId = 672;
@@ -97,7 +97,7 @@ public class RatingGameResultServiceTest
     }
 
     [Fact]
-    public async void CalculateRatingResults_MissingCountryRank()
+    public async Task CalculateRatingResults_MissingCountryRank()
     {
         // arrange
         var playerId = 67;

@@ -31,7 +31,7 @@ public class PlayerServiceTest
     // tests for getting player by id
 
     [Fact]
-    public async void GetPlayer_ValidId()
+    public async Task GetPlayer_ValidId()
     {
         // arrange
         var id = 14;
@@ -50,7 +50,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void GetPlayer_InvalidId()
+    public async Task GetPlayer_InvalidId()
     {
         // arrange
         var id = 14;
@@ -69,7 +69,7 @@ public class PlayerServiceTest
     // tests for getting player by username
 
     [Fact]
-    public async void GetPlayer_ValidUsername()
+    public async Task GetPlayer_ValidUsername()
     {
         // arrange
         var username = "nisse";
@@ -88,7 +88,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void GetPlayer_InvalidUsername()
+    public async Task GetPlayer_InvalidUsername()
     {
         // arrange
         var username = "";
@@ -103,7 +103,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void GetPlayer_NotExistingUsername()
+    public async Task GetPlayer_NotExistingUsername()
     {
         // arrange
         var username = "nope";
@@ -123,7 +123,7 @@ public class PlayerServiceTest
     // tests for creating player
 
     [Fact]
-    public async void CreatePlayer_ValidUsername()
+    public async Task CreatePlayer_ValidUsername()
     {
         // arrange
         var username = "hiæøÅ1278";
@@ -166,7 +166,7 @@ public class PlayerServiceTest
     [InlineData("j*n")]
     [InlineData("=ndwnfks")]
     [InlineData("tretten123456")]
-    public async void CreatePlayer_NotValidUsername(string username)
+    public async Task CreatePlayer_NotValidUsername(string username)
     {
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(
@@ -180,7 +180,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async void CreatePlayer_ExistingUsername()
+    public async Task CreatePlayer_ExistingUsername()
     {
         // arrange
         var username = "nope";

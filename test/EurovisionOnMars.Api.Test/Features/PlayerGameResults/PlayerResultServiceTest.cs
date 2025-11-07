@@ -30,7 +30,7 @@ public class PlayerResultServiceTest
     }
 
     [Fact]
-    public async void GetPlayerGameResults()
+    public async Task GetPlayerGameResults()
     {
         // arrange
         var playerResult1 = CreatePlayerResult(1, 4);
@@ -62,7 +62,7 @@ public class PlayerResultServiceTest
     }
 
     [Fact]
-    public async void CalculatePlayerGameResults()
+    public async Task CalculatePlayerGameResults()
     {
         // arrange
         var playerId1 = 10;
@@ -115,7 +115,7 @@ public class PlayerResultServiceTest
     }
 
     [Fact]
-    public async void CalculateTotalPoints()
+    public async Task CalculateTotalPoints()
     {
         // arrange
         var playerId = 10;
@@ -140,7 +140,7 @@ public class PlayerResultServiceTest
     }
 
     [Fact]
-    public async void CalculateTotalPoints_MissingBonusPoints()
+    public async Task CalculateTotalPoints_MissingBonusPoints()
     {
         // arrange
         var playerId = 10;
@@ -163,7 +163,7 @@ public class PlayerResultServiceTest
     }
 
     [Fact]
-    public async void CalculateTotalPoints_MissingRankDifference()
+    public async Task CalculateTotalPoints_MissingRankDifference()
     {
         // arrange
         var playerId = 10;
