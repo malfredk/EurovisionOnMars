@@ -90,12 +90,12 @@ public class PlayerRatingService : IPlayerRatingService
 
     private PlayerRating CreateNewPlayerRating(UpdatePlayerRatingRequestDto ratingRequestDto)
     {
-        return new PlayerRating
-        {
-            Category1Points = ratingRequestDto.Category1Points,
-            Category2Points = ratingRequestDto.Category2Points,
-            Category3Points = ratingRequestDto.Category3Points
-        };
+        var playerRating = new PlayerRating();
+        playerRating.SetPoints(
+            ratingRequestDto.Category1Points,
+            ratingRequestDto.Category2Points,
+            ratingRequestDto.Category3Points
+            );
     }
 
     private void UpdateCategoryPoints(
@@ -141,7 +141,6 @@ public class PlayerRatingService : IPlayerRatingService
             _logger.LogDebug("Skipping validation since points have not changed in this category.");
             return;
         }
-        ValidatePoints(newRating, categoryPointsGetter);
         ValidateSpecialPoints(newRating, ratings, categoryPointsGetter);
     }
 
@@ -154,19 +153,6 @@ public class PlayerRatingService : IPlayerRatingService
         var points = categoryPointsGetter(rating);
         var newPoints = categoryPointsGetter(newRating);
         return newPoints != points;
-    }
-
-    private void ValidatePoints(
-        PlayerRating rating, 
-        Func<PlayerRating, int?> categoryPointsGetter
-        )
-    {
-        var categoryPoints = categoryPointsGetter(rating);
-        var isValid = categoryPoints != null && VALID_POINTS.Contains((int)categoryPoints);
-        if (!isValid)
-        {
-            throw new ArgumentException("Invalid points amount");
-        }
     }
 
     private void ValidateSpecialPoints
@@ -206,18 +192,7 @@ public class PlayerRatingService : IPlayerRatingService
         IReadOnlyList<PlayerRating> ratings
         )
     {
-        UpdateTotalPoints(rating);
         UpdateRanks(ratings);
-    }
-
-    private void UpdateTotalPoints(PlayerRating rating)
-    {
-        rating.Prediction.TotalGivenPoints = CalculateTotalPoints(rating);
-    }
-
-    private int CalculateTotalPoints(PlayerRating rating)
-    {
-        return (int)(rating.Category1Points + rating.Category2Points + rating.Category3Points);
     }
 
     private void UpdateRanks(IReadOnlyList<PlayerRating> ratings)

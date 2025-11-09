@@ -67,47 +67,21 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> CreateEntity(string username)
     {
-        return new Player
-        {
-            Username = username,
-            PlayerRatings = await CreateInitialRatings(),
-            PlayerGameResult = new PlayerGameResult()
-        };
-    }
 
-    private async Task<List<PlayerRating>> CreateInitialRatings()
-    {
-        var ratings = new List<PlayerRating>();
         var countries = await _countryService.GetCountries();
-        foreach (var country in countries)
-        {
-            ratings.Add(CreateInitialRating(country));
-        }
-        return ratings;
+        return new Player(username, countries);
     }
 
-    private PlayerRating CreateInitialRating(Country country)
-    {
-        return new PlayerRating
-        {
-            CountryId = country.Id,
-            RatingGameResult = new RatingGameResult(),
-            Prediction = new Prediction()
-        };
-    }
-
-    private void ValidateUsername(string username)
+    public static void ValidateUsername(string stringToValidate) // TODO: remove duplication with Player entity
     {
         string pattern = @"^[a-zA-Z0-9æøåÆØÅ]*$";
-        int maxLength = 12;
 
-        var isValid = !string.IsNullOrEmpty(username) 
-            && Regex.IsMatch(username, pattern)
-            && username.Length <= maxLength;
+        var isValid = !string.IsNullOrEmpty(stringToValidate)
+            && Regex.IsMatch(stringToValidate, pattern);
 
         if (!isValid)
         {
-            throw new ArgumentException("Username can only contain letters and numbers");
+            throw new Exception("String can only contain letters and numbers");
         }
     }
 }
