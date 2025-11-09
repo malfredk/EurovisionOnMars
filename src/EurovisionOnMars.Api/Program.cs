@@ -2,7 +2,6 @@ using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Api.Features.PlayerRatings.Mapper;
 using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.Api.Features.RatingGameResults;
@@ -63,7 +62,6 @@ builder.Services.AddTransient<ICountryMapper, CountryMapper>();
 builder.Services.AddTransient<ICountryMapper, CountryMapper>();
 builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
 builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
-builder.Services.AddTransient<IPredictionMapper, PredictionMapper>();
 
 Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)

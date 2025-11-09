@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using EurovisionOnMars.Dto.Players
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -34,7 +35,7 @@
 @code {
     private string? newUsername;
     private string? existingUsername;
-    private PlayerDto? player;
+    private PlayerResponseDto? player;
 
     private async Task CreatePlayer()
     {
@@ -47,7 +48,7 @@
         var response = await Http.PostAsJsonAsync<string>("/api/Players/", newUsername);
         if (response.IsSuccessStatusCode)
         {
-            player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            player = await response.Content.ReadFromJsonAsync<PlayerResponseDto>();
             Snackbar.Add("spiller opprettet", Severity.Success);
             Console.WriteLine($"Successfully created player with username: {player!.Username}");
             NavigationManager.NavigateTo($"/spiller/{player!.Id}");
@@ -80,7 +81,7 @@
         var response = await Http.GetAsync($"/api/Players/{existingUsername}");
         if (response.IsSuccessStatusCode)
         {
-            player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            player = await response.Content.ReadFromJsonAsync<PlayerResponseDto>();
             Console.WriteLine($"Got existing player with username: {player!.Username}");
             NavigationManager.NavigateTo($"/spiller/{player!.Id}");
         }

@@ -10,12 +10,16 @@ public class GameResultsController : ControllerBase
 {
     private readonly IPlayerGameResultService _service;
     private readonly ILogger<GameResultsController> _logger;
-    private readonly IPlayerGameResultMapper _mapper = new PlayerGameResultMapper();
+    private readonly IPlayerGameResultMapper _mapper;
 
-    public GameResultsController(IPlayerGameResultService service, ILogger<GameResultsController> logger)
+    public GameResultsController(
+        IPlayerGameResultService service, 
+        ILogger<GameResultsController> logger,
+        IPlayerGameResultMapper mapper)
     {
         _service = service;
         _logger = logger;
+        _mapper = mapper;
     }
 
     [HttpGet]

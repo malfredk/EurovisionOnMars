@@ -1,4 +1,4 @@
-﻿@using EurovisionOnMars.Dto.Requests
+﻿@using EurovisionOnMars.Dto.Countries
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
@@ -57,7 +57,7 @@
         var response = await Http.PostAsJsonAsync<NewCountryRequestDto>("/api/Countries/", countryRequest);
         if (response.IsSuccessStatusCode)
         {
-            var country = await response.Content.ReadFromJsonAsync<CountryDto>();
+            var country = await response.Content.ReadFromJsonAsync<CountryResponseDto>();
             Snackbar.Add("land opprettet", Severity.Success);
             Console.WriteLine($"Successfully created country with id: {country.Id}");
             Dialog.Close(DialogResult.Ok(country));
