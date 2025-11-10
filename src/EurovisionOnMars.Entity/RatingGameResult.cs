@@ -4,11 +4,11 @@ namespace EurovisionOnMars.Entity;
 
 public record RatingGameResult : IdBase
 {
-    public int? RankDifference { get; private set; } // actual minus predicted
-    public int? BonusPoints { get; private set; }
-    public int PlayerRatingId { get; private set; }
+    public int? RankDifference { get; set; } // actual minus predicted
+    public int? BonusPoints { get; set; }
+    public int PlayerRatingId { get; init; }
     [JsonIgnore]
-    public PlayerRating? PlayerRating { get; private set; }
+    public PlayerRating? PlayerRating { get; init; }
 
     private RatingGameResult() { }
 

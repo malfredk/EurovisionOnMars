@@ -9,13 +9,13 @@ public record PlayerRating : IdBase
     public int? Category1Points { get; private set; }
     public int? Category2Points { get; private set; }
     public int? Category3Points { get; private set; }
-    public Prediction Prediction { get; private set; }
-    public int CountryId { get; private set; }
-    public Country? Country { get; private set; }
-    public RatingGameResult RatingGameResult { get; private set;  }
-    public int PlayerId { get; private set; }
+    public Prediction Prediction { get; init; } = null!;
+    public int CountryId { get; init; }
+    public Country? Country { get; init; }
+    public RatingGameResult RatingGameResult { get; init; } = null!;
+    public int PlayerId { get; init; }
     [JsonIgnore]
-    public Player? Player { get; private set; }
+    public Player? Player { get; init; }
 
     private PlayerRating() { }
 
@@ -36,12 +36,8 @@ public record PlayerRating : IdBase
         )
     {
         ValidateCategoryPoints(category1points, category2points, category3points);
-        SetCategoryPoints((int)category2points!, (int)category2points!, (int)category3points!);
-        Prediction.CalculateTotalGivenPoints(
-            (int)category1points!,
-            (int)category2points!,
-            (int)category3points!
-            );
+        SetCategoryPoints((int)category1points!, (int)category2points!, (int)category3points!);
+        Prediction.CalculateTotalGivenPoints();
     }
 
     private void ValidateCategoryPoints(

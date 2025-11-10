@@ -5,9 +5,12 @@ namespace EurovisionOnMars.Entity;
 
 public record Player : IdBase
 {
-    public string Username { get; private set; } = null!;
-    public List<PlayerRating> PlayerRatings { get; private set; }
-    public PlayerGameResult PlayerGameResult { get; private set; }
+    private static int USERNAME_MAX_LENGTH = 12;
+    private static string USERNAME_PATTERN = @"^[a-zA-Z0-9æøåÆØÅ]*$";
+
+    public string Username { get; init; } = null!;
+    public List<PlayerRating> PlayerRatings { get; init; } = [];
+    public PlayerGameResult PlayerGameResult { get; init; } = null!;
 
     private Player() { }
 
@@ -25,16 +28,13 @@ public record Player : IdBase
 
     public void ValidateUsername(string username)
     {
-        string pattern = @"^[a-zA-Z0-9æøåÆØÅ]*$";
-        int maxLength = 12;
-
         var isValid = !string.IsNullOrEmpty(username)
-            && Regex.IsMatch(username, pattern)
-            && username.Length <= maxLength;
+            && Regex.IsMatch(username, USERNAME_PATTERN)
+            && username.Length <= USERNAME_MAX_LENGTH;
 
         if (!isValid)
         {
-            throw new ArgumentException("Username can only contain letters and numbers");
+            throw new ArgumentException($"Username={username} contains invalid character or is too long.");
         }
     }
 }

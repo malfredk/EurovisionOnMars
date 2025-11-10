@@ -5,10 +5,10 @@ namespace EurovisionOnMars.Entity;
 public record Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
-    public int? CalculatedRank { get; private set; }
-    public int PlayerRatingId { get; private set; }
+    public int? CalculatedRank { get; set; }
+    public int PlayerRatingId { get; init; }
     [JsonIgnore]
-    public PlayerRating PlayerRating { get; private set; }
+    public PlayerRating? PlayerRating { get; init; }
 
     private Prediction() { }
 
@@ -18,12 +18,14 @@ public record Prediction : IdBase
         PlayerRatingId = playerRating.Id;
     }
 
-    public void CalculateTotalGivenPoints(
-        int category1Points,
-        int category2Points,
-        int category3Points
-        )
+    public void CalculateTotalGivenPoints()
     {
-        TotalGivenPoints = category1Points + category2Points + category3Points;
+        if (PlayerRating == null)
+            throw new InvalidOperationException("Prediction must be linked to a PlayerRating before calculation.");
+
+        TotalGivenPoints =
+            (PlayerRating.Category1Points ?? 0) +
+            (PlayerRating.Category2Points ?? 0) +
+            (PlayerRating.Category3Points ?? 0);
     }
 }

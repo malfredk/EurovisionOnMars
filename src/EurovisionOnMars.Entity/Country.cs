@@ -7,8 +7,8 @@ public record Country : IdBase
 {
     private static int MIN_NUMBER = 1;
     private static int MAX_NUMBER = 26;
-    private static ImmutableList<string> POSSIBLE_PARTICIPANTS = new List<string>
-    {
+    private static ImmutableList<string> POSSIBLE_PARTICIPANTS =
+    [
         "australia",
         "tsjekkia",
         "armenia",
@@ -57,10 +57,10 @@ public record Country : IdBase
         "slovakia",
         "luxembourg",
         "monaco"
-    }.ToImmutableList();
+    ];
 
-    public int Number { get; private set; }
-    public string Name { get; private set; } = null!;
+    public int Number { get; init; }
+    public string Name { get; init; } = null!;
     public int? ActualRank { get; private set; }
     [JsonIgnore]
     public List<PlayerRating>? PlayerRatings { get; }
