@@ -128,11 +128,18 @@ public class PlayerRatingService : IPlayerRatingService
         {
             return;
         }
+        EnsureUniqueSpecialPoints(points, ratings, categoryPointsGetter);
+    }
 
-        var samePointsCount = ratings
-            .Count(r => categoryPointsGetter(r) == points);
-
-        if (samePointsCount > 1)
+    private void EnsureUniqueSpecialPoints(
+        int specialPoints,
+        IReadOnlyList<PlayerRating> ratings,
+        Func<PlayerRating, int?> categoryPointsGetter
+        )
+    {
+        var specialPointsCount = ratings
+            .Count(r => categoryPointsGetter(r) == specialPoints);
+        if (specialPointsCount > 1)
         {
             throw new ArgumentException("Special points have already been given in category.");
         }
