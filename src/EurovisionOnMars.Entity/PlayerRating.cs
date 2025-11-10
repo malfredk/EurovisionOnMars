@@ -6,6 +6,8 @@ public record PlayerRating : IdBase
 {
     private static List<int> VALID_POINTS = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12 };
 
+    public static List<int> SPECIAL_POINTS = new List<int>() { 10, 12 };
+
     public int? Category1Points { get; private set; }
     public int? Category2Points { get; private set; }
     public int? Category3Points { get; private set; }

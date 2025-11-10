@@ -15,9 +15,6 @@ public interface IPlayerRatingService
 
 public class PlayerRatingService : IPlayerRatingService
 {
-    private static List<int> VALID_POINTS = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12 };
-    private static List<int> SPECIAL_POINTS = new List<int>() { 10, 12 };
-
     private readonly IPlayerRatingRepository _repository;
     private readonly IRatingClosingService _ratingClosingService;
     private readonly ILogger<PlayerRatingService> _logger;
@@ -52,11 +49,10 @@ public class PlayerRatingService : IPlayerRatingService
         _ratingClosingService.ValidateRatingTime();
 
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
-        var rating = ratings.FirstOrDefault(r => r.Id == id);
-        var newCategoryPointsRating = CreateNewPlayerRating(ratingRequestDto);
-        
-        UpdateCategoryPoints(rating, ratingRequestDto, ratings);
-        UpdatePredictions(rating, ratings);
+        var rating = ratings.First(r => r.Id == id);
+
+        UpdatePoints(rating, ratingRequestDto, ratings);
+        UpdateRanks(ratings);
         await SaveUpdatedRatings(ratings);
     }
 
@@ -88,30 +84,22 @@ public class PlayerRatingService : IPlayerRatingService
         return rating;
     }
 
-    private PlayerRating CreateNewPlayerRating(UpdatePlayerRatingRequestDto ratingRequestDto)
-    {
-        var playerRating = new PlayerRating();
-        playerRating.SetPoints(
-            ratingRequestDto.Category1Points,
-            ratingRequestDto.Category2Points,
-            ratingRequestDto.Category3Points
-            );
-    }
-
-    private void UpdateCategoryPoints(
+    private void UpdatePoints(
         PlayerRating rating,
         UpdatePlayerRatingRequestDto ratingRequest,  
         IReadOnlyList<PlayerRating> ratings
         )
     {
-        var newCategoryPointsRating = CreateNewPlayerRating(ratingRequest);
-        ValidateCategoryPoints(rating, newCategoryPointsRating, ratings);
-        UpdateCategoryPoints(rating, newCategoryPointsRating);
+        rating.SetPoints(
+            ratingRequest.Category1Points,
+            ratingRequest.Category2Points,
+            ratingRequest.Category3Points
+            );
+        ValidateSpecialCategoryPoints(rating, ratings);
     }
 
-    private void ValidateCategoryPoints(
+    private void ValidateSpecialCategoryPoints(
         PlayerRating rating,
-        PlayerRating newCategoryPointsRating, 
         IReadOnlyList<PlayerRating> ratings
         )
     {
@@ -120,79 +108,34 @@ public class PlayerRatingService : IPlayerRatingService
         Func<PlayerRating, int?> category3PointsGetter = r => r.Category3Points;
 
         _logger.LogDebug("Validating points in rating with for category 1.");
-        ValidatePointsForCategory(rating, newCategoryPointsRating, ratings, category1PointsGetter);
+        ValidateSpecialCategoryPoints(rating, ratings, category1PointsGetter);
 
         _logger.LogDebug("Validating points in rating with for category 2.");
-        ValidatePointsForCategory(rating, newCategoryPointsRating, ratings, category2PointsGetter);
+        ValidateSpecialCategoryPoints(rating, ratings, category2PointsGetter);
 
         _logger.LogDebug("Validating points in rating with for category 3.");
-        ValidatePointsForCategory(rating, newCategoryPointsRating, ratings, category3PointsGetter);
+        ValidateSpecialCategoryPoints(rating, ratings, category3PointsGetter);
     }
 
-    private void ValidatePointsForCategory(
+    private void ValidateSpecialCategoryPoints(
         PlayerRating rating,
-        PlayerRating newRating,
         IReadOnlyList<PlayerRating> ratings,
         Func<PlayerRating, int?> categoryPointsGetter
         )
     {
-        if (!HasPointsChanged(rating, newRating, categoryPointsGetter))
-        {
-            _logger.LogDebug("Skipping validation since points have not changed in this category.");
-            return;
-        }
-        ValidateSpecialPoints(newRating, ratings, categoryPointsGetter);
-    }
-
-    private bool HasPointsChanged(
-        PlayerRating rating,
-        PlayerRating newRating,
-        Func<PlayerRating, int?> categoryPointsGetter
-        )
-    {
-        var points = categoryPointsGetter(rating);
-        var newPoints = categoryPointsGetter(newRating);
-        return newPoints != points;
-    }
-
-    private void ValidateSpecialPoints
-        (
-        PlayerRating newRating,
-        IReadOnlyList<PlayerRating> ratings,
-        Func<PlayerRating, int?> categoryPointsGetter
-        )
-    {
-        // category points are validated as nonnull in previous validation
-        var newPoints = (int)categoryPointsGetter(newRating)!;
-
-        if (!SPECIAL_POINTS.Contains(newPoints))
+        var points = (int)categoryPointsGetter(rating)!;
+        if (!PlayerRating.SPECIAL_POINTS.Contains(points))
         {
             return;
         }
 
-        var newPointsCount = ratings
-            .Count(r => categoryPointsGetter(r) == newPoints);
+        var samePointsCount = ratings
+            .Count(r => categoryPointsGetter(r) == points);
 
-        if (newPointsCount > 0)
+        if (samePointsCount > 1)
         {
-            _logger.LogInformation("Antoher rating already has {categoryPoints} points in this category.", newPoints);
-            throw new ArgumentException("Special points has already been given in category.");
+            throw new ArgumentException("Special points have already been given in category.");
         }
-    }
-
-    private void UpdateCategoryPoints(PlayerRating rating, PlayerRating newCategoryPointsRating)
-    {
-        rating.Category1Points = newCategoryPointsRating.Category1Points;
-        rating.Category2Points = newCategoryPointsRating.Category2Points;
-        rating.Category3Points = newCategoryPointsRating.Category3Points;
-    }
-
-    private void UpdatePredictions(
-        PlayerRating rating,
-        IReadOnlyList<PlayerRating> ratings
-        )
-    {
-        UpdateRanks(ratings);
     }
 
     private void UpdateRanks(IReadOnlyList<PlayerRating> ratings)
