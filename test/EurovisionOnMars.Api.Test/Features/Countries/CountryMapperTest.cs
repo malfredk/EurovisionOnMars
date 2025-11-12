@@ -17,20 +17,16 @@ public class CountryMapperTest
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(entity.Id, dto.Id);
-        Assert.Equal(entity.Number, dto.Number);
-        Assert.Equal(entity.Name, dto.Name);
-        Assert.Equal(entity.ActualRank, dto.ActualRank);
+        Assert.Equal(Utils.COUNTRY_ID, dto.Id);
+        Assert.Equal(Utils.COUNTRY_NUMBER, dto.Number);
+        Assert.Equal(Utils.COUNTRY_NAME, dto.Name);
+        Assert.Equal(Utils.COUNTRY_RANK, dto.ActualRank);
     }
 
     private Country CreateEntity()
     {
-        return new Country
-        {
-            Id = 34,
-            Number = 45,
-            Name = "noreg",
-            ActualRank = 6383
-        };
+        var country = Utils.CreateInitialCountry();
+        country.SetActualRank(Utils.COUNTRY_RANK);
+        return country;
     }
 }

@@ -11,16 +11,13 @@ public class PlayerRatingMapperTest
     private static readonly int CATEGORY1_POINTS = 11;
     private static readonly int CATEGORY2_POINTS = 12;
     private static readonly int CATEGORY3_POINTS = 13;
-    private static readonly int TOTAL_POINTS = 100;
     private static readonly int RANK = 200;
-    private static readonly int COUNTRY_NUMBER = 99;
-    private static readonly string COUNTRY_NAME = "heiio";
 
     [Fact]
     public void ToDto()
     {
         // arrange
-        var entity = CreateRatingEntity();
+        var entity = CreateEntity();
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -31,39 +28,21 @@ public class PlayerRatingMapperTest
         Assert.Equal(CATEGORY2_POINTS, dto.Category2Points);
         Assert.Equal(CATEGORY3_POINTS, dto.Category3Points);
         Assert.Equal(RANK, dto.Prediction.CalculatedRank);
-        Assert.Equal(TOTAL_POINTS, dto.Prediction.TotalGivenPoints);
-        Assert.Equal(COUNTRY_NAME, dto.Country.Name);
-        Assert.Equal(COUNTRY_NUMBER, dto.Country.Number);
+        Assert.Equal(35, dto.Prediction.TotalGivenPoints);
+        Assert.Equal(Utils.COUNTRY_NAME, dto.Country.Name);
+        Assert.Equal(Utils.COUNTRY_NUMBER, dto.Country.Number);
     }
 
-    private PlayerRating CreateRatingEntity()
+    private PlayerRating CreateEntity()
     {
-        return new PlayerRating
-        {
-            Id = ID,
-            Category1Points = CATEGORY1_POINTS,
-            Category2Points = CATEGORY2_POINTS,
-            Category3Points = CATEGORY3_POINTS,
-            Country = CreateCountryEntity(),
-            Prediction = CreatePredictionEntity(),
-        };
-    }
+        var player = Utils.CreateInitialPlayerWithOneCountry();
 
-    private Country CreateCountryEntity()
-    {
-        return new Country
-        {
-            Number = COUNTRY_NUMBER,
-            Name = COUNTRY_NAME,
-        };
-    }
+        var rating = player.PlayerRatings.First();
+        rating.SetPoints(CATEGORY1_POINTS, CATEGORY2_POINTS, CATEGORY3_POINTS);
 
-    private Prediction CreatePredictionEntity()
-    {
-        return new Prediction
-        {
-            TotalGivenPoints = TOTAL_POINTS,
-            CalculatedRank = RANK,
-        };
+        var prediction = rating.Prediction;
+        prediction.CalculatedRank = RANK;
+        
+        return rating;
     }
 }

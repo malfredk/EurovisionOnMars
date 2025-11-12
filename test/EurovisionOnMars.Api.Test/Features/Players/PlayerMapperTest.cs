@@ -1,9 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
-using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Api.Features.Players;
-using EurovisionOnMars.Dto;
-using EurovisionOnMars.Entity;
-using Moq;
+﻿using EurovisionOnMars.Api.Features.Players;
 
 namespace EurovisionOnMars.Api.Test.Features.Players;
 
@@ -11,29 +6,17 @@ public class PlayerMapperTest
 {    
     private readonly PlayerMapper _mapper = new PlayerMapper();
 
-    private static readonly int ID = 123;
-    private static readonly string USERNAME = "malfred";
-
     [Fact]
     public void ToDto()
     {
         // arrange
-        var playerEntity = CreatePlayerEntity();
+        var playerEntity = Utils.CreateInitialPlayerWithOneCountry();
 
         // act
         var playerDto = _mapper.ToDto(playerEntity);
 
         // assert
-        Assert.Equal(USERNAME, playerDto.Username);
-        Assert.Equal(ID, playerDto.Id);
-    }
-
-    private static Player CreatePlayerEntity()
-    {
-        return new Player
-        {
-            Id = ID,
-            Username = USERNAME,
-        };
+        Assert.Equal(Utils.PLAYER_USERNAME, playerDto.Username);
+        Assert.Equal(Utils.PLAYER_ID, playerDto.Id);
     }
 }

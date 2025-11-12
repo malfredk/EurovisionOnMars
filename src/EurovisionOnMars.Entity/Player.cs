@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace EurovisionOnMars.Entity;
@@ -16,6 +17,7 @@ public record Player : IdBase
 
     public Player(string username, ImmutableList<Country> countries)
     {
+        ValidateCountries(countries);
         ValidateUsername(username);
         Username = username;
 
@@ -24,6 +26,14 @@ public record Player : IdBase
             .ToList();
 
         PlayerGameResult = new PlayerGameResult(this);
+    }
+
+    private void ValidateCountries(ImmutableList<Country> countries)
+    {
+        if (countries.IsNullOrEmpty())
+        {
+            throw new ArgumentException("Country list is empty."); // TODO: test
+        }
     }
 
     public void ValidateUsername(string username)
