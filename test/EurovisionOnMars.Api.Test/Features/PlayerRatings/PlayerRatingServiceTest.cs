@@ -1,7 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.RatingClosing;
-using EurovisionOnMars.CustomException;
-using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,7 +10,6 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 public class PlayerRatingServiceTest
 {
     private const int RATING_ID = 821;
-    private const int PLAYER_ID = 657;
 
     private readonly Mock<IPlayerRatingRepository> _repositoryMock;
     private readonly Mock<IRatingClosingService> _ratingClosingServiceMock;
@@ -86,17 +83,17 @@ public class PlayerRatingServiceTest
             rating1
         }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID))
             .ReturnsAsync(ratings);
 
         // act
-        var actualRatings = await _service.GetPlayerRatingsByPlayerId(PLAYER_ID);
+        var actualRatings = await _service.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID);
 
         // assert
         Assert.Equal(expectedRatings, actualRatings);
 
         _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
-        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID), Times.Once());
     }
 
     [Fact]
@@ -105,15 +102,15 @@ public class PlayerRatingServiceTest
         // arrange
         var ratings = new List<PlayerRating>() { }.ToImmutableList();
 
-        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID))
+        _repositoryMock.Setup(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID))
             .ReturnsAsync(ratings);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetPlayerRatingsByPlayerId(PLAYER_ID)
+            async () => await _service.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID)
         );
         
-        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(PLAYER_ID), Times.Once());
+        _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID), Times.Once());
     }
 
     //// tests for updating rating points

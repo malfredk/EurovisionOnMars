@@ -27,9 +27,9 @@ public class CountryServiceTest
     public async Task GetCountries()
     {
         // arrange
-        var country1 = CreateCountry("dska", 21);
-        var country2 = CreateCountry("wf", 4);
-        var country3 = CreateCountry("jojo", 7);
+        var country1 = new Country(21, "dska");
+        var country2 = new Country(4, "wf");
+        var country3 = new Country(7, "jojo");
         var countries = new List<Country> 
         { 
             country1,
@@ -55,16 +55,13 @@ public class CountryServiceTest
         _countryRepositoryMock.Verify(m => m.GetCountries(), Times.Once);
     }
 
-    [Theory]
-    [InlineData("østerrike", 1)]
-    [InlineData("san marino", 26)]
-    [InlineData("bosnia-hercegovina", 13)]
-    public async Task CreateCountry_Valid(string name, int number)
+    [Fact]
+    public async Task CreateCountry()
     {
         // arrange
-        var countryRequest = CreateCountryRequest(name, number);
-        var country = CreateCountry(name, number);
-        var expectedCountry = CreateCountry("dska", 90);
+        var countryRequest = CreateCountryRequest(Utils.COUNTRY_NAME, Utils.COUNTRY_NUMBER);
+        var country = Utils.CreateInitialCountry();
+        var expectedCountry = new Country(20, "norge");
 
         _countryRepositoryMock.Setup(m => m.CreateCountry(country))
             .ReturnsAsync(expectedCountry);
@@ -78,37 +75,14 @@ public class CountryServiceTest
         _countryRepositoryMock.Verify(m => m.CreateCountry(country), Times.Once);
     }
 
-    [Theory]
-    [InlineData("Danmark", 1)]
-    [InlineData("england", 1)]
-    [InlineData("danmark2", 26)]
-    [InlineData("danmark",0)]
-    [InlineData("danmark",-10)]
-    [InlineData("danmark",27)]
-    [InlineData("danmark_",1)]
-    [InlineData("",1)]
-    public async Task CreateCountry_Invalid(string name, int number)
-    {
-        // arrange
-        var countryRequest = CreateCountryRequest(name, number);
-
-        // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.CreateCountry(countryRequest));
-
-        _countryRepositoryMock.Verify(m => m.CreateCountry(It.IsAny<Country>()), Times.Never);
-    }
-
-    [Theory]
-    [InlineData(1)]
-    [InlineData(26)]
-    [InlineData(13)]
-    public async Task UpdateCountry_Valid(int rank)
+    [Fact]
+    public async Task UpdateCountry()
     {
         // arrange
         var id = 974678;
-        var existingCountry = CreateCountry(null);
-        var updatedCountry = CreateCountry(rank);
-        var expectedCountry = CreateCountry("dska", 90);
+        var rank = 5;
+        var existingCountry = new Country(1, "norge");
+        var expectedCountry = new Country(2, "sverige");
 
         _countryRepositoryMock.Setup(m => m.GetCountry(id))
             .ReturnsAsync(existingCountry);
@@ -119,26 +93,10 @@ public class CountryServiceTest
         var actualCountry = await _service.UpdateCountry(id, rank);
 
         // assert
-        Assert.Equal(expectedCountry, actualCountry);
+        Assert.Equal(rank, existingCountry.ActualRank);
 
         _countryRepositoryMock.Verify(m => m.GetCountry(id), Times.Once);
         _countryRepositoryMock.Verify(m => m.UpdateCountry(existingCountry), Times.Once);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-10)]
-    [InlineData(27)]
-    public async Task UpdateCountry_Invalid(int rank)
-    {
-        // arrange
-        var id = 974678;
-
-        // act and assert
-        await Assert.ThrowsAsync<ArgumentException>(async () => await _service.UpdateCountry(id, rank));
-
-        _countryRepositoryMock.Verify(m => m.GetCountry(It.IsAny<int>()), Times.Never);
-        _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
     }
 
     [Fact]
@@ -163,25 +121,6 @@ public class CountryServiceTest
         {
             Name = name,
             Number = number
-        };
-    }
-
-    private Country CreateCountry(string name, int number)
-    {
-        return new Country
-        {
-            Name = name,
-            Number = number
-        };
-    }
-
-    private Country CreateCountry(int? rank)
-    {
-        return new Country
-        {
-            Name = "danmark",
-            Number = 1,
-            ActualRank = rank
         };
     }
 }

@@ -15,15 +15,20 @@ public class Utils
 
     public static Player CreateInitialPlayerWithOneCountry()
     {
-        var country = CreateInitialCountry();
-        return CreateInitialPlayer([country]);
+        return CreateInitialPlayerWithOneCountry(PLAYER_ID);
     }
 
-    public static Player CreateInitialPlayer(ImmutableList<Country> countries)
+    public static Player CreateInitialPlayerWithOneCountry(int playerId)
+    {
+        var country = CreateInitialCountry();
+        return CreateInitialPlayer(playerId, [country]);
+    }
+
+    private static Player CreateInitialPlayer(int playerId, ImmutableList<Country> countries)
     {
         return new Player(PLAYER_USERNAME, countries)
         {
-            Id = PLAYER_ID
+            Id = playerId
         };
     }
 
