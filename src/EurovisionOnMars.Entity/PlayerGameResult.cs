@@ -6,9 +6,9 @@ public record PlayerGameResult : IdBase
 {
     public int? Rank { get; set; }
     public int? TotalPoints { get; set; }
-    public int PlayerId { get; init; }
+    public int PlayerId { get; private set; }
     [JsonIgnore]
-    public Player? Player { get; init; }
+    public Player? Player { get; private set; }
 
     private PlayerGameResult() { }
 

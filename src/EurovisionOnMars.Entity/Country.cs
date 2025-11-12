@@ -59,8 +59,8 @@ public record Country : IdBase
         "monaco"
     ];
 
-    public int Number { get; init; }
-    public string Name { get; init; } = null!;
+    public int Number { get; private set; }
+    public string Name { get; private set; } = null!;
     public int? ActualRank { get; private set; }
     [JsonIgnore]
     public List<PlayerRating>? PlayerRatings { get; }

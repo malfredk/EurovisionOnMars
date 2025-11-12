@@ -6,9 +6,9 @@ public record RatingGameResult : IdBase
 {
     public int? RankDifference { get; set; } // actual minus predicted
     public int? BonusPoints { get; set; }
-    public int PlayerRatingId { get; init; }
+    public int PlayerRatingId { get; private set; }
     [JsonIgnore]
-    public PlayerRating? PlayerRating { get; init; }
+    public PlayerRating? PlayerRating { get; private set; }
 
     private RatingGameResult() { }
 

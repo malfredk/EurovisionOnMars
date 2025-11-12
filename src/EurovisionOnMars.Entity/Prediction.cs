@@ -6,9 +6,9 @@ public record Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public int? CalculatedRank { get; set; }
-    public int PlayerRatingId { get; init; }
+    public int PlayerRatingId { get; private set; }
     [JsonIgnore]
-    public PlayerRating? PlayerRating { get; init; }
+    public PlayerRating? PlayerRating { get; private set; }
 
     private Prediction() { }
 

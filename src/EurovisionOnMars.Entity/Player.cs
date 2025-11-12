@@ -8,9 +8,9 @@ public record Player : IdBase
     private static int USERNAME_MAX_LENGTH = 12;
     private static string USERNAME_PATTERN = @"^[a-zA-Z0-9æøåÆØÅ]*$";
 
-    public string Username { get; init; } = null!;
-    public List<PlayerRating> PlayerRatings { get; init; } = [];
-    public PlayerGameResult PlayerGameResult { get; init; } = null!;
+    public string Username { get; private set; } = null!;
+    public List<PlayerRating> PlayerRatings { get; private set; } = [];
+    public PlayerGameResult PlayerGameResult { get; private set; } = null!;
 
     private Player() { }
 
