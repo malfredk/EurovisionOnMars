@@ -3,5 +3,5 @@
 public record CountryResponseDto
 {
     public int Number { get; set; }
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }

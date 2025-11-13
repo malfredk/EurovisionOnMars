@@ -1,8 +1,8 @@
 ﻿namespace EurovisionOnMars.Dto.RatingGameResults;
 
-public record RatingGameResultResponseDto : IdBaseDto
+public record RatingGameResultResponseDto
 {
     public int? RankDifference { get; set; }
     public int? BonusPoints { get; set; }
-    public CountryDto? Country { get; set; }
+    public required CountryResponseDto Country { get; set; }
 }
