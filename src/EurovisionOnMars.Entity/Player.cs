@@ -17,8 +17,8 @@ public record Player : IdBase
 
     public Player(string username, ImmutableList<Country> countries)
     {
-        ValidateCountries(countries);
         ValidateUsername(username);
+        ValidateCountries(countries);
         Username = username;
 
         PlayerRatings = countries
@@ -28,15 +28,7 @@ public record Player : IdBase
         PlayerGameResult = new PlayerGameResult(this);
     }
 
-    private void ValidateCountries(ImmutableList<Country> countries)
-    {
-        if (countries.IsNullOrEmpty())
-        {
-            throw new ArgumentException("Country list is empty."); // TODO: test
-        }
-    }
-
-    public void ValidateUsername(string username)
+    public static void ValidateUsername(string username)
     {
         var isValid = !string.IsNullOrEmpty(username)
             && Regex.IsMatch(username, USERNAME_PATTERN)
@@ -45,6 +37,14 @@ public record Player : IdBase
         if (!isValid)
         {
             throw new ArgumentException($"Username={username} contains invalid character or is too long.");
+        }
+    }
+
+    private void ValidateCountries(ImmutableList<Country> countries)
+    {
+        if (countries.IsNullOrEmpty())
+        {
+            throw new ArgumentException("Country list is empty."); // TODO: test
         }
     }
 }

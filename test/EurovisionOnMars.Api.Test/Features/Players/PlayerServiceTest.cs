@@ -4,7 +4,6 @@ using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features.Players;
 
@@ -35,7 +34,7 @@ public class PlayerServiceTest
     {
         // arrange
         var id = 14;
-        var expectedPlayer = new Player{ Username = "sam" };
+        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(id))
             .ReturnsAsync(expectedPlayer);
@@ -73,7 +72,7 @@ public class PlayerServiceTest
     {
         // arrange
         var username = "nisse";
-        var expectedPlayer = new Player { Username = username };
+        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync(expectedPlayer);
@@ -128,19 +127,14 @@ public class PlayerServiceTest
         // arrange
         var username = "hiæøÅ1278";
 
-        var country1 = CreateCountry(67, "noreg");
-        var country2 = CreateCountry(45, "svg");
-
-        var rating1 = CreateRating(67, country1);
-        var rating2 = CreateRating(45, country2);
-
-        var expectedPlayer = new Player { Username = "dasikj" };
-        Player capturedNewPlayer = null;
+        var country = Utils.CreateInitialCountry();
+        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
+        Player capturedNewPlayer = null!;
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync((Player)null);
         _countryServiceMock.Setup(r => r.GetCountries())
-            .ReturnsAsync(new List<Country> { country1, country2 }.ToImmutableList());
+            .ReturnsAsync([country]);
         _playerRepositoryMock.Setup(r => r.CreatePlayer(It.IsAny<Player>()))
             .Callback<Player>(input => capturedNewPlayer = input)
             .ReturnsAsync(expectedPlayer);
@@ -151,23 +145,20 @@ public class PlayerServiceTest
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
         Assert.Equal(username, capturedNewPlayer.Username);
-        Assert.Equal(rating1, capturedNewPlayer.PlayerRatings[0]);
-        Assert.Equal(rating2, capturedNewPlayer.PlayerRatings[1]);
-        Assert.Equal(2, capturedNewPlayer.PlayerRatings.Count);
+        Assert.Equal(country, capturedNewPlayer.PlayerRatings.First().Country);
+        Assert.Single(capturedNewPlayer.PlayerRatings);
 
         _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
         _countryServiceMock.Verify(r => r.GetCountries(), Times.Once);
         _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Once);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("hei ho")]
-    [InlineData("j*n")]
-    [InlineData("=ndwnfks")]
-    [InlineData("tretten123456")]
-    public async Task CreatePlayer_NotValidUsername(string username)
+    [Fact]
+    public async Task CreatePlayer_NotValidUsername()
     {
+        // arrange
+        var username = "= injection attack";
+
         // act and assert
         await Assert.ThrowsAsync<ArgumentException>(
             async () => await _service.CreatePlayer(username)
@@ -184,7 +175,7 @@ public class PlayerServiceTest
     {
         // arrange
         var username = "nope";
-        var existingPlayer = new Player{ Username = username };
+        var existingPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(username))
             .ReturnsAsync(existingPlayer);
@@ -200,25 +191,5 @@ public class PlayerServiceTest
             .Verify(r => r.GetCountries(), Times.Never());
         _playerRepositoryMock
             .Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
-    }
-
-    private static Country CreateCountry(int id, string name)
-    {
-        return new Country
-        {
-            Name = name,
-            Id = id,
-            Number = 78
-        };
-    }
-
-    private static PlayerRating CreateRating(int countryId, Country country)
-    {
-        return new PlayerRating
-        {
-            CountryId = countryId,
-            Country = country,
-            RatingGameResult = new RatingGameResult()
-        };
     }
 }

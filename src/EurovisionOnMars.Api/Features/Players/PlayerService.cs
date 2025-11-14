@@ -1,7 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
-using System.Text.RegularExpressions;
 
 namespace EurovisionOnMars.Api.Features.Players;
 
@@ -41,7 +40,7 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> GetPlayer(string username)
     {
-        ValidateUsername(username);
+        Player.ValidateUsername(username);
 
         var player = await _playerRepository.GetPlayer(username);
         if (player == null)
@@ -53,35 +52,26 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> CreatePlayer(string username)
     {
-        ValidateUsername(username);
+        await EnsureNewUsername(username);
+
+        var player = await CreateEntity(username);
+        return await _playerRepository.CreatePlayer(player);
+    }
+
+    private async Task EnsureNewUsername(string username)
+    {
+        Player.ValidateUsername(username);
 
         var existingPlayer = await _playerRepository.GetPlayer(username);
         if (existingPlayer != null)
         {
             throw new DuplicateUsernameException($"Player with username={username} already exists");
         }
-
-        var player = await CreateEntity(username);
-        return await _playerRepository.CreatePlayer(player);
     }
 
-    public async Task<Player> CreateEntity(string username)
+    private async Task<Player> CreateEntity(string username)
     {
-
         var countries = await _countryService.GetCountries();
         return new Player(username, countries);
-    }
-
-    public static void ValidateUsername(string stringToValidate) // TODO: remove duplication with Player entity
-    {
-        string pattern = @"^[a-zA-Z0-9æøåÆØÅ]*$";
-
-        var isValid = !string.IsNullOrEmpty(stringToValidate)
-            && Regex.IsMatch(stringToValidate, pattern);
-
-        if (!isValid)
-        {
-            throw new Exception("String can only contain letters and numbers");
-        }
     }
 }
