@@ -24,6 +24,11 @@ public class Utils
         return CreateInitialPlayer(playerId, [country]);
     }
 
+    public static Player CreateInitialPlayer(ImmutableList<Country> countries)
+    {
+        return CreateInitialPlayer(PLAYER_ID, countries);
+    }
+
     private static Player CreateInitialPlayer(int playerId, ImmutableList<Country> countries)
     {
         return new Player(PLAYER_USERNAME, countries)

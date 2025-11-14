@@ -18,15 +18,22 @@ public class PlayerRatingService : IPlayerRatingService
     private readonly IPlayerRatingRepository _repository;
     private readonly IRatingClosingService _ratingClosingService;
     private readonly ILogger<PlayerRatingService> _logger;
+    private readonly ISpecialPointsValidator _specialPointsValidator;
+    private readonly IRankHandler _rankHandler;
 
     public PlayerRatingService(
         IPlayerRatingRepository repository,
         IRatingClosingService ratingClosingService,
-        ILogger<PlayerRatingService> logger)
+        ILogger<PlayerRatingService> logger,
+        ISpecialPointsValidator specialPointsValidator,
+        IRankHandler rankHandler
+        )
     {
         _repository = repository;
         _ratingClosingService = ratingClosingService;
         _logger = logger;
+        _specialPointsValidator = specialPointsValidator;
+        _rankHandler = rankHandler;
     }
 
     public async Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings()
@@ -52,17 +59,16 @@ public class PlayerRatingService : IPlayerRatingService
         var rating = ratings.First(r => r.Id == id);
 
         UpdatePoints(rating, ratingRequestDto, ratings);
-        UpdateRanks(ratings);
-        await SaveUpdatedRatings(ratings);
+        var ratingsWithUpdatedRank = _rankHandler.CalculateRanks(ratings);
+        await SaveUpdatedRatings(ratingsWithUpdatedRank);
     }
 
     public async Task UpdatePlayerRating(int id, int rank)
     {
         _ratingClosingService.ValidateRatingTime();
-        ValidateRank(rank);
 
         var rating = await GetPlayerRating(id);
-        UpdateRank(rating, rank);
+        rating.Prediction.SetCalculatedRank(rank);
         await _repository.UpdateRating(rating);
     }
 
@@ -95,77 +101,7 @@ public class PlayerRatingService : IPlayerRatingService
             ratingRequest.Category2Points,
             ratingRequest.Category3Points
             );
-        ValidateSpecialCategoryPoints(rating, ratings);
-    }
-
-    private void ValidateSpecialCategoryPoints(
-        PlayerRating rating,
-        IReadOnlyList<PlayerRating> ratings
-        )
-    {
-        Func<PlayerRating, int?> category1PointsGetter = r => r.Category1Points;
-        Func<PlayerRating, int?> category2PointsGetter = r => r.Category2Points;
-        Func<PlayerRating, int?> category3PointsGetter = r => r.Category3Points;
-
-        _logger.LogDebug("Validating points in rating with for category 1.");
-        ValidateSpecialCategoryPoints(rating, ratings, category1PointsGetter);
-
-        _logger.LogDebug("Validating points in rating with for category 2.");
-        ValidateSpecialCategoryPoints(rating, ratings, category2PointsGetter);
-
-        _logger.LogDebug("Validating points in rating with for category 3.");
-        ValidateSpecialCategoryPoints(rating, ratings, category3PointsGetter);
-    }
-
-    private void ValidateSpecialCategoryPoints(
-        PlayerRating rating,
-        IReadOnlyList<PlayerRating> ratings,
-        Func<PlayerRating, int?> categoryPointsGetter
-        )
-    {
-        var points = (int)categoryPointsGetter(rating)!;
-        if (!PlayerRating.SPECIAL_POINTS.Contains(points))
-        {
-            return;
-        }
-        EnsureUniqueSpecialPoints(points, ratings, categoryPointsGetter);
-    }
-
-    private void EnsureUniqueSpecialPoints(
-        int specialPoints,
-        IReadOnlyList<PlayerRating> ratings,
-        Func<PlayerRating, int?> categoryPointsGetter
-        )
-    {
-        var specialPointsCount = ratings
-            .Count(r => categoryPointsGetter(r) == specialPoints);
-        if (specialPointsCount > 1)
-        {
-            throw new ArgumentException("Special points have already been given in category.");
-        }
-    }
-
-    private void UpdateRanks(IReadOnlyList<PlayerRating> ratings)
-    {
-        var orderedPredicitions = ratings
-            .Select(r => r.Prediction)
-            .OrderByDescending(p => p.TotalGivenPoints)
-            .ToList();
-
-        Prediction? previous = null;
-        for (int i = 0; i < orderedPredicitions.Count; i++)
-        {
-            var current = orderedPredicitions[i];
-            if (previous != null && current.TotalGivenPoints == previous.TotalGivenPoints)
-            {
-                current.CalculatedRank = previous.CalculatedRank;
-            }
-            else
-            {
-                current.CalculatedRank = i + 1;
-            }
-            previous = current;
-        }
+        _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
     }
 
     private async Task SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)
@@ -175,18 +111,5 @@ public class PlayerRatingService : IPlayerRatingService
             _logger.LogDebug("Updating rating with id={id}.", rating.Id);
             await _repository.UpdateRating(rating);
         }
-    }
-
-    private void ValidateRank(int rank)
-    {
-        if (rank < 1 || rank > 26)
-        {
-            throw new ArgumentException("Rank must be between 1 and 26");
-        }
-    }
-
-    private void UpdateRank(PlayerRating entity, int rank)
-    {
-        entity.Prediction.CalculatedRank = rank;
     }
 }

@@ -41,7 +41,7 @@ public class PlayerRatingMapperTest
         rating.SetPoints(CATEGORY1_POINTS, CATEGORY2_POINTS, CATEGORY3_POINTS);
 
         var prediction = rating.Prediction;
-        prediction.CalculatedRank = RANK;
+        prediction.SetCalculatedRank(RANK);
         
         return rating;
     }
