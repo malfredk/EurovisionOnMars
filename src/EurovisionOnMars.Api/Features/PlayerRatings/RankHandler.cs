@@ -22,11 +22,11 @@ public class RankHandler : IRankHandler
             var current = orderedPredicitions[i];
             if (previous != null && current.TotalGivenPoints == previous.TotalGivenPoints)
             {
-                current.CalculatedRank = previous.CalculatedRank;
+                current.SetCalculatedRank(previous.CalculatedRank);
             }
             else
             {
-                current.CalculatedRank = i + 1;
+                current.SetCalculatedRank(i + 1);
             }
             previous = current;
         }
