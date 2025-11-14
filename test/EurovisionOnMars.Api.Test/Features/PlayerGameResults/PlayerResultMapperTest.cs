@@ -21,7 +21,6 @@ public class PlayerResultMapperTest
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(PLAYER_GAME_RESULT_ID, dto.Id);
         Assert.Equal(PLAYER_GAME_RESULT_RANK, dto.Rank);
         Assert.Equal(PLAYER_GAME_RESULT_POINTS, dto.TotalPoints);
         Assert.Equal(Utils.PLAYER_USERNAME, dto.PlayerUsername);

@@ -13,9 +13,20 @@ public class RatingGameResultMapper : IRatingGameResultMapper
     {
         return new RatingGameResultResponseDto
         {
-            Id = entity.Id,
             RankDifference = entity.RankDifference,
-            BonusPoints = entity.BonusPoints
+            BonusPoints = entity.BonusPoints,
+            Country = ToCountryDto(entity)
+        };
+    }
+
+    private CountryResponseDto ToCountryDto(RatingGameResult ratingGameResult) // TODO: test
+    {
+        var country = ratingGameResult.PlayerRating?.Country 
+            ?? throw new Exception("RatingGameResult's related PLayerRating is missing Country.");
+        return new CountryResponseDto
+        {
+            Name = country.Name,
+            ActualRank = country.ActualRank
         };
     }
 }

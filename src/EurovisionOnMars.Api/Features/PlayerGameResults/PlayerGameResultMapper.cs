@@ -12,12 +12,14 @@ public class PlayerGameResultMapper : IPlayerGameResultMapper
 {
     public PlayerGameResultResponseDto ToDto(PlayerGameResult entity)
     {
+        var player = entity.Player ??
+            throw new Exception("PlayerGameResult is missing Player.");
+
         return new PlayerGameResultResponseDto
         {
-            Id = entity.Id,
             Rank = entity.Rank,
             TotalPoints = entity.TotalPoints,
-            PlayerUsername = entity.Player?.Username
+            PlayerUsername = player.Username
         };
     }
 }
