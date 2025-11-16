@@ -49,7 +49,7 @@ public class PlayerRatingRepository : IPlayerRatingRepository
 
     public async Task<IReadOnlyList<PlayerRating>> GetPlayerRatingsForPlayer(int id)
     {
-        _logger.LogDebug("Getting ratings with same playerId as rating with id={id}", id);
+        _logger.LogDebug("Getting ratings under same player as rating with id={id}", id);
         return await _context.PlayerRatings
             .Where(r => r.Id == id)
             .SelectMany(r => r.Player.PlayerRatings)

@@ -114,7 +114,7 @@ public class RatingGameResultServiceTest
         // arrange
         var rating = CreatePlayerRatingWithRankDifference(calculatedRank, 0);
         var otherRating = CreatePlayerRating(17, 17);
-        var otherRatingWithoutCalculatedRank = CreatePlayerRating();
+        var otherRatingWithoutCalculatedRank = Utils.CreateInitialPlayerRating();
 
         var ratings = new List<PlayerRating>
         {
@@ -170,22 +170,16 @@ public class RatingGameResultServiceTest
 
     private RatingGameResult CreateRatingGameResult(int id)
     {
-        var playerRating = CreatePlayerRating();
+        var playerRating = Utils.CreateInitialPlayerRating();
         return new RatingGameResult(playerRating)
         {
             Id = id
         };
     }
 
-    private PlayerRating CreatePlayerRating()
-    {
-        var player = Utils.CreateInitialPlayerWithOneCountry();
-        return player.PlayerRatings.First();
-    }
-
     private PlayerRating CreatePlayerRating(int actualRank, int? calculatedRank)
     {
-        var rating = CreatePlayerRating();
+        var rating = Utils.CreateInitialPlayerRating();
 
         rating.Country.SetActualRank(actualRank);
         rating.Prediction.SetCalculatedRank(calculatedRank);

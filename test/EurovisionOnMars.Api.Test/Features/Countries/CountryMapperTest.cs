@@ -1,5 +1,4 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Features.Countries;
 
@@ -11,7 +10,7 @@ public class CountryMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = CreateEntity();
+        var entity = Utils.CreateCountry();
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -21,12 +20,5 @@ public class CountryMapperTest
         Assert.Equal(Utils.COUNTRY_NUMBER, dto.Number);
         Assert.Equal(Utils.COUNTRY_NAME, dto.Name);
         Assert.Equal(Utils.COUNTRY_RANK, dto.ActualRank);
-    }
-
-    private Country CreateEntity()
-    {
-        var country = Utils.CreateInitialCountry();
-        country.SetActualRank(Utils.COUNTRY_RANK);
-        return country;
     }
 }

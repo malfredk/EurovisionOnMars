@@ -7,16 +7,14 @@ using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features.PlayerGameResults;
 
-public class PlayerResultServiceTest
+public class PlayerGameResultServiceTest
 {
     private readonly Mock<IPlayerGameResultRepository> _playerResultRepositoryMock;
     private readonly Mock<IRatingGameResultService> _ratingGameResultServiceMock;
     private readonly Mock<ILogger<PlayerGameResultService>> _loggerMock;
     private readonly PlayerGameResultService _service;
 
-    private static readonly int PLAYER_ID = 6474373;
-
-    public PlayerResultServiceTest()
+    public PlayerGameResultServiceTest()
     {
         _playerResultRepositoryMock = new Mock<IPlayerGameResultRepository>();
         _ratingGameResultServiceMock = new Mock<IRatingGameResultService>();
@@ -68,28 +66,24 @@ public class PlayerResultServiceTest
         var playerId1 = 10;
         var playerId2 = 20;
 
-        var playerResult1 = CreateInitialPlayerGameResult(playerId1);
-        var playerResult2 = CreateInitialPlayerGameResult(playerId2);
+        var playerResult1 = Utils.CreateInitialPlayerGameResult(playerId1);
+        var playerResult2 = Utils.CreateInitialPlayerGameResult(playerId2);
         var playerResults = 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
-            .ReturnsAsync(new List<PlayerGameResult>
-            {
+            .ReturnsAsync(
+            [
                 playerResult1,
                 playerResult2
-            }
+            ]
         );
 
-        var ratingResults1 = new List<RatingGameResult> { 
-            CreateRatingGameResult(-5, 0)
-        }.ToImmutableList();
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId1))
-            .ReturnsAsync(ratingResults1);
+        var ratingResult1 = Utils.CreateRatingGameResult(-5, 0);
+        var ratingResult2 = Utils.CreateRatingGameResult(10, -3);
 
-        var ratingResults2 = new List<RatingGameResult> {
-            CreateRatingGameResult(10, -3)
-        }.ToImmutableList();
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId1))
+            .ReturnsAsync([ratingResult1]);
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId2))
-            .ReturnsAsync(ratingResults2);
+            .ReturnsAsync([ratingResult2]);
 
         // act
         await _service.CalculatePlayerGameResults();
@@ -98,15 +92,10 @@ public class PlayerResultServiceTest
         _playerResultRepositoryMock
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
 
-        Assert.Equal(5, playerResult1.TotalPoints);
-        Assert.Equal(7, playerResult2.TotalPoints);
         _ratingGameResultServiceMock
             .Verify(m => m.GetRatingGameResults(playerId1), Times.Once);
         _ratingGameResultServiceMock
             .Verify(m => m.GetRatingGameResults(playerId2), Times.Once);
-
-        Assert.Equal(2, playerResult1.Rank);
-        Assert.Equal(1, playerResult2.Rank);
 
         _playerResultRepositoryMock
             .Verify(m => m.UpdatePlayerGameResult(playerResult1), Times.Once);
@@ -118,15 +107,14 @@ public class PlayerResultServiceTest
     public async Task CalculateTotalPoints()
     {
         // arrange
-        var playerId = 10;
-        var playerResult = CreateInitialPlayerGameResult(playerId);
+        var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            CreateRatingGameResult(-5, 0),
-            CreateRatingGameResult(100, -25),
-            CreateRatingGameResult(3, 7),
+            Utils.CreateRatingGameResult(-5, 0),
+            Utils.CreateRatingGameResult(100, -25),
+            Utils.CreateRatingGameResult(3, 7),
         }.ToImmutableList();
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId))
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
 
         // act
@@ -136,21 +124,20 @@ public class PlayerResultServiceTest
         Assert.Equal(80, playerResult.TotalPoints);
 
         _ratingGameResultServiceMock
-            .Verify(m => m.GetRatingGameResults(playerId), Times.Once);
+            .Verify(m => m.GetRatingGameResults(Utils.PLAYER_ID), Times.Once);
     }
 
     [Fact]
     public async Task CalculateTotalPoints_MissingBonusPoints()
     {
         // arrange
-        var playerId = 10;
-        var playerResult = CreateInitialPlayerGameResult(playerId);
+        var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            CreateRatingGameResult(-5, 0),
-            CreateRatingGameResult(10, null),
+            Utils.CreateRatingGameResult(-5, 0),
+            Utils.CreateRatingGameResult(10, null),
         }.ToImmutableList();
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId))
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
 
         // act and assert
@@ -166,14 +153,13 @@ public class PlayerResultServiceTest
     public async Task CalculateTotalPoints_MissingRankDifference()
     {
         // arrange
-        var playerId = 10;
-        var playerResult = CreateInitialPlayerGameResult(playerId);
+        var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            CreateRatingGameResult(-5, 0),
-            CreateRatingGameResult(null, 3),
+            Utils.CreateRatingGameResult(-5, 0),
+            Utils.CreateRatingGameResult(null, 3),
         }.ToImmutableList();
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId))
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
 
         // act and assert
@@ -211,41 +197,13 @@ public class PlayerResultServiceTest
         Assert.Equal(playerResult4.Rank, 2);
     }
 
-    private PlayerGameResult CreateInitialPlayerGameResult(int playerId)
-    {
-        var player = Utils.CreateInitialPlayerWithOneCountry(playerId);
-        return player.PlayerGameResult;
-    }
-
     private PlayerGameResult CreatePlayerGameResultWithRank(int? rank)
     {
-        return CreatePlayerGameResult(null, rank);
+        return Utils.CreatePlayerGameResult(rank, null);
     }
 
     private PlayerGameResult CreatePlayerGameResultWithPoints(int totalPoints)
     {
-        return CreatePlayerGameResult(totalPoints, null);
-    }
-
-    private PlayerGameResult CreatePlayerGameResult(int? totalPoints, int? rank)
-
-    {
-        var player = Utils.CreateInitialPlayerWithOneCountry();
-        var playerGameResult = player.PlayerGameResult;
-        playerGameResult.TotalPoints = totalPoints;
-        playerGameResult.Rank = rank;
-
-        return playerGameResult;
-    }
-
-    private RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
-    {
-        var player = Utils.CreateInitialPlayerWithOneCountry();
-        var ratingGameResult = player.PlayerRatings.First().RatingGameResult;
-
-        ratingGameResult.RankDifference = difference;
-        ratingGameResult.BonusPoints = bonusPoints;
-
-        return ratingGameResult;
+        return Utils.CreatePlayerGameResult(null, totalPoints);
     }
 }

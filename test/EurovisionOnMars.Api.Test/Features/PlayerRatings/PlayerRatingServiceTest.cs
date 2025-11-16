@@ -39,7 +39,7 @@ public class PlayerRatingServiceTest
     public async Task GetAllPlayerRatings()
     {
         // arrange
-        ImmutableList<PlayerRating> expectedRatings = [CreatePlayerRatings()];
+        ImmutableList<PlayerRating> expectedRatings = [Utils.CreateInitialPlayerRating()];
         _repositoryMock.Setup(r => r.GetAllPlayerRatings())
             .ReturnsAsync(expectedRatings);
 
@@ -99,24 +99,13 @@ public class PlayerRatingServiceTest
 
     // TODO: tests for updating rank in player rating
 
-    private static PlayerRating CreatePlayerRatings()
-    {
-        var player = Utils.CreateInitialPlayerWithOneCountry();
-        return player.PlayerRatings.First();
-    }
-
     private static PlayerRating CreatePlayerRating(int countryNumber, int? predictionRank)
     {
-        var country = CreateCountry(countryNumber);
+        var country = Utils.CreateInitialCountry(countryNumber);
         var player = Utils.CreateInitialPlayerWithOneCountry();
 
         var rating = new PlayerRating(player, country);
         rating.Prediction.SetCalculatedRank(predictionRank);
         return rating;
-    }
-
-    private static Country CreateCountry(int number)
-    {
-        return new Country(number, "norge");
     }
 }

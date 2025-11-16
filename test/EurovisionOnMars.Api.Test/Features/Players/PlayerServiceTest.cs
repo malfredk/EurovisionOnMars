@@ -33,36 +33,33 @@ public class PlayerServiceTest
     public async Task GetPlayer_ValidId()
     {
         // arrange
-        var id = 14;
         var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
-        _playerRepositoryMock.Setup(r => r.GetPlayer(id))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_ID))
             .ReturnsAsync(expectedPlayer);
 
         // act
-        var actualPlayer = await _service.GetPlayer(id);
+        var actualPlayer = await _service.GetPlayer(Utils.PLAYER_ID);
 
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(id), Times.Once);
+        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_ID), Times.Once);
     }
 
     [Fact]
     public async Task GetPlayer_InvalidId()
     {
         // arrange
-        var id = 14;
-
-        _playerRepositoryMock.Setup(r => r.GetPlayer(id))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_ID))
             .ReturnsAsync((Player)null);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetPlayer(id)
+            async () => await _service.GetPlayer(Utils.PLAYER_ID)
         );
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(id), Times.Once);
+        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_ID), Times.Once);
     }
 
     // tests for getting player by username
@@ -71,19 +68,18 @@ public class PlayerServiceTest
     public async Task GetPlayer_ValidUsername()
     {
         // arrange
-        var username = "nisse";
         var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
-        _playerRepositoryMock.Setup(r => r.GetPlayer(username))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync(expectedPlayer);
 
         // act
-        var actualPlayer = await _service.GetPlayer(username);
+        var actualPlayer = await _service.GetPlayer(Utils.PLAYER_USERNAME);
 
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
+        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_USERNAME), Times.Once);
     }
 
     [Fact]
@@ -105,18 +101,16 @@ public class PlayerServiceTest
     public async Task GetPlayer_NotExistingUsername()
     {
         // arrange
-        var username = "nope";
-
-        _playerRepositoryMock.Setup(r => r.GetPlayer(username))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync((Player)null);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetPlayer(username)
+            async () => await _service.GetPlayer(Utils.PLAYER_USERNAME)
         );
         
         _playerRepositoryMock
-            .Verify(r => r.GetPlayer(username), Times.Once);
+            .Verify(r => r.GetPlayer(Utils.PLAYER_USERNAME), Times.Once);
     }
 
     // tests for creating player
@@ -125,13 +119,11 @@ public class PlayerServiceTest
     public async Task CreatePlayer_ValidUsername()
     {
         // arrange
-        var username = "hiæøÅ1278";
-
         var country = Utils.CreateInitialCountry();
         var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
         Player capturedNewPlayer = null!;
 
-        _playerRepositoryMock.Setup(r => r.GetPlayer(username))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync((Player)null);
         _countryServiceMock.Setup(r => r.GetCountries())
             .ReturnsAsync([country]);
@@ -140,15 +132,15 @@ public class PlayerServiceTest
             .ReturnsAsync(expectedPlayer);
 
         // act
-        var actualPlayer = await _service.CreatePlayer(username);
+        var actualPlayer = await _service.CreatePlayer(Utils.PLAYER_USERNAME);
 
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
-        Assert.Equal(username, capturedNewPlayer.Username);
+        Assert.Equal(Utils.PLAYER_USERNAME, capturedNewPlayer.Username);
         Assert.Equal(country, capturedNewPlayer.PlayerRatings.First().Country);
         Assert.Single(capturedNewPlayer.PlayerRatings);
 
-        _playerRepositoryMock.Verify(r => r.GetPlayer(username), Times.Once);
+        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_USERNAME), Times.Once);
         _countryServiceMock.Verify(r => r.GetCountries(), Times.Once);
         _playerRepositoryMock.Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Once);
     }
@@ -174,19 +166,18 @@ public class PlayerServiceTest
     public async Task CreatePlayer_ExistingUsername()
     {
         // arrange
-        var username = "nope";
         var existingPlayer = Utils.CreateInitialPlayerWithOneCountry();
 
-        _playerRepositoryMock.Setup(r => r.GetPlayer(username))
+        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync(existingPlayer);
 
         // act and assert
         await Assert.ThrowsAsync<DuplicateUsernameException>(
-            async () => await _service.CreatePlayer(username)
+            async () => await _service.CreatePlayer(Utils.PLAYER_USERNAME)
         );
 
         _playerRepositoryMock
-            .Verify(r => r.GetPlayer(username), Times.Once);
+            .Verify(r => r.GetPlayer(Utils.PLAYER_USERNAME), Times.Once);
         _countryServiceMock
             .Verify(r => r.GetCountries(), Times.Never());
         _playerRepositoryMock

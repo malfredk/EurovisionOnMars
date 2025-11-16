@@ -33,7 +33,7 @@ public class CountryService : ICountryService
 
     public async Task<Country> CreateCountry(NewCountryRequestDto countryDto)
     {
-        var country = new Country(countryDto.Number, countryDto.Name);
+        var country = CreateCountryEntity(countryDto);
         return await _countryRepository.CreateCountry(country);
     }
 
@@ -52,5 +52,10 @@ public class CountryService : ICountryService
             throw new KeyNotFoundException($"No country with id={id} exists");
         }
         return country;
+    }
+
+    private Country CreateCountryEntity(NewCountryRequestDto countryDto)
+    {
+        return new Country(countryDto.Number, countryDto.Name);
     }
 }
