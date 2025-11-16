@@ -38,20 +38,15 @@ public class RatingGameResultService : IRatingGameResultService
         var playerRatings = await _playerRatingService.GetAllPlayerRatings();
         foreach (var playerRating in playerRatings)
         {
-            var ratingGameResult = await CalculateRatingGameResult(playerRating, playerRatings);
-            await UpdateRatingGameResult(ratingGameResult);
+            CalculateRatingGameResult(playerRating, playerRatings);
+            await UpdateRatingGameResult(playerRating.RatingGameResult);
         }
     }
 
-    public async Task<RatingGameResult> CalculateRatingGameResult(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
+    private void CalculateRatingGameResult(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
     {
-        int rankDifference = CalculateRankDifference(rating);
-        int bonusPoints = CalculateBonusPoints(rating, ratings, rankDifference);
-
-        var ratingGameResult = rating.RatingGameResult;
-        ratingGameResult.RankDifference = rankDifference;
-        ratingGameResult.BonusPoints = bonusPoints;
-        return ratingGameResult;
+        CalculateRankDifference(rating);
+        CalculateBonusPoints(rating, ratings);
     }
 
     private async Task UpdateRatingGameResult(RatingGameResult ratingGameResult)
@@ -59,10 +54,11 @@ public class RatingGameResultService : IRatingGameResultService
          await _ratingGameResultRepository.UpdateRatingGameResult(ratingGameResult);
     }
 
-    private int CalculateRankDifference(PlayerRating rating)
+    internal void CalculateRankDifference(PlayerRating rating)
     {
         var actualRank = rating.Country.ActualRank;
         var predictedRank = rating.Prediction.CalculatedRank;
+        int rankDifference;
 
         if (actualRank == null)
         {
@@ -71,25 +67,30 @@ public class RatingGameResultService : IRatingGameResultService
         else if (predictedRank == null)
         {
             // player is penalized for not rating a country
-            return 26;
+            rankDifference = 26;
         }
         else
         {
-            return (int)(actualRank - predictedRank);
+            rankDifference = (int)(actualRank - predictedRank);
         }
+        rating.RatingGameResult.RankDifference = rankDifference;
     }
 
-    private int CalculateBonusPoints(
+    internal void CalculateBonusPoints(
         PlayerRating rating,
-        IReadOnlyList<PlayerRating> ratings,
-        int rankDifference
+        IReadOnlyList<PlayerRating> ratings
     )
     {
-        if (rankDifference == 0 && HasUniqueRank(rating, ratings))
+        var ratingGameResult = rating.RatingGameResult;
+        int bonusPoints;
+        if (ratingGameResult.RankDifference == 0 && HasUniqueRank(rating, ratings))
         {
-            return DetermineBonusPoints((int)rating.Prediction.CalculatedRank);
+            bonusPoints = DetermineBonusPoints((int)rating.Prediction.CalculatedRank);
+        } else
+        {
+            bonusPoints = 0;
         }
-        return 0;
+        ratingGameResult.BonusPoints = bonusPoints;
     }
 
     private bool HasUniqueRank(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
