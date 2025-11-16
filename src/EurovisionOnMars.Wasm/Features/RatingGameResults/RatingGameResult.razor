@@ -4,7 +4,7 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
-<NavigationBar PlayerId="Id"></NavigationBar>
+<NavigationBar PlayerId="PlayerId"></NavigationBar>
 
 <MudTable
     Items="@RatingsGameResults"
@@ -35,22 +35,22 @@
 </MudTable>
 
 @code {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public int PlayerId { get; set; }
     public List<RatingGameResultResponseDto> RatingsGameResults { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"/api/RatingGameResults/{Id}");
+        var response = await Http.GetAsync($"/api/RatingGameResults/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
             RatingsGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultResponseDto>>();
             RatingsGameResults = RatingsGameResults.OrderBy(r => r.Country.ActualRank).ToList();
-            Console.WriteLine($"Got rating results for player with id={Id}");
+            Console.WriteLine($"Got rating results for player with id={PlayerId}");
         }
         else
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
-            Console.WriteLine($"Failed to get rating results for player with id={Id}");
+            Console.WriteLine($"Failed to get rating results for player with id={PlayerId}");
         }
     }
 

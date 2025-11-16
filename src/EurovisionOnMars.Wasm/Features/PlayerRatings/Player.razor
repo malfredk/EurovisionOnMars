@@ -12,7 +12,7 @@
     }
 </style>
 
-<NavigationBar PlayerId="Id"></NavigationBar>
+<NavigationBar PlayerId="PlayerId"></NavigationBar>
 
 <MudTable 
     T="PlayerRatingResponseDto" 
@@ -63,7 +63,7 @@
 </MudTable>
 
 @code {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public int PlayerId { get; set; }
     public List<PlayerRatingResponseDto> PlayerRatings { get; set; } = new List<PlayerRatingResponseDto>();
 
     private bool hasFinishedRating;
@@ -109,16 +109,16 @@
 
     private async Task FetchRatings()
     {
-        var response = await Http.GetAsync($"/api/Ratings/{Id}");
+        var response = await Http.GetAsync($"/api/Ratings/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
             PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingResponseDto>>();
-            Console.WriteLine($"Got ratings for player with id={Id}");
+            Console.WriteLine($"Got ratings for player with id={PlayerId}");
         }
         else
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
-            Console.WriteLine($"Failed to get ratings for player with id={Id}");
+            Console.WriteLine($"Failed to get ratings for player with id={PlayerId}");
         }
     }
 
