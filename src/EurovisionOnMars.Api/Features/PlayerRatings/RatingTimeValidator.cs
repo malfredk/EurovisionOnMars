@@ -1,29 +1,29 @@
 ﻿using EurovisionOnMars.CustomException;
 
-namespace EurovisionOnMars.Api.Features.RatingClosing;
+namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
-public interface IRatingClosingService
+public interface IRatingTimeValidator
 {
-    public void ValidateRatingTime();
+    public void EnsureRatingIsOpen();
 }
 
-public class RatingClosingService : IRatingClosingService
+public class RatingTimeValidator : IRatingTimeValidator
 {
     public readonly IDateTimeNow _dateTimeNow;
     private readonly DateTimeOffset _ratingClosingTime;
-    private readonly ILogger<RatingClosingService> _logger;
+    private readonly ILogger<RatingTimeValidator> _logger;
 
-    public RatingClosingService(
+    public RatingTimeValidator(
         IDateTimeNow dateTimeNow, 
         DateTimeOffset ratingClosingTime,
-        ILogger<RatingClosingService> logger)
+        ILogger<RatingTimeValidator> logger)
     {
         _dateTimeNow = dateTimeNow;
         _ratingClosingTime = ratingClosingTime;
         _logger = logger;
     }
 
-    public void ValidateRatingTime()
+    public void EnsureRatingIsOpen()
     {        
         if (_dateTimeNow.Now > _ratingClosingTime)
         {

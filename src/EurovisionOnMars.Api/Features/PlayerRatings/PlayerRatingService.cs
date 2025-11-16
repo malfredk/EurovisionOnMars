@@ -1,5 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.RatingClosing;
-using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 
@@ -16,21 +15,21 @@ public interface IPlayerRatingService
 public class PlayerRatingService : IPlayerRatingService
 {
     private readonly IPlayerRatingRepository _repository;
-    private readonly IRatingClosingService _ratingClosingService;
+    private readonly IRatingTimeValidator _ratingTimeValidator;
     private readonly ILogger<PlayerRatingService> _logger;
     private readonly ISpecialPointsValidator _specialPointsValidator;
     private readonly IRankHandler _rankHandler;
 
     public PlayerRatingService(
         IPlayerRatingRepository repository,
-        IRatingClosingService ratingClosingService,
+        IRatingTimeValidator ratingTimeValidator,
         ILogger<PlayerRatingService> logger,
         ISpecialPointsValidator specialPointsValidator,
         IRankHandler rankHandler
         )
     {
         _repository = repository;
-        _ratingClosingService = ratingClosingService;
+        _ratingTimeValidator = ratingTimeValidator;
         _logger = logger;
         _specialPointsValidator = specialPointsValidator;
         _rankHandler = rankHandler;
@@ -53,7 +52,7 @@ public class PlayerRatingService : IPlayerRatingService
 
     public async Task UpdatePlayerRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto)
     {
-        _ratingClosingService.ValidateRatingTime();
+        _ratingTimeValidator.EnsureRatingIsOpen();
 
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
         var rating = ratings.First(r => r.Id == id);
@@ -65,7 +64,7 @@ public class PlayerRatingService : IPlayerRatingService
 
     public async Task UpdatePlayerRating(int id, int rank)
     {
-        _ratingClosingService.ValidateRatingTime();
+        _ratingTimeValidator.EnsureRatingIsOpen();
 
         var rating = await GetPlayerRating(id);
         rating.Prediction.SetCalculatedRank(rank);

@@ -1,23 +1,23 @@
-﻿using EurovisionOnMars.Api.Features.RatingClosing;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.RatingClosing;
+namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
-public class RatingClosingServiceTest
+public class RatingTimeValidatorTest
 {
     private readonly DateTimeOffset _ratingClosingTime = new DateTimeOffset(2024, 5, 11, 23, 50, 0, TimeSpan.Zero);
     private readonly Mock<IDateTimeNow> _dateTimeNowMock;
-    private readonly Mock<ILogger<RatingClosingService>> _loggerMock;
-    private readonly RatingClosingService _service;
+    private readonly Mock<ILogger<RatingTimeValidator>> _loggerMock;
+    private readonly RatingTimeValidator _validator;
 
-    public RatingClosingServiceTest()
+    public RatingTimeValidatorTest()
     {
         _dateTimeNowMock = new Mock<IDateTimeNow>();
-        _loggerMock = new Mock<ILogger<RatingClosingService>>();
+        _loggerMock = new Mock<ILogger<RatingTimeValidator>>();
 
-        _service = new RatingClosingService(
+        _validator = new RatingTimeValidator(
             _dateTimeNowMock.Object,
             _ratingClosingTime,
             _loggerMock.Object);
@@ -25,14 +25,14 @@ public class RatingClosingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestData))]
-    public void ValidateRatingTime(DateTimeOffset dateTimeNow)
+    public void EnsureRatingIsOpen(DateTimeOffset dateTimeNow)
     {
         // arrange
         _dateTimeNowMock.Setup(m => m.Now)
             .Returns(dateTimeNow);
 
         // act
-        _service.ValidateRatingTime();
+        _validator.EnsureRatingIsOpen();
 
         // assert
         _dateTimeNowMock.Verify(m => m.Now, Times.Once);
@@ -47,14 +47,14 @@ public class RatingClosingServiceTest
 
     [Theory]
     [MemberData(nameof(GetTestData_Invalid))]
-    public void ValidateRatingTime_Invalid(DateTimeOffset dateTimeNow)
+    public void EnsureRatingIsOpen_Invalid(DateTimeOffset dateTimeNow)
     {
         // arrange
         _dateTimeNowMock.Setup(m => m.Now)
             .Returns(dateTimeNow);
 
         // act and assert
-        Assert.Throws<RatingIsClosedException>(() => _service.ValidateRatingTime());
+        Assert.Throws<RatingIsClosedException>(() => _validator.EnsureRatingIsOpen());
 
         _dateTimeNowMock.Verify(m => m.Now, Times.Once);
     }

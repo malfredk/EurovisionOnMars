@@ -1,5 +1,4 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Api.Features.RatingClosing;
 using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -10,7 +9,7 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 public class PlayerRatingServiceTest
 {
     private readonly Mock<IPlayerRatingRepository> _repositoryMock;
-    private readonly Mock<IRatingClosingService> _ratingClosingServiceMock;
+    private readonly Mock<IRatingTimeValidator> _ratingTimeValidatorMock;
     private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
     private readonly Mock<ISpecialPointsValidator> _specialPointsValidatorMock;
     private readonly Mock<IRankHandler> _rankHandlerMock;
@@ -19,14 +18,14 @@ public class PlayerRatingServiceTest
     public PlayerRatingServiceTest()
     {
         _repositoryMock = new Mock<IPlayerRatingRepository>();
-        _ratingClosingServiceMock = new Mock<IRatingClosingService>();
+        _ratingTimeValidatorMock = new Mock<IRatingTimeValidator>();
         _loggerMock = new Mock<ILogger<PlayerRatingService>>();
         _specialPointsValidatorMock = new Mock<ISpecialPointsValidator>();
         _rankHandlerMock = new Mock<IRankHandler>();
 
         _service = new PlayerRatingService(
             _repositoryMock.Object, 
-            _ratingClosingServiceMock.Object,
+            _ratingTimeValidatorMock.Object,
             _loggerMock.Object, 
             _specialPointsValidatorMock.Object,
             _rankHandlerMock.Object
@@ -48,7 +47,7 @@ public class PlayerRatingServiceTest
 
         // assert
         Assert.Equal(expectedRatings, actualRatings);
-        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingTimeValidatorMock.Verify(m => m.EnsureRatingIsOpen(), Times.Never());
         _repositoryMock.Verify(r => r.GetAllPlayerRatings(), Times.Once());
     }
 
@@ -74,7 +73,7 @@ public class PlayerRatingServiceTest
         // assert
         Assert.Equal(expectedRatings, actualRatings);
 
-        _ratingClosingServiceMock.Verify(m => m.ValidateRatingTime(), Times.Never());
+        _ratingTimeValidatorMock.Verify(m => m.EnsureRatingIsOpen(), Times.Never());
         _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID), Times.Once());
     }
 
