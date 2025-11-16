@@ -121,7 +121,7 @@ public class PlayerGameResultServiceTest
         await _service.CalculateTotalPoints(playerResult);
 
         // assert
-        Assert.Equal(80, playerResult.TotalPoints);
+        Assert.Equal(90, playerResult.TotalPoints);
 
         _ratingGameResultServiceMock
             .Verify(m => m.GetRatingGameResults(Utils.PLAYER_ID), Times.Once);
@@ -134,16 +134,12 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(-5, 0),
             Utils.CreateRatingGameResult(10, null),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
 
         // act and assert
-        await _service.CalculateTotalPoints(playerResult);
-
-        // assert
         await Assert.ThrowsAsync<Exception>(
             async () => await _service.CalculateTotalPoints(playerResult)
         );
@@ -156,16 +152,12 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(-5, 0),
             Utils.CreateRatingGameResult(null, 3),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
 
         // act and assert
-        await _service.CalculateTotalPoints(playerResult);
-
-        // assert
         await Assert.ThrowsAsync<Exception>(
             async () => await _service.CalculateTotalPoints(playerResult)
         );

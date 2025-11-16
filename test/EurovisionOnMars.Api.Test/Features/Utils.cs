@@ -84,7 +84,7 @@ public class Utils
     public static PlayerGameResult CreateInitialPlayerGameResult(int playerId)
     {
         var player = CreateInitialPlayerWithOneCountry(playerId);
-        return player.PlayerGameResult;
+        return new PlayerGameResult(player);
     }
 
     // player rating
