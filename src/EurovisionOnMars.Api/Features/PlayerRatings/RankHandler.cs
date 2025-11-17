@@ -4,33 +4,46 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IRankHandler
 {
-    public IReadOnlyList<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings);
+    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings);
 }
 
 public class RankHandler : IRankHandler
 {
-    public IReadOnlyList<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings) // TODO: test
+    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings)
     {
-        var orderedPredicitions = ratings
-            .Select(r => r.Prediction)
-            .OrderByDescending(p => p.TotalGivenPoints)
-            .ToList();
+        var orderedRatings = SortRatings(ratings);
+        List<PlayerRating> ratingsWithUpdatedRank = new();
 
-        Prediction? previous = null;
-        for (int i = 0; i < orderedPredicitions.Count; i++)
+        Prediction? previousPrediction = null;
+        for (int i = 0; i < orderedRatings.Count; i++)
         {
-            var current = orderedPredicitions[i];
-            if (previous != null && current.TotalGivenPoints == previous.TotalGivenPoints)
+            var currentRating = orderedRatings[i];
+            var currentPrediction = currentRating.Prediction;
+            var currentPoints = currentPrediction.TotalGivenPoints;
+
+            if (currentPoints == null)
             {
-                current.SetCalculatedRank(previous.CalculatedRank);
+                break;
+            } 
+            else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
+            {
+                currentPrediction.SetCalculatedRank(previousPrediction.CalculatedRank);
             }
             else
             {
-                current.SetCalculatedRank(i + 1);
+                currentPrediction.SetCalculatedRank(i + 1);
             }
-            previous = current;
+            ratingsWithUpdatedRank.Add(currentRating);
+            previousPrediction = currentPrediction;
         }
 
-        return ratings;
+        return ratingsWithUpdatedRank;
+    }
+
+    private IReadOnlyList<PlayerRating> SortRatings(IReadOnlyList<PlayerRating> ratings)
+    {
+        return ratings
+            .OrderByDescending(r => r.Prediction.TotalGivenPoints ?? 0)
+            .ToList();
     }
 }
