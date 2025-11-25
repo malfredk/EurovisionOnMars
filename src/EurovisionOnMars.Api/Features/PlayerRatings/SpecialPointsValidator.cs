@@ -16,7 +16,7 @@ public class SpecialPointsValidator : ISpecialPointsValidator
         _logger = logger;
     }
 
-    public void ValidateSpecialCategoryPoints(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings) // TODO: test
+    public void ValidateSpecialCategoryPoints(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings)
     {
         Func<PlayerRating, int?> category1PointsGetter = r => r.Category1Points;
         Func<PlayerRating, int?> category2PointsGetter = r => r.Category2Points;
@@ -33,12 +33,12 @@ public class SpecialPointsValidator : ISpecialPointsValidator
     }
 
     private void ValidateSpecialCategoryPoints(
-        PlayerRating rating,
+        PlayerRating editedRating,
         IReadOnlyList<PlayerRating> ratings,
         Func<PlayerRating, int?> categoryPointsGetter
         )
     {
-        var points = (int)categoryPointsGetter(rating)!;
+        var points = (int)categoryPointsGetter(editedRating)!;
         if (!PlayerRating.SPECIAL_POINTS.Contains(points))
         {
             _logger.LogDebug("Skipping validation since edited rating does not have special points in this category.");
