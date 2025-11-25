@@ -31,7 +31,6 @@ public record Prediction : IdBase
 
     public void SetCalculatedRank(int? rank) // TODO: test
     {
-        // TODO: validate overwritten rank
         if (rank < 1 || rank > 26)
         {
             throw new ArgumentException("Rank must be between 1 and 26");

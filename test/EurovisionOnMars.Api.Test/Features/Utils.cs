@@ -29,7 +29,6 @@ public class Utils
         return CreateInitialCountry(COUNTRY_NUMBER);
     }
 
-
     public static Country CreateInitialCountry(int number)
     {
         return new Country(number, COUNTRY_NAME)
