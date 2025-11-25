@@ -18,7 +18,7 @@ public record Prediction : IdBase
         PlayerRatingId = playerRating.Id;
     }
 
-    public void CalculateTotalGivenPoints()
+    internal void CalculateTotalGivenPoints()
     {
         if (PlayerRating == null)
             throw new InvalidOperationException("Prediction must be linked to a PlayerRating before calculation.");
