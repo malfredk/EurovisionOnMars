@@ -44,7 +44,7 @@ public record Player : IdBase
     {
         if (countries.IsNullOrEmpty())
         {
-            throw new ArgumentException("Country list is empty."); // TODO: test
+            throw new InvalidOperationException("Country list is empty.");
         }
     }
 }

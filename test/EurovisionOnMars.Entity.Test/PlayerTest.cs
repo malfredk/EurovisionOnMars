@@ -42,6 +42,24 @@ public class PlayerTest
         Assert.Throws<ArgumentException>(() => new Player(username, countries));
     }
 
+    [Theory]
+    [MemberData(nameof(NoCountriesTestData))]
+    public void Player_MissingCountries_ThrowException(ImmutableList<Country> countries)
+    {
+        // arrange
+        var username = "hiæøÅ1278";
+
+        // act and assert
+        Assert.Throws<InvalidOperationException>(() => new Player(username, countries));
+    }
+
+    public static IEnumerable<object[]> NoCountriesTestData =>
+    new List<object[]>
+    {
+        new object[] { null! },                                       // null
+        new object[] { ImmutableList<Country>.Empty }                 // empty
+    };
+
     private ImmutableList<Country> GetCountries()
     {
         return new List<Country>
