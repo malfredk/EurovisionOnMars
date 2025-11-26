@@ -6,15 +6,15 @@ namespace EurovisionOnMars.Api.Features.PlayerGameResults;
 
 [Route("api/[controller]")]
 [ApiController]
-public class GameResultsController : ControllerBase
+public class PlayerGameResultsController : ControllerBase
 {
     private readonly IPlayerGameResultService _service;
-    private readonly ILogger<GameResultsController> _logger;
+    private readonly ILogger<PlayerGameResultsController> _logger;
     private readonly IPlayerGameResultMapper _mapper;
 
-    public GameResultsController(
+    public PlayerGameResultsController(
         IPlayerGameResultService service, 
-        ILogger<GameResultsController> logger,
+        ILogger<PlayerGameResultsController> logger,
         IPlayerGameResultMapper mapper)
     {
         _service = service;

@@ -11,12 +11,12 @@ namespace EurovisionOnMars.Api.Features.RatingGameResults;
 public class RatingGameResultsController : ControllerBase
 {
     private readonly IRatingGameResultService _service;
-    private readonly ILogger<GameResultsController> _logger;
+    private readonly ILogger<RatingGameResultsController> _logger;
     private readonly IRatingGameResultMapper _mapper;
 
     public RatingGameResultsController(
         IRatingGameResultService service, 
-        ILogger<GameResultsController> logger,
+        ILogger<RatingGameResultsController> logger,
         IRatingGameResultMapper mapper
         )
     {
