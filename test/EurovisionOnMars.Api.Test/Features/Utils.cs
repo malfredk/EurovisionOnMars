@@ -5,15 +5,15 @@ namespace EurovisionOnMars.Api.Test.Features;
 
 public class Utils
 {
-    public static int COUNTRY_ID = 8;
-    public static int COUNTRY_NUMBER = 5;
-    public static string COUNTRY_NAME = "australia";
-    public static int COUNTRY_RANK = 7;
+    public const int COUNTRY_ID = 8;
+    public const int COUNTRY_NUMBER = 5;
+    public const string COUNTRY_NAME = "australia";
+    public const int COUNTRY_RANK = 7;
 
-    public static string PLAYER_USERNAME = "lars";
-    public static int PLAYER_ID = 1234;
+    public const string PLAYER_USERNAME = "lars";
+    public const int PLAYER_ID = 1234;
 
-    public static int RATING_ID = 77;
+    public const int RATING_ID = 77;
     
     // country
 
@@ -98,14 +98,14 @@ public class Utils
         return rating;
     }
 
-    public static PlayerRating CreateInitialPlayerRating()
+    public static PlayerRating CreateInitialPlayerRating(int ratingId = RATING_ID)
     {
         var country = CreateInitialCountry();
         var player = CreateInitialPlayerWithOneCountry();
 
         var rating = new PlayerRating(player, country)
         {
-            Id = RATING_ID,
+            Id = ratingId,
         };
         return rating;
     }
