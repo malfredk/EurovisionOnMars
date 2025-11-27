@@ -20,11 +20,11 @@ public class RatingGameResultMapper : IRatingGameResultMapper
         };
     }
 
-    private CountryResponseDto ToCountryDto(RatingGameResult ratingGameResult)
+    private RatingGameResultCountryResponseDto ToCountryDto(RatingGameResult ratingGameResult)
     {
         var country = ratingGameResult.PlayerRating?.Country 
             ?? throw new Exception("RatingGameResult's related PlayerRating is missing Country.");
-        return new CountryResponseDto
+        return new RatingGameResultCountryResponseDto
         {
             Name = country.Name,
             ActualRank = country.ActualRank

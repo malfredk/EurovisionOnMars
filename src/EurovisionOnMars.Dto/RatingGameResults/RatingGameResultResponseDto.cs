@@ -4,5 +4,5 @@ public record RatingGameResultResponseDto
 {
     public int? RankDifference { get; set; }
     public int? BonusPoints { get; set; }
-    public required CountryResponseDto Country { get; set; }
+    public required RatingGameResultCountryResponseDto Country { get; set; }
 }

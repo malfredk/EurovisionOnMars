@@ -33,11 +33,11 @@ public class PlayerRatingMapper : IPlayerRatingMapper
         };
     }
 
-    private CountryResponseDto ToCountryDto(PlayerRating rating)
+    private PlayerRatingCountryResponseDto ToCountryDto(PlayerRating rating)
     {
         var country = rating.Country ?? 
             throw new Exception("PlayerRating is missing Country");
-        return new CountryResponseDto
+        return new PlayerRatingCountryResponseDto
         {
             Number = country.Number,
             Name = country.Name
