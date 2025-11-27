@@ -5,14 +5,14 @@ namespace EurovisionOnMars.Api.Features.Players;
 
 public interface IPlayerMapper
 {
-    public PlayerResponseDto ToDto(Player entity);
+    public PlayerDto ToDto(Player entity);
 }
 
 public class PlayerMapper : IPlayerMapper
 {
-    public PlayerResponseDto ToDto(Player entity)
+    public PlayerDto ToDto(Player entity)
     {
-        return new PlayerResponseDto
+        return new PlayerDto
         {
             Id = entity.Id,
             Username = entity.Username

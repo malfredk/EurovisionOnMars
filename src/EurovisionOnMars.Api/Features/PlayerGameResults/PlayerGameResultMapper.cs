@@ -5,17 +5,17 @@ namespace EurovisionOnMars.Api.Features.PlayerGameResults;
 
 public interface IPlayerGameResultMapper
 {
-    public PlayerGameResultResponseDto ToDto(PlayerGameResult entity);
+    public PlayerGameResultDto ToDto(PlayerGameResult entity);
 }
 
 public class PlayerGameResultMapper : IPlayerGameResultMapper
 {
-    public PlayerGameResultResponseDto ToDto(PlayerGameResult entity)
+    public PlayerGameResultDto ToDto(PlayerGameResult entity)
     {
         var player = entity.Player ??
             throw new Exception("PlayerGameResult is missing Player.");
 
-        return new PlayerGameResultResponseDto
+        return new PlayerGameResultDto
         {
             Rank = entity.Rank,
             TotalPoints = entity.TotalPoints,

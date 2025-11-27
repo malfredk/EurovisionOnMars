@@ -57,7 +57,7 @@
         var response = await Http.PostAsJsonAsync<NewCountryRequestDto>("/api/Countries/", countryRequest);
         if (response.IsSuccessStatusCode)
         {
-            var country = await response.Content.ReadFromJsonAsync<CountryResponseDto>();
+            var country = await response.Content.ReadFromJsonAsync<CountryDto>();
             Snackbar.Add("land opprettet", Severity.Success);
             Console.WriteLine($"Successfully created country with id: {country.Id}");
             Dialog.Close(DialogResult.Ok(country));

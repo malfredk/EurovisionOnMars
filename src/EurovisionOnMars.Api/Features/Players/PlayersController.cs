@@ -23,7 +23,7 @@ public class PlayersController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<PlayerResponseDto>> GetPlayerById(int id)
+    public async Task<ActionResult<PlayerDto>> GetPlayerById(int id)
     {
         var player = await _service.GetPlayer(id);
         var playerDto = _mapper.ToDto(player);
@@ -31,7 +31,7 @@ public class PlayersController : ControllerBase
     }
 
     [HttpGet("{username}")]
-    public async Task<ActionResult<PlayerResponseDto>> GetPlayerByUsername(string username)
+    public async Task<ActionResult<PlayerDto>> GetPlayerByUsername(string username)
     {
         var player = await _service.GetPlayer(username);
         var playerDto = _mapper.ToDto(player);
@@ -39,7 +39,7 @@ public class PlayersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PlayerResponseDto>> CreatePlayer([FromBody] string username)
+    public async Task<ActionResult<PlayerDto>> CreatePlayer([FromBody] string username)
     {
         var player = await _service.CreatePlayer(username);
         var playerDto = _mapper.ToDto(player);

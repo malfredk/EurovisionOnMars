@@ -5,14 +5,14 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IPlayerRatingMapper
 {
-    public PlayerRatingResponseDto ToDto(PlayerRating entity);
+    public PlayerRatingDto ToDto(PlayerRating entity);
 }
 
 public class PlayerRatingMapper : IPlayerRatingMapper
 {
-    public PlayerRatingResponseDto ToDto(PlayerRating entity)
+    public PlayerRatingDto ToDto(PlayerRating entity)
     {
-        return new PlayerRatingResponseDto
+        return new PlayerRatingDto
         {
             Id = entity.Id,
             Category1Points = entity.Category1Points,
@@ -23,21 +23,21 @@ public class PlayerRatingMapper : IPlayerRatingMapper
         };
     }
 
-    private PredictionResponseDto ToPredicitionDto(PlayerRating rating)
+    private PredictionDto ToPredicitionDto(PlayerRating rating)
     {
         Prediction prediction = rating.Prediction;
-        return new PredictionResponseDto
+        return new PredictionDto
         {
             TotalGivenPoints = prediction.TotalGivenPoints,
             CalculatedRank = prediction.CalculatedRank
         };
     }
 
-    private PlayerRatingCountryResponseDto ToCountryDto(PlayerRating rating)
+    private PlayerRatingCountryDto ToCountryDto(PlayerRating rating)
     {
         var country = rating.Country ?? 
             throw new Exception("PlayerRating is missing Country");
-        return new PlayerRatingCountryResponseDto
+        return new PlayerRatingCountryDto
         {
             Number = country.Number,
             Name = country.Name

@@ -5,14 +5,14 @@ namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
 public interface IRatingGameResultMapper
 {
-    public RatingGameResultResponseDto ToDto(RatingGameResult entity);
+    public RatingGameResultDto ToDto(RatingGameResult entity);
 }
 
 public class RatingGameResultMapper : IRatingGameResultMapper
 {
-    public RatingGameResultResponseDto ToDto(RatingGameResult entity)
+    public RatingGameResultDto ToDto(RatingGameResult entity)
     {
-        return new RatingGameResultResponseDto
+        return new RatingGameResultDto
         {
             RankDifference = entity.RankDifference,
             BonusPoints = entity.BonusPoints,
@@ -20,11 +20,11 @@ public class RatingGameResultMapper : IRatingGameResultMapper
         };
     }
 
-    private RatingGameResultCountryResponseDto ToCountryDto(RatingGameResult ratingGameResult)
+    private RatingGameResultCountryDto ToCountryDto(RatingGameResult ratingGameResult)
     {
         var country = ratingGameResult.PlayerRating?.Country 
             ?? throw new Exception("RatingGameResult's related PlayerRating is missing Country.");
-        return new RatingGameResultCountryResponseDto
+        return new RatingGameResultCountryDto
         {
             Name = country.Name,
             ActualRank = country.ActualRank

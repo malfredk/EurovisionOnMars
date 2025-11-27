@@ -23,7 +23,7 @@ public class PlayerGameResultsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PlayerGameResultResponseDto>>> GetPlayerGameResults()
+    public async Task<ActionResult<IEnumerable<PlayerGameResultDto>>> GetPlayerGameResults()
     {
         var playerGameResults = await _service.GetPlayerGameResults();
         var playerGameResultDtos = Utils.MapList(playerGameResults.ToList(), _mapper.ToDto);

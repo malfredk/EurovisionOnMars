@@ -24,7 +24,7 @@ public class CountriesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CountryResponseDto>>> GetCountries()
+    public async Task<ActionResult<IEnumerable<CountryDto>>> GetCountries()
     {
         var countries = await _service.GetCountries();
         var countryDtos = Utils.MapList(countries.ToList(), _mapper.ToDto);
@@ -32,7 +32,7 @@ public class CountriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CountryResponseDto>> CreateCountry([FromBody] NewCountryRequestDto requestDto)
+    public async Task<ActionResult<CountryDto>> CreateCountry([FromBody] NewCountryRequestDto requestDto)
     {
         var country = await _service.CreateCountry(requestDto);
         var countryDto = _mapper.ToDto(country);

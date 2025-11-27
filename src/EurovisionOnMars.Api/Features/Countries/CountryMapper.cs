@@ -5,14 +5,14 @@ namespace EurovisionOnMars.Api.Features.Countries;
 
 public interface ICountryMapper
 {
-    public CountryResponseDto ToDto(Country entity);
+    public CountryDto ToDto(Country entity);
 }
 
 public class CountryMapper : ICountryMapper
 {
-    public CountryResponseDto ToDto(Country entity)
+    public CountryDto ToDto(Country entity)
     {
-        return new CountryResponseDto
+        return new CountryDto
         {
             Id = entity.Id,
             Number = entity.Number,

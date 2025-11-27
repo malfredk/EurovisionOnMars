@@ -36,14 +36,14 @@
 
 @code {
     [Parameter] public int PlayerId { get; set; }
-    public List<RatingGameResultResponseDto> RatingsGameResults { get; set; }
+    public List<RatingGameResultDto> RatingsGameResults { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync($"/api/RatingGameResults/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
-            RatingsGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultResponseDto>>();
+            RatingsGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultDto>>();
             RatingsGameResults = RatingsGameResults.OrderBy(r => r.Country.ActualRank).ToList();
             Console.WriteLine($"Got rating results for player with id={PlayerId}");
         }
@@ -54,7 +54,7 @@
         }
     }
 
-    private int? GetAbsoluteRankDifference(RatingGameResultResponseDto ratingGameResult)
+    private int? GetAbsoluteRankDifference(RatingGameResultDto ratingGameResult)
     {
         var rankDifference = ratingGameResult.RankDifference;
         if (rankDifference is null)
@@ -64,7 +64,7 @@
         return Math.Abs((int)ratingGameResult.RankDifference!);
     }
 
-    private ArrowDirection GetArrowDirection(RatingGameResultResponseDto ratingGameResult)
+    private ArrowDirection GetArrowDirection(RatingGameResultDto ratingGameResult)
     {
         var rankDifference = ratingGameResult.RankDifference!;
         if (rankDifference is null || 

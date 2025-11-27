@@ -25,7 +25,7 @@ public class PlayerRatingsController : ControllerBase
     }
 
     [HttpGet("{playerId:int}")]
-    public async Task<ActionResult<IEnumerable<PlayerRatingResponseDto>>> GetPlayerRatings(int playerId)
+    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetPlayerRatings(int playerId)
     {
         var ratings = await _service.GetPlayerRatingsByPlayerId(playerId);
         var ratingDtos = Utils.MapList(ratings.ToList(), _mapper.ToDto);

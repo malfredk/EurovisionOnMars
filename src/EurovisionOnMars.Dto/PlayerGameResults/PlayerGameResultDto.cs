@@ -1,6 +1,6 @@
 ﻿namespace EurovisionOnMars.Dto.PlayerGameResults;
 
-public record PlayerGameResultResponseDto
+public record PlayerGameResultDto
 {
     public int? Rank { get; set; }
     public int? TotalPoints { get; set; }

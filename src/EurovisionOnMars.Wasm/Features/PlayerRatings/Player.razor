@@ -15,7 +15,7 @@
 <NavigationBar PlayerId="PlayerId"></NavigationBar>
 
 <MudTable 
-    T="PlayerRatingResponseDto" 
+    T="PlayerRatingDto" 
     Items="@PlayerRatings" 
     OnRowClick="HandleSelectRating"
     Breakpoint="Breakpoint.None" 
@@ -23,13 +23,13 @@
     Class="mb-2">
     <HeaderContent>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<PlayerRatingResponseDto, object>(r => r.Country.Number)">
+            <MudTableSortLabel SortBy="new Func<PlayerRatingDto, object>(r => r.Country.Number)">
                     #
             </MudTableSortLabel>
         </MudTh>
         <MudTh>land</MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<PlayerRatingResponseDto, object>(r => (r.Prediction.CalculatedRank ?? 0))">
+            <MudTableSortLabel SortBy="new Func<PlayerRatingDto, object>(r => (r.Prediction.CalculatedRank ?? 0))">
                     <MudIcon Icon="@PODIUM_ICON"></MudIcon>
             </MudTableSortLabel>
         </MudTh>
@@ -64,7 +64,7 @@
 
 @code {
     [Parameter] public int PlayerId { get; set; }
-    public List<PlayerRatingResponseDto> PlayerRatings { get; set; } = new List<PlayerRatingResponseDto>();
+    public List<PlayerRatingDto> PlayerRatings { get; set; } = new List<PlayerRatingDto>();
 
     private bool hasFinishedRating;
 
@@ -78,7 +78,7 @@
         SetHasFinishedRating();
     }
 
-    private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingResponseDto> tableRowClickEventArgs)
+    private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
         var parameters = new DialogParameters<RatingDialog>();
@@ -112,7 +112,7 @@
         var response = await Http.GetAsync($"/api/Ratings/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
-            PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingResponseDto>>();
+            PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingDto>>();
             Console.WriteLine($"Got ratings for player with id={PlayerId}");
         }
         else
@@ -122,7 +122,7 @@
         }
     }
 
-    private int NumberOfSpecialPoints(PlayerRatingResponseDto rating, int specialPoints)
+    private int NumberOfSpecialPoints(PlayerRatingDto rating, int specialPoints)
     {
         return ConvertBoolToInt(HasGivenSpecialPoints(rating.Category1Points, specialPoints))
         + ConvertBoolToInt(HasGivenSpecialPoints(rating.Category2Points, specialPoints))
@@ -139,7 +139,7 @@
         return categoryPoints != null && categoryPoints == specialPoints;
     }
 
-    private bool HasUniquePointsSum(PlayerRatingResponseDto rating)
+    private bool HasUniquePointsSum(PlayerRatingDto rating)
     {
         var pointsSum = rating.Prediction.TotalGivenPoints;
         if (pointsSum == null)
@@ -160,7 +160,7 @@
         return true;
     }
 
-    private async Task HandleRank(PlayerRatingResponseDto rating)
+    private async Task HandleRank(PlayerRatingDto rating)
     {
         var parameters = new DialogParameters<RankDialog>();
         parameters.Add(x => x.Rating, rating);

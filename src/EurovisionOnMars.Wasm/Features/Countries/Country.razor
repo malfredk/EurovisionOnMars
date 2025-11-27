@@ -8,7 +8,7 @@
 <NavigationBar></NavigationBar>
 
 <MudTable 
-    T="CountryResponseDto"
+    T="CountryDto"
     Items="@Countries"
     Breakpoint="Breakpoint.None"
     Hover=true RowClass="cursor-pointer"
@@ -50,8 +50,8 @@
 </MudTable>
 
 @code {
-    public List<CountryResponseDto> Countries = new List<CountryResponseDto>();
-    private CountryResponseDto? selectedCountry = null;
+    public List<CountryDto> Countries = new ();
+    private CountryDto? selectedCountry;
     private int? backupRank;
     private bool disableAddButton = false;
 
@@ -60,7 +60,7 @@
         await FetchCountries();
     }
 
-    private async Task UpdateRank(CountryResponseDto country)
+    private async Task UpdateRank(CountryDto country)
     {
         var rank = country.ActualRank;
         if (rank == null)
@@ -86,7 +86,7 @@
         var response = await Http.GetAsync("/api/Countries");
         if (response.IsSuccessStatusCode)
         {
-            Countries = await response.Content.ReadFromJsonAsync<List<CountryResponseDto>>();
+            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
             disableAddButton = Countries != null && Countries.Count() == 26;
         }
         else
@@ -98,12 +98,12 @@
 
     private void BackupRank(object country)
     {
-        backupRank = ((CountryResponseDto)country).ActualRank;
+        backupRank = ((CountryDto)country).ActualRank;
     }
 
     private void ResetCountry(object country)
     {
-        ((CountryResponseDto)country).ActualRank = backupRank;
+        ((CountryDto)country).ActualRank = backupRank;
     }
 
     private async Task CreateCountry()
@@ -112,7 +112,7 @@
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {
-            var newCountry = dialogResult.Data as CountryResponseDto;
+            var newCountry = dialogResult.Data as CountryDto;
             if (newCountry != null)
             {
                 Countries.Add(newCountry);

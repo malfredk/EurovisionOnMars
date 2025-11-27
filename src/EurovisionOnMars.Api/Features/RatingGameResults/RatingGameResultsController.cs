@@ -26,7 +26,7 @@ public class RatingGameResultsController : ControllerBase
     }
 
     [HttpGet("{playerId:int}")]
-    public async Task<ActionResult<IEnumerable<RatingGameResultResponseDto>>> GetRatingGameResults(int playerId)
+    public async Task<ActionResult<IEnumerable<RatingGameResultDto>>> GetRatingGameResults(int playerId)
     {
         var ratingGameResults = await _service.GetRatingGameResults(playerId);
         var ratingGameResultDtos = Utils.MapList(ratingGameResults.ToList(), _mapper.ToDto);
