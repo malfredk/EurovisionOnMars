@@ -27,41 +27,6 @@ public class PlayerServiceTest
             );
     }
 
-    // tests for getting player by id
-
-    [Fact]
-    public async Task GetPlayer_ValidId()
-    {
-        // arrange
-        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
-
-        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_ID))
-            .ReturnsAsync(expectedPlayer);
-
-        // act
-        var actualPlayer = await _service.GetPlayer(Utils.PLAYER_ID);
-
-        // assert
-        Assert.Equal(expectedPlayer, actualPlayer);
-
-        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_ID), Times.Once);
-    }
-
-    [Fact]
-    public async Task GetPlayer_InvalidId()
-    {
-        // arrange
-        _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_ID))
-            .ReturnsAsync((Player)null);
-
-        // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.GetPlayer(Utils.PLAYER_ID)
-        );
-
-        _playerRepositoryMock.Verify(r => r.GetPlayer(Utils.PLAYER_ID), Times.Once);
-    }
-
     // tests for getting player by username
 
     [Fact]

@@ -7,7 +7,6 @@ namespace EurovisionOnMars.Api.Features.Players;
 
 public interface IPlayerRepository
 {
-    Task<Player?> GetPlayer(int id);
     Task<Player?> GetPlayer(string username);
     Task<Player> CreatePlayer(Player player);
 }
@@ -21,12 +20,6 @@ public class PlayerRepository : IPlayerRepository
     {
         _context = context;
         _logger = logger;
-    }
-
-    public async Task<Player?> GetPlayer(int id)
-    {
-        _logger.LogDebug("Getting player with id={id}.", id);
-        return await _context.Players.FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<Player?> GetPlayer(string username)

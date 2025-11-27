@@ -22,16 +22,8 @@ public class PlayersController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<PlayerDto>> GetPlayerById(int id)
-    {
-        var player = await _service.GetPlayer(id);
-        var playerDto = _mapper.ToDto(player);
-        return Ok(playerDto);
-    }
-
     [HttpGet("{username}")]
-    public async Task<ActionResult<PlayerDto>> GetPlayerByUsername(string username)
+    public async Task<ActionResult<PlayerDto>> GetPlayer(string username)
     {
         var player = await _service.GetPlayer(username);
         var playerDto = _mapper.ToDto(player);
@@ -43,6 +35,6 @@ public class PlayersController : ControllerBase
     {
         var player = await _service.CreatePlayer(username);
         var playerDto = _mapper.ToDto(player);
-        return CreatedAtAction(nameof(GetPlayerByUsername), new { username = player.Username }, playerDto);
+        return CreatedAtAction(nameof(GetPlayer), new { username = player.Username }, playerDto);
     }
 }
