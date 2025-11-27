@@ -16,7 +16,7 @@
     @bind-SelectedItem="selectedCountry"
     EditTrigger="TableEditTrigger.RowClick"
     OnCommitEditClick="@(async () => await UpdateRank(selectedCountry))"
-    RowEditPreview="BackupRank"
+    RowEditPreview="SetBackupRank"
     RowEditCancel="ResetCountry"
     Class="mb-2">
     <ToolBarContent>
@@ -96,7 +96,7 @@
         }
     }
 
-    private void BackupRank(object country)
+    private void SetBackupRank(object country)
     {
         backupRank = ((CountryDto)country).ActualRank;
     }

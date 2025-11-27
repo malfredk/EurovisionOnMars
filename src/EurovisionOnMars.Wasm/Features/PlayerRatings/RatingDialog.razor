@@ -78,7 +78,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync<UpdatePlayerRatingRequestDto>($"/api/Ratings/{Rating.Id}/", ratingRequest);
+        var response = await Http.PatchAsJsonAsync<UpdatePlayerRatingRequestDto>($"/api/PlayerRatings/{Rating.Id}/", ratingRequest);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("avstemning lagret", Severity.Success);

@@ -1,6 +1,4 @@
 ﻿using EurovisionOnMars.Api.Features.Common;
-using EurovisionOnMars.Api.Features.PlayerGameResults;
-using EurovisionOnMars.Dto.PlayerGameResults;
 using EurovisionOnMars.Dto.RatingGameResults;
 using Microsoft.AspNetCore.Mvc;
 

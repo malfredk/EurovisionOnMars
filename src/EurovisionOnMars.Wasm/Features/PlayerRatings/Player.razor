@@ -50,11 +50,11 @@
         </MudTd>
         <MudTd DataLabel="poengsum">
             @rating.Prediction.TotalGivenPoints
-            @for (int tenPointer = 0; tenPointer < NumberOfSpecialPoints(rating, 10); tenPointer++)
+            @for (int tenPointer = 0; tenPointer < CalculateNumberOfSpecialPoints(rating, 10); tenPointer++)
             {
                 <MudIcon Icon="@Icons.Material.Filled.StarHalf" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>
             }
-            @for (int twelvePointer = 0; twelvePointer < NumberOfSpecialPoints(rating, 12); twelvePointer++)
+            @for (int twelvePointer = 0; twelvePointer < CalculateNumberOfSpecialPoints(rating, 12); twelvePointer++)
             {
                 <MudIcon Icon="@Icons.Material.Filled.Star" Class="extra-small-icon" Color="Color.Secondary"></MudIcon>
             }
@@ -64,7 +64,7 @@
 
 @code {
     [Parameter] public int PlayerId { get; set; }
-    public List<PlayerRatingDto> PlayerRatings { get; set; } = new List<PlayerRatingDto>();
+    public List<PlayerRatingDto> PlayerRatings { get; set; } = new ();
 
     private bool hasFinishedRating;
 
@@ -109,7 +109,7 @@
 
     private async Task FetchRatings()
     {
-        var response = await Http.GetAsync($"/api/Ratings/{PlayerId}");
+        var response = await Http.GetAsync($"/api/PlayerRatings/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
             PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingDto>>();
@@ -122,7 +122,7 @@
         }
     }
 
-    private int NumberOfSpecialPoints(PlayerRatingDto rating, int specialPoints)
+    private int CalculateNumberOfSpecialPoints(PlayerRatingDto rating, int specialPoints)
     {
         return ConvertBoolToInt(HasGivenSpecialPoints(rating.Category1Points, specialPoints))
         + ConvertBoolToInt(HasGivenSpecialPoints(rating.Category2Points, specialPoints))

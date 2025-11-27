@@ -55,7 +55,7 @@
 
     private async Task UpdateRating()
     {
-        var response = await Http.PatchAsJsonAsync<int>($"/api/Ratings/{Rating.Id}/Rank", rank);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/PlayerRatings/{Rating.Id}/Rank", rank);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("plassering lagret", Severity.Success);

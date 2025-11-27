@@ -7,7 +7,7 @@
 <NavigationBar PlayerId="PlayerId"></NavigationBar>
 
 <MudTable
-    Items="@RatingsGameResults"
+    Items="@RatingGameResults"
     Breakpoint="Breakpoint.None"
     Class="mb-2">
     <HeaderContent>
@@ -36,15 +36,15 @@
 
 @code {
     [Parameter] public int PlayerId { get; set; }
-    public List<RatingGameResultDto> RatingsGameResults { get; set; }
+    public List<RatingGameResultDto> RatingGameResults { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync($"/api/RatingGameResults/{PlayerId}");
         if (response.IsSuccessStatusCode)
         {
-            RatingsGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultDto>>();
-            RatingsGameResults = RatingsGameResults.OrderBy(r => r.Country.ActualRank).ToList();
+            RatingGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultDto>>();
+            RatingGameResults = RatingGameResults.OrderBy(r => r.Country.ActualRank).ToList();
             Console.WriteLine($"Got rating results for player with id={PlayerId}");
         }
         else
