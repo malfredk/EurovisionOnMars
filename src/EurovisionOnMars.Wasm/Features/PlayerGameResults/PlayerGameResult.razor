@@ -4,7 +4,7 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
-<NavigationBar PlayerId="@playerId"></NavigationBar>
+<NavigationBar PlayerId="@PlayerId"></NavigationBar>
 
 <MudTable 
     Items="@PlayerGameResults"
@@ -37,7 +37,7 @@
 </MudTable>
 
 @code {
-    [Parameter] public int? playerId { get; set; }
+    [Parameter] public int? PlayerId { get; set; }
 
     public List<PlayerGameResultDto> PlayerGameResults { get; set; } = new();
 

@@ -1,4 +1,4 @@
-﻿@page "/spiller/{id:int}"
+﻿@page "/spiller/{playerId:int}"
 
 @using EurovisionOnMars.Dto.PlayerRatings
 
@@ -12,7 +12,7 @@
     }
 </style>
 
-<NavigationBar PlayerId="PlayerId"></NavigationBar>
+<NavigationBar PlayerId="@PlayerId"></NavigationBar>
 
 <MudTable 
     T="PlayerRatingDto" 

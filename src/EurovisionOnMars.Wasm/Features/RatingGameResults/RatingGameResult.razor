@@ -1,10 +1,10 @@
-﻿@page "/spiller/{id:int}/resultat"
+﻿@page "/spiller/{playerId:int}/resultat"
 @using EurovisionOnMars.Dto.RatingGameResults
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
-<NavigationBar PlayerId="PlayerId"></NavigationBar>
+<NavigationBar PlayerId="@PlayerId"></NavigationBar>
 
 <MudTable
     Items="@RatingGameResults"
