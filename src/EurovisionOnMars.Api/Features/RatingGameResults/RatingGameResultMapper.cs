@@ -23,7 +23,7 @@ public class RatingGameResultMapper : IRatingGameResultMapper
     private RatingGameResultCountryDto ToCountryDto(RatingGameResult ratingGameResult)
     {
         var country = ratingGameResult.PlayerRating?.Country 
-            ?? throw new Exception("RatingGameResult's related PlayerRating is missing Country.");
+            ?? throw new Exception("RatingGameResult is missing PlayerRating or related PlayerRating is missing Country.");
         return new RatingGameResultCountryDto
         {
             Name = country.Name,

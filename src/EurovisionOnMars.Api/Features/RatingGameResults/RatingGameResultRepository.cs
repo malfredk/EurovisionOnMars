@@ -28,6 +28,8 @@ public class RatingGameResultRepository : IRatingGameResultRepository
         _logger.LogDebug("Getting rating results for player with id={playerId}.", playerId);
         var ratingResults = await _context.RatingGameResults
             .Where(rgr => rgr.PlayerRating.PlayerId == playerId)
+            .Include(rgr => rgr.PlayerRating)
+            .Include(rgr => rgr.PlayerRating.Country)
             .ToListAsync();
         return ratingResults.ToImmutableList();
     }
