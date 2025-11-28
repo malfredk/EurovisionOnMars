@@ -1,0 +1,120 @@
+﻿@page "/"
+@using EurovisionOnMars.Dto.Players
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<NavigationBar></NavigationBar>
+
+<MudGrid Spacing="1" Class="align-end">
+    <MudItem>
+        <MudTextField @bind-Value="newUsername" OnKeyDown="HandleEnterNew" Label="ny spiller"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudButton 
+            Variant="Variant.Filled" Color="Color.Secondary" 
+            OnClick="CreatePlayer">
+                spill
+        </MudButton>
+    </MudItem>
+</MudGrid>
+<MudGrid Spacing="1" Class="align-end">
+    <MudItem>
+        <MudTextField @bind-Value="existingUsername" OnKeyDown="HandleEnterExisting" Label="eksisterende spiller"></MudTextField>
+    </MudItem>
+    <MudItem>
+        <MudButton 
+            Variant="Variant.Filled" Color="Color.Secondary"
+            OnClick="GetPlayer">
+                spill
+        </MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? newUsername;
+    private string? existingUsername;
+    private PlayerDto? player;
+
+    private async Task CreatePlayer()
+    {
+        if (string.IsNullOrEmpty(newUsername))
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            return;
+        }
+
+        var response = await Http.PostAsJsonAsync<string>("/api/Players/", newUsername);
+        if (response.IsSuccessStatusCode)
+        {
+            player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            Snackbar.Add("spiller opprettet", Severity.Success);
+            Console.WriteLine($"Successfully created player with username: {player!.Username}");
+            NavigationManager.NavigateTo($"/stemmeskjema/{player!.Id}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+        {
+            Snackbar.Add("brukernavnet er allerede i bruk", Severity.Error);
+            Console.WriteLine($"Failed to create new player due to duplicate username");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            Snackbar.Add("ugyldig brukernavn", Severity.Error);
+            Console.WriteLine($"Failed to create new player due to invalid username");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to create new player due to: {response.StatusCode}");
+        }
+    }
+
+    private async Task GetPlayer()
+    {
+        if (string.IsNullOrEmpty(existingUsername))
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            return;
+        }
+
+        var response = await Http.GetAsync($"/api/Players/{existingUsername}");
+        if (response.IsSuccessStatusCode)
+        {
+            player = await response.Content.ReadFromJsonAsync<PlayerDto>();
+            Console.WriteLine($"Got existing player with username: {player!.Username}");
+            NavigationManager.NavigateTo($"/stemmeskjema/{player!.Id}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            Snackbar.Add("spilleren eksisterer ikke", Severity.Error);
+            Console.WriteLine($"Failed to get existing player");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            Snackbar.Add("ugyldig brukernavn", Severity.Error);
+            Console.WriteLine($"Failed to get existing player due to invalid username");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to get existing player due to: {response.StatusCode}");
+        }
+    }
+
+    private async Task HandleEnterNew(KeyboardEventArgs args)
+    {
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
+        {
+            await CreatePlayer();
+        }
+    }
+
+    private async Task HandleEnterExisting(KeyboardEventArgs args)
+    {
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
+        {
+            await GetPlayer();
+        }
+    }
+}

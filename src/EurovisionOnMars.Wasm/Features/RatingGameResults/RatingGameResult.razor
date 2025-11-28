@@ -1,0 +1,92 @@
+﻿@page "/stemmeskjema/{playerId:int}/resultat"
+@using EurovisionOnMars.Dto.RatingGameResults
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<NavigationBar PlayerId="@PlayerId"></NavigationBar>
+
+<MudTable
+    Items="@RatingGameResults"
+    Breakpoint="Breakpoint.None"
+    Class="mb-2">
+    <HeaderContent>
+        <MudTh>faktisk plassering</MudTh>
+        <MudTh>land</MudTh>
+        <MudTh>differanse</MudTh>
+        <MudTh>bonus</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="ratingGameResult">
+        <MudTd DataLabel="faktisk plassering">@ratingGameResult.Country.ActualRank</MudTd>
+        <MudTd DataLabel="land">@ratingGameResult.Country.Name</MudTd>
+        <MudTd DataLabel="differanse i plassering">
+            @GetAbsoluteRankDifference(ratingGameResult)
+            @if (GetArrowDirection(ratingGameResult) == ArrowDirection.UP)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="Size.Small"></MudIcon>
+            }
+            @if (GetArrowDirection(ratingGameResult) == ArrowDirection.DOWN)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small"></MudIcon>
+            }
+        </MudTd>
+        <MudTd DataLabel="bonuspoeng">@ratingGameResult.BonusPoints</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public int PlayerId { get; set; }
+    public List<RatingGameResultDto> RatingGameResults { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync($"/api/RatingGameResults/{PlayerId}");
+        if (response.IsSuccessStatusCode)
+        {
+            RatingGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultDto>>();
+            RatingGameResults = RatingGameResults.OrderBy(r => r.Country.ActualRank).ToList();
+            Console.WriteLine($"Got rating results for player with id={PlayerId}");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to get rating results for player with id={PlayerId}");
+        }
+    }
+
+    private int? GetAbsoluteRankDifference(RatingGameResultDto ratingGameResult)
+    {
+        var rankDifference = ratingGameResult.RankDifference;
+        if (rankDifference is null)
+        {
+            return null;
+        }
+        return Math.Abs((int)ratingGameResult.RankDifference!);
+    }
+
+    private ArrowDirection GetArrowDirection(RatingGameResultDto ratingGameResult)
+    {
+        var rankDifference = ratingGameResult.RankDifference!;
+        if (rankDifference is null || 
+            rankDifference == 0 ||
+            rankDifference == 26)
+        {
+            return ArrowDirection.NONE;
+        }
+        else if (rankDifference > 0)
+        {
+            return ArrowDirection.DOWN;
+        }
+        else
+        {
+            return ArrowDirection.UP;
+        }
+    }
+
+    enum ArrowDirection
+    {
+        UP,
+        DOWN,
+        NONE
+    }
+}

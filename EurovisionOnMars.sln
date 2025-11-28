@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.CustomException", "src\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj", "{82E38281-3C15-411D-8090-60D2721F4DB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Entity.Test", "test\EurovisionOnMars.Entity.Test\EurovisionOnMars.Entity.Test.csproj", "{8F9566B4-E615-462E-A801-85BA37D06D56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9566B4-E615-462E-A801-85BA37D06D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9566B4-E615-462E-A801-85BA37D06D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9566B4-E615-462E-A801-85BA37D06D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9566B4-E615-462E-A801-85BA37D06D56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

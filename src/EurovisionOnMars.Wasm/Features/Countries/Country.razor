@@ -1,0 +1,137 @@
+﻿@page "/oppsett"
+@using EurovisionOnMars.Dto.Countries
+
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<NavigationBar></NavigationBar>
+
+<MudTable 
+    T="CountryDto"
+    Items="@Countries"
+    Breakpoint="Breakpoint.None"
+    Hover=true RowClass="cursor-pointer"
+    CanCancelEdit=true
+    @bind-SelectedItem="selectedCountry"
+    EditTrigger="TableEditTrigger.RowClick"
+    OnCommitEditClick="@(async () => await UpdateRank(selectedCountry))"
+    RowEditPreview="SetBackupRank"
+    RowEditCancel="ResetCountry"
+    Class="mb-2">
+    <ToolBarContent>
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Add" Color="Color.Primary"
+            OnClick="CreateCountry"
+            Disabled="disableAddButton">
+        </MudIconButton>
+        <MudIconButton
+            Icon="@Icons.Material.Filled.Calculate" Color="Color.Primary" 
+            OnClick="CalculateResult">
+        </MudIconButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>land</MudTh>
+        <MudTh>plassering</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="country">
+        <MudTd DataLabel="#">@country.Number</MudTd>
+        <MudTd DataLabel="land">@country.Name</MudTd>
+        <MudTd DataLabel="plassering">@country.ActualRank</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate Context="country">
+        <MudTd DataLabel="#">@country.Number</MudTd>
+        <MudTd DataLabel="land">@country.Name</MudTd>
+        <MudTd DataLabel="plassering">
+            <MudNumericField @bind-Value="@country.ActualRank" Min="1" Max="26"></MudNumericField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public List<CountryDto> Countries = new ();
+    private CountryDto? selectedCountry;
+    private int? backupRank;
+    private bool disableAddButton = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchCountries();
+    }
+
+    private async Task UpdateRank(CountryDto country)
+    {
+        var rank = country.ActualRank;
+        if (rank == null)
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Rank is null");
+        }
+
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)country.ActualRank!);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("resultat lagret", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to update country due to: {response.StatusCode}");
+        }
+    } 
+
+    private async Task FetchCountries()
+    {
+        var response = await Http.GetAsync("/api/Countries");
+        if (response.IsSuccessStatusCode)
+        {
+            Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
+            disableAddButton = Countries != null && Countries.Count() == 26;
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Failed to get countries");
+        }
+    }
+
+    private void SetBackupRank(object country)
+    {
+        backupRank = ((CountryDto)country).ActualRank;
+    }
+
+    private void ResetCountry(object country)
+    {
+        ((CountryDto)country).ActualRank = backupRank;
+    }
+
+    private async Task CreateCountry()
+    {
+        var dialogResponse = await DialogService.ShowAsync<NewCountryDialog>("legg til nytt land");
+        var dialogResult = await dialogResponse.Result;
+        if (!dialogResult.Canceled)
+        {
+            var newCountry = dialogResult.Data as CountryDto;
+            if (newCountry != null)
+            {
+                Countries.Add(newCountry);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task CalculateResult()
+    {
+        var response = await Http.PostAsync("/api/GameResults", null);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("kalkulering av resultat var vellykket", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine("Failed to calculate results");
+        }
+    }
+}
