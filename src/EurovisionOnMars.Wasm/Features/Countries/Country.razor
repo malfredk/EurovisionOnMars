@@ -1,4 +1,4 @@
-﻿@page "/land"
+﻿@page "/oppsett"
 @using EurovisionOnMars.Dto.Countries
 
 @inject HttpClient Http
@@ -108,7 +108,7 @@
 
     private async Task CreateCountry()
     {
-        var dialogResponse = await DialogService.ShowAsync<CountryDialog>("legg til nytt land");
+        var dialogResponse = await DialogService.ShowAsync<NewCountryDialog>("legg til nytt land");
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {

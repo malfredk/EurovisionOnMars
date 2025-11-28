@@ -1,4 +1,4 @@
-﻿@page "/spiller/{playerId:int}"
+﻿@page "/stemmeskjema/{playerId:int}"
 
 @using EurovisionOnMars.Dto.PlayerRatings
 
@@ -81,10 +81,10 @@
     private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
-        var parameters = new DialogParameters<RatingDialog>();
+        var parameters = new DialogParameters<PointsDialog>();
         parameters.Add(x => x.Rating, selectedRating);
 
-        var dialogResponse = await DialogService.ShowAsync<RatingDialog>($"{selectedRating.Country.Name}", parameters);
+        var dialogResponse = await DialogService.ShowAsync<PointsDialog>($"{selectedRating.Country.Name}", parameters);
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {
