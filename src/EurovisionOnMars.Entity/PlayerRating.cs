@@ -21,7 +21,7 @@ public record PlayerRating : IdBase
 
     private PlayerRating() { }
 
-    public PlayerRating(Player player, Country country)
+    internal PlayerRating(Player player, Country country)
     {
         Player = player;
         PlayerId = player.Id;

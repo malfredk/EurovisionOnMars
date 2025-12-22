@@ -12,7 +12,7 @@ public record Prediction : IdBase
 
     private Prediction() { }
 
-    public Prediction(PlayerRating playerRating)
+    internal Prediction(PlayerRating playerRating)
     {
         PlayerRating = playerRating;
         PlayerRatingId = playerRating.Id;
