@@ -12,7 +12,7 @@ public record PlayerGameResult : IdBase
 
     private PlayerGameResult() { }
 
-    public PlayerGameResult(Player player)
+    internal PlayerGameResult(Player player)
     {
         Player = player;
         PlayerId = player.Id;
