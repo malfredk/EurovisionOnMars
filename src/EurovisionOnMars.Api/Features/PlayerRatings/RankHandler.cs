@@ -9,6 +9,8 @@ public interface IRankHandler
 
 public class RankHandler : IRankHandler
 {
+    private const int DEFAULT_TIE_BREAK_DEMOTION_SORT_VALUE = -1;
+
     private readonly ILogger<RankHandler> _logger;
 
     public RankHandler(ILogger<RankHandler> logger)
@@ -108,7 +110,9 @@ public class RankHandler : IRankHandler
     private void AdjustTieBreakerDemotionsAndSameRankCounts(List<Prediction> predictionsWithSameTotalGivenPoints)
     {
         var sameRankCount = predictionsWithSameTotalGivenPoints.Count();
-        var sortedPredictions = predictionsWithSameTotalGivenPoints.OrderBy(p => p.TieBreakDemotion);
+        var sortedPredictions = predictionsWithSameTotalGivenPoints
+            .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_TIE_BREAK_DEMOTION_SORT_VALUE); 
+        // TODO: don't set this if TieBreakDemotion is null for all, new member should enter at top?
 
         int tieBreakDemotion = 0;
         foreach (var prediction in sortedPredictions)
