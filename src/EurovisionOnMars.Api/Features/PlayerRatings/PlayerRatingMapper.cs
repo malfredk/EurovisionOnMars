@@ -18,25 +18,36 @@ public class PlayerRatingMapper : IPlayerRatingMapper
             Category1Points = entity.Category1Points,
             Category2Points = entity.Category2Points,
             Category3Points = entity.Category3Points,
-            Prediction = ToPredicitionDto(entity),
-            Country = ToCountryDto(entity)
+            Prediction = ToPredicitionDto(entity.Prediction),
+            Country = ToCountryDto(entity.Country)
         };
     }
 
-    private PredictionDto ToPredicitionDto(PlayerRating rating)
+    private PredictionDto ToPredicitionDto(Prediction? prediction)
     {
-        Prediction prediction = rating.Prediction;
+        if (prediction == null) {
+            throw new Exception("PlayerRating is missing Prediction.");
+        }
+
         return new PredictionDto
         {
+            Id = prediction.Id,
             TotalGivenPoints = prediction.TotalGivenPoints,
-            CalculatedRank = prediction.CalculatedRank
+            CalculatedRank = prediction.CalculatedRank,
+            SameRankCount = prediction.SameRankCount,
+            TieBreakDemotion = prediction.TieBreakDemotion,
+            PredictedRank = prediction.GetPredictedRank()
         };
     }
 
-    private PlayerRatingCountryDto ToCountryDto(PlayerRating rating)
+    private PlayerRatingCountryDto ToCountryDto(Country? country)
     {
-        var country = rating.Country ?? 
-            throw new Exception("PlayerRating is missing Country");
+        if (country == null)
+        {
+            throw new Exception("PlayerRating is missing Country.");
+
+        }
+
         return new PlayerRatingCountryDto
         {
             Number = country.Number,

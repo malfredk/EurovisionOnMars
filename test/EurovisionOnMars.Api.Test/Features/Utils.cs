@@ -14,7 +14,9 @@ public class Utils
     public const int PLAYER_ID = 1234;
 
     public const int RATING_ID = 77;
-    
+    public const int TIE_BREAK_DEMOTION = 0;
+    public const int SAME_RANK_COUNT = 0;
+
     // country
 
     public static Country CreateCountry()
@@ -94,6 +96,8 @@ public class Utils
         rating.SetPoints(category1Points, category2Points, category3Points);
 
         rating.Prediction.SetCalculatedRank(rank);
+        rating.Prediction.SetTieBreakDemotion(TIE_BREAK_DEMOTION);
+        rating.Prediction.SetSameRankCount(SAME_RANK_COUNT);
 
         return rating;
     }
