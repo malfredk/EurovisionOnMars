@@ -4,15 +4,31 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IRankHandler
 {
-    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, int? oldCalculatedRank);
+    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
 }
 
 public class RankHandler : IRankHandler
 {
-    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, int? oldCalculatedRank)
+    private readonly ILogger<RankHandler> _logger;
+
+    public RankHandler(ILogger<RankHandler> logger)
+    {
+        _logger = logger;
+    }
+
+    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
+    {
+        var ratingsWithCalculatedRank = RankRatings(ratings);
+
+        AdjustTieBreakerDemotionsAndSameRankCounts(editedRating, ratingsWithCalculatedRank, oldPrediction);
+
+        return ratingsWithCalculatedRank;
+    }
+
+    private List<PlayerRating> RankRatings(IReadOnlyList<PlayerRating> ratings)
     {
         var orderedRatings = SortRatings(ratings);
-        List<PlayerRating> ratingsWithUpdatedRank = new();
+        List<PlayerRating> ratingsWithCalculatedRank = new();
 
         Prediction? previousPrediction = null;
         for (int i = 0; i < orderedRatings.Count; i++)
@@ -24,7 +40,7 @@ public class RankHandler : IRankHandler
             if (currentPoints == null)
             {
                 break;
-            } 
+            }
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
                 currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank);
@@ -33,11 +49,10 @@ public class RankHandler : IRankHandler
             {
                 currentPrediction.SetCalculatedRank(i + 1);
             }
-            ratingsWithUpdatedRank.Add(currentRating);
+            ratingsWithCalculatedRank.Add(currentRating);
             previousPrediction = currentPrediction;
         }
-
-        return ratingsWithUpdatedRank;
+        return ratingsWithCalculatedRank;
     }
 
     private IReadOnlyList<PlayerRating> SortRatings(IReadOnlyList<PlayerRating> ratings)
@@ -45,5 +60,62 @@ public class RankHandler : IRankHandler
         return ratings
             .OrderByDescending(r => r.Prediction.TotalGivenPoints ?? 0)
             .ToList();
+    }
+
+    private void AdjustTieBreakerDemotionsAndSameRankCounts(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
+    {
+        var newCalculatedRank = editedRating.Prediction.CalculatedRank;
+        var oldCalculatedRank = oldPrediction.CalculatedRank;
+        if (newCalculatedRank == oldCalculatedRank)
+        {
+            _logger.LogDebug("Skipping adjusting of TieBreakerDemotion and SameRankCount since CaclulatedRank is unchanged.");
+            return;
+        }
+
+        var predictionsGroupedByTotalGivenPoints = ratings
+            .Select(r => r.Prediction)
+            .GroupBy(p => p.TotalGivenPoints)
+            .ToList();
+
+        HandleOldTotalGivenPointsGroup(predictionsGroupedByTotalGivenPoints, oldPrediction);
+        HandleNewTotalGivenPointsGroup(predictionsGroupedByTotalGivenPoints, editedRating);
+    }
+
+    private void HandleOldTotalGivenPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByTotalGivenPoints, SimplePrediction oldPrediction)
+    {
+        var oldTotalGivenPoints = oldPrediction.TotalGivenPoints;
+        var oldGroup = predictionsGroupedByTotalGivenPoints
+            .FirstOrDefault(g => g.Key == oldTotalGivenPoints, null);
+
+        if (oldGroup == null)
+        {
+            _logger.LogDebug("Old TotalGivenPoints group is empty; thus, there is nothing to adjust.");
+            return;
+        }
+
+        AdjustTieBreakerDemotionsAndSameRankCounts(oldGroup.ToList());
+    }
+
+    private void HandleNewTotalGivenPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByTotalGivenPoints, PlayerRating editedRating)
+    {
+        var newTotalGivenPoints = editedRating.Prediction.TotalGivenPoints;
+        var newGroup = predictionsGroupedByTotalGivenPoints
+            .FirstOrDefault(g => g.Key == newTotalGivenPoints);
+
+        AdjustTieBreakerDemotionsAndSameRankCounts(newGroup.ToList());
+    }
+
+    private void AdjustTieBreakerDemotionsAndSameRankCounts(List<Prediction> predictionsWithSameTotalGivenPoints)
+    {
+        var sameRankCount = predictionsWithSameTotalGivenPoints.Count();
+        var sortedPredictions = predictionsWithSameTotalGivenPoints.OrderBy(p => p.TieBreakDemotion);
+
+        int tieBreakDemotion = 0;
+        foreach (var prediction in sortedPredictions)
+        {
+            prediction.SetSameRankCount(sameRankCount);
+            prediction.SetTieBreakDemotion(tieBreakDemotion);
+            tieBreakDemotion++;
+        }
     }
 }
