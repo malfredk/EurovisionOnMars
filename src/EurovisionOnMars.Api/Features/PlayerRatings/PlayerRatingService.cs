@@ -9,7 +9,6 @@ public interface IPlayerRatingService
     Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetPlayerRatingsByPlayerId(int playerId);
     Task UpdatePlayerRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto);
-    Task UpdatePlayerRating(int id, int rank);
 }
 
 public class PlayerRatingService : IPlayerRatingService
@@ -62,31 +61,12 @@ public class PlayerRatingService : IPlayerRatingService
         await SaveUpdatedRatings(ratingsWithUpdatedRank);
     }
 
-    public async Task UpdatePlayerRating(int id, int tieBreakDemotion)
-    {
-        _ratingTimeValidator.EnsureRatingIsOpen();
-
-        var rating = await GetPlayerRating(id);
-        rating.Prediction.SetTieBreakDemotion(tieBreakDemotion);
-        await _repository.UpdateRating(rating);
-    }
-
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
     {
         return ratings
             .OrderBy(r => r.Prediction.CalculatedRank ?? 100)
             .ThenBy(r => r.Country.Number)
             .ToImmutableList();
-    }
-
-    private async Task<PlayerRating> GetPlayerRating(int id)
-    {
-        var rating = await _repository.GetRating(id);
-        if (rating == null)
-        {
-            throw new KeyNotFoundException($"No rating with id={id} exists.");
-        }
-        return rating;
     }
 
     private void UpdatePoints(
