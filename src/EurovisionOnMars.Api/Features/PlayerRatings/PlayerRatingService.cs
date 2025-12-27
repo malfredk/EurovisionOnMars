@@ -54,11 +54,15 @@ public class PlayerRatingService : IPlayerRatingService
         _ratingTimeValidator.EnsureRatingIsOpen();
 
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
-        var rating = ratings.First(r => r.Id == id);
+        var editedRating = ratings.First(r => r.Id == id);
 
-        UpdatePoints(rating, ratingRequestDto, ratings);
-        var ratingsWithUpdatedRank = _rankHandler.CalculateRanks(ratings);
-        await SaveUpdatedRatings(ratingsWithUpdatedRank);
+        var oldTotalGivenPoints = editedRating.Prediction.TotalGivenPoints;
+        var oldCalculatedRank = editedRating.Prediction.CalculatedRank;
+
+        UpdatePoints(editedRating, ratingRequestDto, ratings);
+        var updatedRatings = UpdateRank(editedRating, ratings, oldTotalGivenPoints, oldCalculatedRank);
+
+        await SaveUpdatedRatings(updatedRatings);
     }
 
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
@@ -81,6 +85,27 @@ public class PlayerRatingService : IPlayerRatingService
             ratingRequest.Category3Points
             );
         _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
+    }
+
+    private List<PlayerRating> UpdateRank(
+        PlayerRating rating, 
+        IReadOnlyList<PlayerRating> ratings, 
+        int? oldTotalGivenPoints,
+        int? oldCalculatedRank
+        )
+    {
+        var updatedRatings = new List<PlayerRating>();
+        if (rating.Prediction.TotalGivenPoints == oldTotalGivenPoints)
+        {
+            _logger.LogDebug("Skipping recalculation of rank since TotalGivenPoints is unchanged.");
+            updatedRatings.Add(rating);
+        }
+        else
+        {
+            updatedRatings.Add(_rankHandler.CalculateRanks(rating, ratings, oldCalculatedRank));
+        }
+
+        return updatedRatings;
     }
 
     private async Task SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)

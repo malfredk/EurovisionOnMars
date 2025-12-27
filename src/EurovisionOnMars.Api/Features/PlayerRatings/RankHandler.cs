@@ -4,12 +4,12 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IRankHandler
 {
-    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings);
+    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, int? oldCalculatedRank);
 }
 
 public class RankHandler : IRankHandler
 {
-    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings)
+    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, int? oldCalculatedRank)
     {
         var orderedRatings = SortRatings(ratings);
         List<PlayerRating> ratingsWithUpdatedRank = new();
@@ -27,7 +27,7 @@ public class RankHandler : IRankHandler
             } 
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
-                currentPrediction.SetCalculatedRank(previousPrediction.CalculatedRank);
+                currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank);
             }
             else
             {

@@ -31,7 +31,7 @@ public record Prediction : IdBase
             (PlayerRating.Category3Points ?? 0);
     }
 
-    public void SetCalculatedRank(int? rank)
+    public void SetCalculatedRank(int rank)
     {
         if (rank < 1 || rank > 26)
         {
