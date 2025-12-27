@@ -5,6 +5,7 @@ using EurovisionOnMars.Api.Features.GameResults;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.Predictions;
 using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Entity.DataAccess;
@@ -27,7 +28,9 @@ AddDbContext(builder);
 AddCountriesFeature(builder);
 AddGameResultsFeature(builder);
 AddPlayerGameResultsFeature(builder);
+AddRatingTimeValidator(builder);
 AddPlayerRatingsFeature(builder);
+AddPredictionsFeature(builder);
 AddPlayersFeature(builder);
 AddRatingGameResultsFeature(builder);
 
@@ -129,9 +132,19 @@ static void AddPlayerRatingsFeature(WebApplicationBuilder builder)
     builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 
     builder.Services.AddScoped<IRankHandler, RankHandler>();
+    builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
+}
+
+static void AddRatingTimeValidator(WebApplicationBuilder builder)
+{
     builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
     builder.Services.AddScoped<IRatingTimeValidator, RatingTimeValidator>();
-    builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
+}
+
+static void AddPredictionsFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IPredicitonRepository, PredictionRepository>();
+    builder.Services.AddScoped<IPredictionServie, PredicitonService>();
 }
 
 static void AddPlayersFeature(WebApplicationBuilder builder)
