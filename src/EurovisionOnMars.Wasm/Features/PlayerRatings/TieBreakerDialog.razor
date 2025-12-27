@@ -53,25 +53,24 @@
         }
     }
 
-    private async Task UpdatePrediction(PredictionDto prediciton)
+    private async Task UpdatePrediction(PredictionDto prediction)
     {
-        // TODO
-        var response = await Http.PatchAsJsonAsync<int>($"/api/PlayerRatings/{Rating.Id}/Rank", calculatedRank);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Predictions/{prediction.Id}", prediction.TieBreakDemotion); // TODO
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("rangering lagret", Severity.Success);
-            Console.WriteLine($"Successfully updated rating with id: {Rating!.Id}");
+            Console.WriteLine($"Successfully updated prediction with id: {prediction.Id}");
             Dialog.Close();
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
         {
             Snackbar.Add("stemming er stengt", Severity.Error);
-            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
+            Console.WriteLine($"Failed to update prediction due to: {response.StatusCode}");
         }
         else
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
-            Console.WriteLine($"Failed to update rating due to: {response.StatusCode}");
+            Console.WriteLine($"Failed to update prediction due to: {response.StatusCode}");
         }
     }
 }

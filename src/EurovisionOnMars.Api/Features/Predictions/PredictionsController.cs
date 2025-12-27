@@ -16,7 +16,7 @@ public class PredictionsController : ControllerBase
     }
 
 
-    [HttpPatch("{id:int}/TieBreakDemotion")]
+    [HttpPatch("{id:int}")]
     public async Task<ActionResult> UpdatePrediciton(int id, [FromBody] int tieBreakDemotion)
     {
         await _service.UpdatePrediction(id, tieBreakDemotion);
