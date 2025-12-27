@@ -40,7 +40,7 @@
         <MudTd DataLabel="land">@rating.Country.Name</MudTd>
         <MudTd DataLabel="plassering">
             @rating.Prediction.CalculatedRank
-            @if (hasFinishedRating && !HasUniquePointsSum(rating))
+            @if (!HasUniqueCalculatedRank(rating))
             {
                 <MudIconButton 
                     Icon="@Icons.Material.Filled.SwapVert"
@@ -66,7 +66,7 @@
     [Parameter] public int PlayerId { get; set; }
     public List<PlayerRatingDto> PlayerRatings { get; set; } = new ();
 
-    private bool hasFinishedRating;
+    // TODO: utilize PredictedRank 
 
     const string PODIUM_ICON = @"<svg style=""width:24px;height:24px"" viewBox=""0 0 640 512"">
         <path fill=""currentColor"" d=""M353.8 54.1L330.2 6.3c-3.9-8.3-16.1-8.6-20.4 0L286.2 54.1l-52.3 7.5c-9.3 1.4-13.3 12.9-6.4 19.8l38 37-9 52.1c-1.4 9.3 8.2 16.5 16.8 12.2l46.9-24.8 46.6 24.4c8.6 4.3 18.3-2.9 16.8-12.2l-9-52.1 38-36.6c6.8-6.8 2.9-18.3-6.4-19.8l-52.3-7.5zM256 256c-17.7 0-32 14.3-32 32V480c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V288c0-17.7-14.3-32-32-32H256zM32 320c-17.7 0-32 14.3-32 32V480c0 17.7 14.3 32 32 32H160c17.7 0 32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zm416 96v64c0 17.7 14.3 32 32 32H608c17.7 0 32-14.3 32-32V416c0-17.7-14.3-32-32-32H480c-17.7 0-32 14.3-32 32z"" />
@@ -75,7 +75,6 @@
     protected override async Task OnInitializedAsync()
     {
         await FetchRatings();
-        SetHasFinishedRating();
     }
 
     private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingDto> tableRowClickEventArgs)
@@ -89,21 +88,7 @@
         if (!dialogResult.Canceled)
         {
             await FetchRatings();
-            SetHasFinishedRating();
             StateHasChanged();
-        }
-    }
-
-    private void SetHasFinishedRating()
-    {
-        hasFinishedRating = true;
-        foreach (var rating in PlayerRatings)
-        {
-            if (rating.Prediction.CalculatedRank == null)
-            {
-                hasFinishedRating = false;
-                return;
-            }
         }
     }
 
@@ -139,25 +124,9 @@
         return categoryPoints != null && categoryPoints == specialPoints;
     }
 
-    private bool HasUniquePointsSum(PlayerRatingDto rating) // TODO
+    private bool HasUniqueCalculatedRank(PlayerRatingDto rating) 
     {
-        var pointsSum = rating.Prediction.TotalGivenPoints;
-        if (pointsSum == null)
-        {
-            return true;
-        }
-
-        foreach (var otherRating in PlayerRatings)
-        {
-            var otherPointsSum = otherRating.Prediction.TotalGivenPoints;
-            if (otherRating.Id != rating.Id
-                && otherPointsSum != null
-                && pointsSum == otherPointsSum)
-            {
-                return false;
-            }
-        }
-        return true;
+        return rating.Prediction.SameRankCount == 1;
     }
 
     private async Task HandleRank(PlayerRatingDto rating) // TODO
