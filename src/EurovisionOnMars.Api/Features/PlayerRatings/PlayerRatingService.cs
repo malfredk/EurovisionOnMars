@@ -62,12 +62,12 @@ public class PlayerRatingService : IPlayerRatingService
         await SaveUpdatedRatings(ratingsWithUpdatedRank);
     }
 
-    public async Task UpdatePlayerRating(int id, int rank)
+    public async Task UpdatePlayerRating(int id, int tieBreakDemotion)
     {
         _ratingTimeValidator.EnsureRatingIsOpen();
 
         var rating = await GetPlayerRating(id);
-        rating.Prediction.SetCalculatedRank(rank);
+        rating.Prediction.SetTieBreakDemotion(tieBreakDemotion);
         await _repository.UpdateRating(rating);
     }
 

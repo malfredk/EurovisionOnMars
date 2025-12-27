@@ -139,7 +139,7 @@
         return categoryPoints != null && categoryPoints == specialPoints;
     }
 
-    private bool HasUniquePointsSum(PlayerRatingDto rating)
+    private bool HasUniquePointsSum(PlayerRatingDto rating) // TODO
     {
         var pointsSum = rating.Prediction.TotalGivenPoints;
         if (pointsSum == null)
@@ -160,7 +160,7 @@
         return true;
     }
 
-    private async Task HandleRank(PlayerRatingDto rating)
+    private async Task HandleRank(PlayerRatingDto rating) // TODO
     {
         var parameters = new DialogParameters<RankDialog>();
         parameters.Add(x => x.Rating, rating);
