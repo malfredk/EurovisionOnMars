@@ -58,7 +58,7 @@ public record Prediction : IdBase
         TieBreakDemotion = tieBreakDemotion;
     }
 
-    public int? GetFinalRank()
+    public int? GetPredictedRank()
     {
         int? finalRank = null;
         if (CalculatedRank.HasValue)

@@ -57,12 +57,12 @@ public class RatingGameResultService : IRatingGameResultService
     internal void CalculateRankDifference(PlayerRating rating)
     {
         var actualRank = rating.Country.ActualRank;
-        var predictedRank = rating.Prediction.CalculatedRank;
+        var predictedRank = rating.Prediction.GetPredictedRank();
         int rankDifference;
 
         if (actualRank == null)
         {
-            throw new Exception("Country is missing rank");
+            throw new Exception("Country is missing rank.");
         }
         else if (predictedRank == null)
         {
@@ -85,7 +85,7 @@ public class RatingGameResultService : IRatingGameResultService
         int bonusPoints;
         if (ratingGameResult.RankDifference == 0 && HasUniqueRank(rating, ratings))
         {
-            bonusPoints = DetermineBonusPoints((int)rating.Prediction.CalculatedRank);
+            bonusPoints = DetermineBonusPoints((int)rating.Prediction.GetPredictedRank());
         } else
         {
             bonusPoints = 0;
@@ -98,7 +98,7 @@ public class RatingGameResultService : IRatingGameResultService
         var sameRankAndPlayerCount = ratings
             .Count(r => 
             r.PlayerId == rating.PlayerId && 
-            r.Prediction.CalculatedRank == rating.Prediction.CalculatedRank
+            r.Prediction.GetPredictedRank() == rating.Prediction.GetPredictedRank()
             );
         return sameRankAndPlayerCount == 1;
     }
