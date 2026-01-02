@@ -143,8 +143,8 @@ static void AddRatingTimeValidator(WebApplicationBuilder builder)
 
 static void AddPredictionsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPredicitonRepository, PredictionRepository>();
-    builder.Services.AddScoped<IPredictionServie, PredicitonService>();
+    builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
+    builder.Services.AddScoped<IPredictionService, PredictionService>();
 }
 
 static void AddPlayersFeature(WebApplicationBuilder builder)

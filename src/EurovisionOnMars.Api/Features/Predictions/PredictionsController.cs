@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EurovisionOnMars.Dto.Predictions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
 
@@ -7,19 +8,19 @@ namespace EurovisionOnMars.Api.Features.Predictions;
 public class PredictionsController : ControllerBase
 {
     private readonly ILogger<PredictionsController> _logger;
-    private readonly IPredictionServie _service;
+    private readonly IPredictionService _service;
 
-    public PredictionsController(ILogger<PredictionsController> logger, IPredictionServie service)
+    public PredictionsController(ILogger<PredictionsController> logger, IPredictionService service)
     {
         _logger = logger;
         _service = service;
     }
 
 
-    [HttpPatch("{id:int}")]
-    public async Task<ActionResult> UpdatePrediciton(int id, [FromBody] int tieBreakDemotion)
+    [HttpPatch]
+    public async Task<ActionResult> UpdateTieBreakDemotions([FromBody] ResolveTieBreakRequestDto request)
     {
-        await _service.UpdatePrediction(id, tieBreakDemotion);
+        await _service.UpdateTieBreakDemotions(request);
         return Ok();
     }
 }

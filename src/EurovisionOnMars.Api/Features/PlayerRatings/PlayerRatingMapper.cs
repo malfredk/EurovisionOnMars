@@ -18,12 +18,12 @@ public class PlayerRatingMapper : IPlayerRatingMapper
             Category1Points = entity.Category1Points,
             Category2Points = entity.Category2Points,
             Category3Points = entity.Category3Points,
-            Prediction = ToPredicitionDto(entity.Prediction),
+            Prediction = ToPredictionDto(entity.Prediction),
             Country = ToCountryDto(entity.Country)
         };
     }
 
-    private PredictionDto ToPredicitionDto(Prediction? prediction)
+    private PredictionDto ToPredictionDto(Prediction? prediction)
     {
         if (prediction == null) {
             throw new Exception("PlayerRating is missing Prediction.");

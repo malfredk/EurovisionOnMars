@@ -1,17 +1,16 @@
 ﻿using EurovisionOnMars.Entity;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
 
-public interface IPredicitonRepository
+public interface IPredictionRepository
 {
-    Task<Prediction?> GetPrediction(int id);
-    Task<Prediction> UpdatePrediction(Prediction prediction);
+    Task<List<Prediction>> GetPredictions(List<int> ids);
+    Task SaveChanges();
 }
 
-public class PredictionRepository : IPredicitonRepository
+public class PredictionRepository : IPredictionRepository
 {
     private readonly DataContext _dataContext;
     private readonly ILogger<PredictionRepository> _logger;
@@ -22,18 +21,17 @@ public class PredictionRepository : IPredicitonRepository
         _logger = logger;
     }
 
-    public async Task<Prediction?> GetPrediction(int id)
+    public async Task<List<Prediction>> GetPredictions(List<int> ids)
     {
-        _logger.LogDebug("Getting prediction with id={id}.", id);
+        _logger.LogDebug("Getting predictions with ids={ids}.", ids);
         return await _dataContext.Predictions
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .Include(p => p.PlayerRating)
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync();
     }
 
-    public async Task<Prediction> UpdatePrediction(Prediction prediction)
+    public async Task SaveChanges()
     {
-        _logger.LogDebug("Updating prediction: {prediciton}.", JsonSerializer.Serialize(prediction));
-        var updatedPrediction = _dataContext.Predictions.Update(prediction);
         await _dataContext.SaveChangesAsync();
-        return updatedPrediction.Entity;
     }
 }
