@@ -24,7 +24,7 @@
             </ChildContent>
 
             <ItemRenderer>
-                <MudPaper>
+                <MudPaper @key="context.PredictionId">
                     <MudGrid AlignItems="AlignItems.Center">
                         <MudItem>
                             <MudText>
@@ -72,12 +72,12 @@
     private bool _tieBreakAlreadyResolved;
     private bool _userReordered;
 
-    private sealed record TieRating
+    private sealed class TieRating
     {
         public int PredictionId { get; init; }
         public int Order { get; set; }
         public required string CountryName { get; init; }
-        public string Zone { get; set;  } = ZONE_ID;
+        public string Zone { get; set; } = ZONE_ID;
     }
 
     protected override void OnInitialized()
