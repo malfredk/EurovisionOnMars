@@ -20,12 +20,6 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
     public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
     {
-        if (newPrediction.CalculatedRank == oldPrediction.CalculatedRank)
-        {
-            _logger.LogDebug("Skipping calculation of TieBreakDemotions since CaclulatedRank is unchanged.");
-            return;
-        }
-
         ResetTieBreakDemotion(newPrediction);
 
         var predictionsGroupedByPoints = ratings

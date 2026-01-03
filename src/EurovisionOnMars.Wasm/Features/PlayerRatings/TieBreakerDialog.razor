@@ -6,7 +6,7 @@
 
 <MudDialog>
     <DialogContent>
-        <MudText>dra og dropp for å rangere land med plassering @_calculatedRank</MudText>
+        <MudText>dra og dropp for å rangere land med samme plassering</MudText>
         
         <MudDropContainer T="TieRating"
                           Items="@_orderedRatings"
@@ -25,8 +25,22 @@
 
             <ItemRenderer>
                 <MudPaper>
-                    <MudText>@(context.CountryName)</MudText>
-                    <MudChip>@(_calculatedRank + context.Order)</MudChip>
+                    <MudGrid AlignItems="AlignItems.Center">
+                        <MudItem>
+                            <MudText>
+                                @{
+                                    var showDemotedRanks = _tieBreakAlreadyResolved || _userReordered;
+                                    var displayRank = _calculatedRank + (showDemotedRanks ? context.Order : 0);
+                                }
+                                @(displayRank)
+                            </MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudText>
+                                @context.CountryName
+                            </MudText>
+                        </MudItem>
+                    </MudGrid>
                 </MudPaper>
             </ItemRenderer>
 
@@ -36,6 +50,7 @@
     <DialogActions>
         <MudIconButton Variant="Variant.Filled" Color="Color.Secondary"
                        Icon="@Icons.Material.Filled.Check"
+                       Disabled="!_userReordered"
                        OnClick="SavePredictions">
         </MudIconButton>
         <MudIconButton Variant="Variant.Filled" Color="Color.Secondary"
@@ -54,6 +69,8 @@
 
     private int _calculatedRank;
     private List<TieRating> _orderedRatings = new();
+    private bool _tieBreakAlreadyResolved;
+    private bool _userReordered;
 
     private sealed record TieRating
     {
@@ -66,8 +83,10 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        this._calculatedRank = (int)TiedRatings.FirstOrDefault()!.Prediction!.CalculatedRank!;
-        this._orderedRatings = TiedRatings
+
+        _calculatedRank = (int)TiedRatings.FirstOrDefault()!.Prediction!.CalculatedRank!;
+
+        _orderedRatings = TiedRatings
             .OrderBy(r => r.Prediction.TieBreakDemotion ?? 0)
             .Select((r, index) => new TieRating
             {
@@ -76,12 +95,21 @@
                 CountryName = r.Country.Name,
             })
             .ToList();
+
+        _tieBreakAlreadyResolved = TiedRatings.Any(r => r.Prediction?.TieBreakDemotion is not null);
     }
 
     private void OnItemDropped(MudItemDropInfo<TieRating> dropInfo)
     {
         dropInfo.Item.Zone = dropInfo.DropzoneIdentifier;
         _orderedRatings.UpdateOrder(dropInfo, r => r.Order);
+
+        _orderedRatings = _orderedRatings
+            .OrderBy(r => r.Order)
+            .ToList();
+
+        _userReordered = true;
+
         StateHasChanged();
     }
 
@@ -102,7 +130,7 @@
             OrderedPredictionIds = orderedPredictionIds
         };
 
-        var response = await Http.PatchAsJsonAsync("/api/Predictions/TieBreak", request);
+        var response = await Http.PatchAsJsonAsync("/api/Predictions/TieBreakDemotions", request);
         
         if (response.IsSuccessStatusCode)
         {

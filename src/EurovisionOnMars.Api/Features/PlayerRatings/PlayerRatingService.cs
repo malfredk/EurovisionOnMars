@@ -74,7 +74,7 @@ public class PlayerRatingService : IPlayerRatingService
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
     {
         return ratings
-            .OrderBy(r => r.Prediction.CalculatedRank ?? 100)
+            .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
             .ThenBy(r => r.Country.Number)
             .ToImmutableList();
     }
@@ -102,7 +102,7 @@ public class PlayerRatingService : IPlayerRatingService
         var updatedRatings = new List<PlayerRating>();
         if (editedRating.Prediction.TotalGivenPoints == oldPrediction.TotalGivenPoints)
         {
-            _logger.LogDebug("Skipping recalculation of rank since TotalGivenPoints is unchanged.");
+            _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
             updatedRatings.Add(editedRating);
         }
         else

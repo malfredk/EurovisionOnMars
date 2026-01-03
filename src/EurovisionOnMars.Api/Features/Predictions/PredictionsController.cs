@@ -17,7 +17,7 @@ public class PredictionsController : ControllerBase
     }
 
 
-    [HttpPatch("/TieBreak")]
+    [HttpPatch("TieBreakDemotions")]
     public async Task<ActionResult> UpdateTieBreakDemotions([FromBody] ResolveTieBreakRequestDto request)
     {
         await _service.UpdateTieBreakDemotions(request);
