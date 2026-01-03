@@ -4,7 +4,7 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface ITieBreakDemotionHandler
 {
-    public void CalculateTieBreaks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
+    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
 }
 
 public class TieBreakDemotionHandler : ITieBreakDemotionHandler
@@ -18,77 +18,109 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
         _logger = logger;
     }
 
-    public void CalculateTieBreaks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
+    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
     {
-        var newCalculatedRank = editedRating.Prediction.CalculatedRank;
-        var oldCalculatedRank = oldPrediction.CalculatedRank;
-        if (newCalculatedRank == oldCalculatedRank)
+        if (newPrediction.CalculatedRank == oldPrediction.CalculatedRank)
         {
-            _logger.LogDebug("Skipping adjusting of TieBreakerDemotion and SameRankCount since CaclulatedRank is unchanged.");
+            _logger.LogDebug("Skipping calculation of TieBreakDemotions since CaclulatedRank is unchanged.");
             return;
         }
 
-        var predictionsGroupedByTotalGivenPoints = ratings
+        ResetTieBreakDemotion(newPrediction);
+
+        var predictionsGroupedByPoints = ratings
             .Select(r => r.Prediction)
             .GroupBy(p => p.TotalGivenPoints)
             .ToList();
 
-        HandleOldTotalGivenPointsGroup(predictionsGroupedByTotalGivenPoints, oldPrediction);
-        HandleNewTotalGivenPointsGroup(predictionsGroupedByTotalGivenPoints, editedRating);
+        HandleOldPointsGroup(predictionsGroupedByPoints, oldPrediction);
+        HandleNewPointsGroup(predictionsGroupedByPoints, newPrediction);
     }
 
-    private void HandleOldTotalGivenPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByTotalGivenPoints, SimplePrediction oldPrediction)
+    private void ResetTieBreakDemotion(Prediction prediction)
     {
-        var oldTotalGivenPoints = oldPrediction.TotalGivenPoints;
-        var oldGroup = predictionsGroupedByTotalGivenPoints
-            .FirstOrDefault(g => g.Key == oldTotalGivenPoints, null);
+        prediction.SetTieBreakDemotion(null);
+    }
+
+    private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, SimplePrediction oldPrediction)
+    {
+        var oldGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, oldPrediction.TotalGivenPoints);
 
         if (oldGroup == null)
         {
-            _logger.LogDebug("Old TotalGivenPoints group is empty; thus, there is nothing to adjust.");
+            _logger.LogDebug("Old prediction was not tied; thus, there is no TieBreakDemotion to adjust.");
             return;
         }
 
-        AdjustTieBreakerDemotionsAndSameRankCounts(oldGroup.ToList());
+        HandleTieBreakDemotions(oldGroup);
     }
 
-    private void HandleNewTotalGivenPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByTotalGivenPoints, PlayerRating editedRating)
+    private void HandleNewPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, Prediction newPrediction)
     {
-        var newTotalGivenPoints = editedRating.Prediction.TotalGivenPoints;
-        var newGroup = predictionsGroupedByTotalGivenPoints
-            .FirstOrDefault(g => g.Key == newTotalGivenPoints);
+        var newGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, newPrediction.TotalGivenPoints);
 
-        AdjustTieBreakerDemotionsAndSameRankCounts(newGroup.ToList());
+        HandleTieBreakDemotions(newGroup!);
     }
 
-    private void AdjustTieBreakerDemotionsAndSameRankCounts(List<Prediction> predictionsWithSameTotalGivenPoints)
+    private List<Prediction>? GetPredictionPointsGroup(
+        List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, 
+        int? totalGivenPoints
+        )
     {
-        var sameRankCount = predictionsWithSameTotalGivenPoints.Count();
-
-        if (sameRankCount == 1)
+        if (totalGivenPoints == null)
         {
-            var singlePrediction = predictionsWithSameTotalGivenPoints.First();
-            singlePrediction.SetSameRankCount(1);
-            singlePrediction.SetTieBreakDemotion(0);
+            return null;
+        }
+
+        var group = predictionsGroupedByPoints
+            .FirstOrDefault(g => g.Key == totalGivenPoints);
+
+        if (group == null)
+        {
+            return null;
+        }
+
+        return group.ToList();
+    }
+
+    private void HandleTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    {
+        if (predictionsWithSamePoints.Count() == 1)
+        {
+            HandleSingletonList(predictionsWithSamePoints);
             return;
         }
 
-        var sortedPredictions = predictionsWithSameTotalGivenPoints
+        if (AreAllTieBreakDemotionsNull(predictionsWithSamePoints))
+        {
+            _logger.LogDebug("TieBreakDemotions have not been applied to this group; therefore skipping TieBreakDemotion adjustment.");
+            return;
+        }
+
+        CalculateTieBreakDemotions(predictionsWithSamePoints);
+    }
+
+    private void HandleSingletonList(List<Prediction> singlePredictionList)
+    {
+        var singlePrediction = singlePredictionList.First();
+        ResetTieBreakDemotion(singlePrediction);
+    }
+
+    private bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
+    {
+        return predictions.All(p => p.TieBreakDemotion == null);
+    }
+
+    private void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    {
+        var sortedPredictions = predictionsWithSamePoints
             .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_TIE_BREAK_DEMOTION_SORT_VALUE);
-        // TODO: don't set this if TieBreakDemotion is null for all, new member should enter at top?
 
         int tieBreakDemotion = 0;
         foreach (var prediction in sortedPredictions)
         {
-            prediction.SetSameRankCount(sameRankCount);
             prediction.SetTieBreakDemotion(tieBreakDemotion);
             tieBreakDemotion++;
         }
-    }
-
-    private void HandleSingleGroup(List<Prediction> predictions)
-    {
-        var singlePrediction = predictions.First();
-
     }
 }

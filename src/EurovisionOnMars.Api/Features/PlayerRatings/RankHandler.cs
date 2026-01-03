@@ -10,15 +10,12 @@ public interface IRankHandler
 public class RankHandler : IRankHandler
 {
     private readonly ILogger<RankHandler> _logger;
-    private readonly ITieBreakDemotionHandler _tieBreakDemotionHandler;
 
     public RankHandler(
-        ILogger<RankHandler> logger,
-        ITieBreakDemotionHandler tieBreakDemotionHandler
+        ILogger<RankHandler> logger
         )
     {
         _logger = logger;
-        _tieBreakDemotionHandler = tieBreakDemotionHandler;
     }
 
     public List<PlayerRating> CalculateRanks(
@@ -28,15 +25,12 @@ public class RankHandler : IRankHandler
         )
     {
         var ratingsWithCalculatedRank = RankRatings(ratings);
-
-        _tieBreakDemotionHandler.CalculateTieBreaks(editedRating, ratingsWithCalculatedRank, oldPrediction);
-
         return ratingsWithCalculatedRank;
     }
 
     private List<PlayerRating> RankRatings(IReadOnlyList<PlayerRating> ratings)
     {
-        var orderedRatings = SortRatings(ratings);
+        var orderedRatings = SortRatingsByDescendingPoints(ratings);
         List<PlayerRating> ratingsWithCalculatedRank = new();
 
         Prediction? previousPrediction = null;
@@ -52,7 +46,7 @@ public class RankHandler : IRankHandler
             }
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
-                currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank);
+                currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank!);
             }
             else
             {
@@ -64,7 +58,7 @@ public class RankHandler : IRankHandler
         return ratingsWithCalculatedRank;
     }
 
-    private IReadOnlyList<PlayerRating> SortRatings(IReadOnlyList<PlayerRating> ratings)
+    private IReadOnlyList<PlayerRating> SortRatingsByDescendingPoints(IReadOnlyList<PlayerRating> ratings)
     {
         return ratings
             .OrderByDescending(r => r.Prediction.TotalGivenPoints ?? 0)

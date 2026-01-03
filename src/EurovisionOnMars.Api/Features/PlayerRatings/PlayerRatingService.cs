@@ -18,13 +18,15 @@ public class PlayerRatingService : IPlayerRatingService
     private readonly ILogger<PlayerRatingService> _logger;
     private readonly ISpecialPointsValidator _specialPointsValidator;
     private readonly IRankHandler _rankHandler;
+    private readonly ITieBreakDemotionHandler _tieBreakDemotionHandler;
 
     public PlayerRatingService(
         IPlayerRatingRepository repository,
         IRatingTimeValidator ratingTimeValidator,
         ILogger<PlayerRatingService> logger,
         ISpecialPointsValidator specialPointsValidator,
-        IRankHandler rankHandler
+        IRankHandler rankHandler,
+        ITieBreakDemotionHandler tieBreakDemotionHandler
         )
     {
         _repository = repository;
@@ -32,6 +34,7 @@ public class PlayerRatingService : IPlayerRatingService
         _logger = logger;
         _specialPointsValidator = specialPointsValidator;
         _rankHandler = rankHandler;
+        _tieBreakDemotionHandler = tieBreakDemotionHandler;
     }
 
     public async Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings()
@@ -63,7 +66,7 @@ public class PlayerRatingService : IPlayerRatingService
         };
 
         UpdatePoints(editedRating, ratingRequestDto, ratings);
-        var updatedRatings = UpdateRanks(editedRating, ratings, oldPrediction);
+        var updatedRatings = UpdatePredictions(editedRating, ratings, oldPrediction);
 
         await SaveUpdatedRatings(updatedRatings);
     }
@@ -90,21 +93,22 @@ public class PlayerRatingService : IPlayerRatingService
         _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
     }
 
-    private List<PlayerRating> UpdateRanks(
-        PlayerRating rating, 
+    private List<PlayerRating> UpdatePredictions(
+        PlayerRating editedRating, 
         IReadOnlyList<PlayerRating> ratings, 
         SimplePrediction oldPrediction
         )
     {
         var updatedRatings = new List<PlayerRating>();
-        if (rating.Prediction.TotalGivenPoints == oldPrediction.TotalGivenPoints)
+        if (editedRating.Prediction.TotalGivenPoints == oldPrediction.TotalGivenPoints)
         {
             _logger.LogDebug("Skipping recalculation of rank since TotalGivenPoints is unchanged.");
-            updatedRatings.Add(rating);
+            updatedRatings.Add(editedRating);
         }
         else
         {
-            updatedRatings.AddRange(_rankHandler.CalculateRanks(rating, ratings, oldPrediction));
+            updatedRatings.AddRange(_rankHandler.CalculateRanks(editedRating, ratings, oldPrediction));
+            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldPrediction);
         }
 
         return updatedRatings;
