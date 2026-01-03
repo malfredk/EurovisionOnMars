@@ -133,6 +133,7 @@ static void AddPlayerRatingsFeature(WebApplicationBuilder builder)
 
     builder.Services.AddScoped<IRankHandler, RankHandler>();
     builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
+    builder.Services.AddScoped<ITieBreakDemotionHandler, TieBreakDemotionHandler>();
 }
 
 static void AddRatingTimeValidator(WebApplicationBuilder builder)
