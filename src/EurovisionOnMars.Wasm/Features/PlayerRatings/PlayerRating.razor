@@ -124,8 +124,15 @@
 
     private bool IsTied(PlayerRatingDto rating) 
     {
-        var sameRankCount = rating.Prediction.SameRankCount;
-        return sameRankCount != null && sameRankCount > 1;
+        var calculatedRank = rating.Prediction.CalculatedRank;
+        if (calculatedRank == null)
+        {
+            return false;
+        }
+
+        var sameRankCount = PlayerRatings
+            .Count(r => r.Prediction.CalculatedRank == calculatedRank);
+        return sameRankCount > 1;
     }
 
     private async Task HandleTieBreak(PlayerRatingDto tiedRating)

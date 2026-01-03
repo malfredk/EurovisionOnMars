@@ -34,7 +34,6 @@ public class PlayerRatingMapper : IPlayerRatingMapper
             Id = prediction.Id,
             TotalGivenPoints = prediction.TotalGivenPoints,
             CalculatedRank = prediction.CalculatedRank,
-            SameRankCount = prediction.SameRankCount,
             TieBreakDemotion = prediction.TieBreakDemotion,
             PredictedRank = prediction.GetPredictedRank()
         };

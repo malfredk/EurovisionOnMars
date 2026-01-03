@@ -6,7 +6,8 @@ namespace EurovisionOnMars.Api.Features.Predictions;
 
 public interface IPredictionRepository
 {
-    Task<List<Prediction>> GetPredictions(List<int> ids);
+    Task<Prediction?> GetPrediction(int id);
+    Task<List<Prediction>> GetPredictions(int playerId, int calculatedRank);
     Task SaveChanges();
 }
 
@@ -21,12 +22,20 @@ public class PredictionRepository : IPredictionRepository
         _logger = logger;
     }
 
-    public async Task<List<Prediction>> GetPredictions(List<int> ids)
+    public async Task<Prediction?> GetPrediction(int id)
     {
-        _logger.LogDebug("Getting predictions with ids={ids}.", ids);
         return await _dataContext.Predictions
             .Include(p => p.PlayerRating)
-            .Where(p => ids.Contains(p.Id))
+            .SingleOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<List<Prediction>> GetPredictions(int playerId, int calculatedRank)
+    {
+        return await _dataContext.Predictions
+            .Include(p => p.PlayerRating)
+            .Where(p =>
+                p.PlayerRating!.PlayerId == playerId &&
+                p.CalculatedRank == calculatedRank)
             .ToListAsync();
     }
 

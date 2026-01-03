@@ -6,7 +6,7 @@ public record Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public int? CalculatedRank { get; private set; }
-    public int? SameRankCount { get; private set; }
+    private int? SameRankCount { get; set; } // TODO: remove
     public int? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
@@ -40,22 +40,16 @@ public record Prediction : IdBase
         CalculatedRank = rank;
     }
 
-    public void SetSameRankCount(int sameRankCount)
+    public void SetTieBreakDemotion(int? tieBreakDemotion)
     {
-        if (sameRankCount < 0 || sameRankCount > 26)
+        if (tieBreakDemotion == null || (tieBreakDemotion >= 0 && tieBreakDemotion <= 26))
         {
-            throw new ArgumentException("SameRankCount should be positive and no more than 26.");
-        }
-        SameRankCount = sameRankCount;
-    }
-
-    public void SetTieBreakDemotion(int tieBreakDemotion)
-    {
-        if (!SameRankCount.HasValue || tieBreakDemotion < 0 || tieBreakDemotion >= SameRankCount)
+            TieBreakDemotion = tieBreakDemotion;
+        } 
+        else 
         {
-            throw new ArgumentException($"TieBreakDemotion must be positive and less than sameRankCount={SameRankCount}.");
+            throw new ArgumentException("TieBreakDemotion must be null, zero or positive and less than 26.");
         }
-        TieBreakDemotion = tieBreakDemotion;
     }
 
     public int? GetPredictedRank()

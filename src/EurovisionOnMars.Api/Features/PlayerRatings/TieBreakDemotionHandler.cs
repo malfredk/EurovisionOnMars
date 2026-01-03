@@ -4,7 +4,7 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface ITieBreakDemotionHandler
 {
-    public void CalculateTieBreaks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
+    public void CalculateTieBreaks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
 }
 
 public class TieBreakDemotionHandler : ITieBreakDemotionHandler

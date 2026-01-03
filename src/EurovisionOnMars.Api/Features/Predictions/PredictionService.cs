@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Dto.Predictions;
+﻿using Azure.Core;
+using EurovisionOnMars.Dto.Predictions;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
@@ -52,60 +53,44 @@ public class PredictionService : IPredictionService
 
     private async Task<List<Prediction>> GetPredictions(ResolveTieBreakRequestDto request)
     {
-        var predictions = await _repository.GetPredictions(request.OrderedPredictionIds);
-        ValidatePredictions(predictions, request);
+        var predictions = await GetTiedPredictions(request);
+        EnsureEqualIds(predictions, request);
         return predictions;
     }
 
-    private void ValidatePredictions(List<Prediction> predictions, ResolveTieBreakRequestDto request)
+    private async Task<List<Prediction>> GetTiedPredictions(ResolveTieBreakRequestDto request)
     {
-        ValidatePredictionCount(predictions, request);
-        ValidatePlayerIds(predictions);
-        ValidateCalculatedRanks(predictions);
+        var firstPrediction = await GetFirstPrediction(request);
+
+        var tiedPredictions = await _repository.GetPredictions(
+            firstPrediction.PlayerRating!.PlayerId,
+            (int)firstPrediction.CalculatedRank!);
+
+        return tiedPredictions;
     }
 
-    private void ValidatePredictionCount(List<Prediction> predictions, ResolveTieBreakRequestDto request)
+    private async Task<Prediction> GetFirstPrediction(ResolveTieBreakRequestDto request)
     {
-        var predictionsCount = predictions.Count;
-        if (predictionsCount != request.OrderedPredictionIds.Count)
-        {
-            throw new ArgumentException("One or more prediction ids do not exist.");
-        }
+        var firstPredictionId = request.OrderedPredictionIds[0];
+        var firstPrediction = await _repository.GetPrediction(firstPredictionId);
 
-        if (predictionsCount != predictions.FirstOrDefault().SameRankCount)
-        {
-            throw new ArgumentException("The number of provided predictions does not match their SameRankCount.");
-        }
+        if (firstPrediction == null)
+            throw new KeyNotFoundException($"Prediction with id={firstPredictionId} does not exist.");
+
+        if (firstPrediction.CalculatedRank == null)
+            throw new InvalidOperationException("Prediction is not eligible for tie breaking since CalculatedRank is null.");
+
+        return firstPrediction;
     }
 
-    private void ValidateCalculatedRanks(List<Prediction> predictions)
+    private void EnsureEqualIds(List<Prediction> predictions, ResolveTieBreakRequestDto request)
     {
-        var distinctCalculatedRanks = predictions
-            .Select(p => p.CalculatedRank)
-            .Distinct()
-            .ToList();
+        var requestIds = request.OrderedPredictionIds.ToHashSet();
+        var dbIds = predictions.Select(p => p.Id).ToHashSet();
 
-        if (distinctCalculatedRanks.Count != 1)
+        if (!requestIds.SetEquals(dbIds))
         {
-            throw new ArgumentException("The provided predictions do not all have the same CalculatedRank.");
-        }
-
-        if (distinctCalculatedRanks[0] == null)
-        {
-            throw new ArgumentException("The provided predictions do not have a CalculatedRank set.");
-        }
-    }
-
-    private void ValidatePlayerIds(List<Prediction> predictions)
-    {
-        var distinctPlayerIds = predictions
-            .Select(p => p.PlayerRating.PlayerId)
-            .Distinct()
-            .ToList();
-
-        if (distinctPlayerIds.Count != 1)
-        {
-            throw new ArgumentException("The provided predictions do not all have the same PlayerId.");
+            throw new ArgumentException("One or more prediction ids in request do not match tied predictions in database.");
         }
     }
 
