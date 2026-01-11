@@ -6,7 +6,6 @@ public record Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public int? CalculatedRank { get; private set; }
-    private int? SameRankCount { get; set; } // TODO: remove
     public int? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
