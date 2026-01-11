@@ -41,14 +41,11 @@ public record Prediction : IdBase
 
     public void SetTieBreakDemotion(int? tieBreakDemotion)
     {
-        if (tieBreakDemotion == null || (tieBreakDemotion >= 0 && tieBreakDemotion <= 26))
+        if (tieBreakDemotion < 0 || tieBreakDemotion > 26)
         {
-            TieBreakDemotion = tieBreakDemotion;
-        } 
-        else 
-        {
-            throw new ArgumentException("TieBreakDemotion must be null, zero or positive and less than 26.");
+            throw new ArgumentException("TieBreakDemotion must be null, zero or positive and no more than 26.");
         }
+        TieBreakDemotion = tieBreakDemotion;
     }
 
     public int? GetPredictedRank()
