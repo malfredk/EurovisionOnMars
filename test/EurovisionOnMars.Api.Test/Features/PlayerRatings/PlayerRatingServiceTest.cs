@@ -11,11 +11,16 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
 public class PlayerRatingServiceTest
 {
+    private const int CATEGORY1_POINTS = 4;
+    private const int CATEGORY2_POINTS = 5;
+    private const int CATEGORY3_POINTS = 6;
+
     private readonly Mock<IPlayerRatingRepository> _repositoryMock;
     private readonly Mock<IRatingTimeValidator> _ratingTimeValidatorMock;
     private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
     private readonly Mock<ISpecialPointsValidator> _specialPointsValidatorMock;
     private readonly Mock<IRankHandler> _rankHandlerMock;
+    private readonly Mock<ITieBreakDemotionHandler> _tieBreakDemotionHandlerMock;
     private readonly PlayerRatingService _service;
 
     public PlayerRatingServiceTest()
@@ -25,13 +30,15 @@ public class PlayerRatingServiceTest
         _loggerMock = new Mock<ILogger<PlayerRatingService>>();
         _specialPointsValidatorMock = new Mock<ISpecialPointsValidator>();
         _rankHandlerMock = new Mock<IRankHandler>();
+        _tieBreakDemotionHandlerMock = new Mock<ITieBreakDemotionHandler>();
 
         _service = new PlayerRatingService(
             _repositoryMock.Object, 
             _ratingTimeValidatorMock.Object,
             _loggerMock.Object, 
             _specialPointsValidatorMock.Object,
-            _rankHandlerMock.Object
+            _rankHandlerMock.Object,
+            _tieBreakDemotionHandlerMock.Object
             );
     }
 
@@ -127,14 +134,19 @@ public class PlayerRatingServiceTest
         _repositoryMock
             .Verify(m => m.GetPlayerRatingsForPlayer(Utils.RATING_ID), Times.Once);
 
-        Assert.Equal(1, rating.Category1Points);
-        Assert.Equal(2, rating.Category2Points);
-        Assert.Equal(3, rating.Category3Points);
+        Assert.Equal(CATEGORY1_POINTS, rating.Category1Points);
+        Assert.Equal(CATEGORY2_POINTS, rating.Category2Points);
+        Assert.Equal(CATEGORY3_POINTS, rating.Category3Points);
         _specialPointsValidatorMock
             .Verify(m => m.ValidateSpecialCategoryPoints(rating, ratings), Times.Once);
 
         _rankHandlerMock
             .Verify(m => m.CalculateRanks(ratings), Times.Once);
+        _tieBreakDemotionHandlerMock
+            .Verify(
+                m => m.CalculateTieBreakDemotions(rating.Prediction, updatedRatings, It.IsAny<SimplePrediction>()), 
+                Times.Once
+            );
 
         _repositoryMock
             .Verify(m => m.UpdateRating(updatedRating), Times.Once);
@@ -188,52 +200,6 @@ public class PlayerRatingServiceTest
             .Verify(m => m.UpdateRating(It.IsAny<PlayerRating>()), Times.Never);
     }
 
-    // tests for updating rank in rating
-
-    [Fact]
-    public async Task UpdatePlayerRating_UpdatedRank()
-    {
-        // arrange
-        var rank = 12;
-
-        var rating = Utils.CreateInitialPlayerRating();
-        _repositoryMock.Setup(m => m.GetRating(Utils.RATING_ID))
-            .ReturnsAsync(rating);
-
-        // act
-        await _service.UpdatePlayerRating(Utils.RATING_ID, rank);
-
-        // assert
-        _ratingTimeValidatorMock
-            .Verify(m => m.EnsureRatingIsOpen(), Times.Once);
-
-        _repositoryMock
-            .Verify(m => m.GetRating(Utils.RATING_ID), Times.Once);
-
-        Assert.Equal(rank, rating.Prediction.CalculatedRank);
-
-        _repositoryMock
-            .Verify(m => m.UpdateRating(rating), Times.Once);
-    }
-
-    [Fact]
-    public async Task UpdatePlayerRating_UpdatedRank_RatingTimeValidatorThrowsException()
-    {
-        // arrange
-        var rank = 12;
-
-        _ratingTimeValidatorMock.Setup(m => m.EnsureRatingIsOpen())
-            .Throws<RatingIsClosedException>();
-
-        // act and assert
-        await Assert.ThrowsAsync<RatingIsClosedException>(() => _service.UpdatePlayerRating(Utils.RATING_ID, rank));
-
-        _repositoryMock
-            .Verify(m => m.GetRating(It.IsAny<int>()), Times.Never);
-        _repositoryMock
-            .Verify(m => m.UpdateRating(It.IsAny<PlayerRating>()), Times.Never);
-    }
-
     // helpers
 
     private static PlayerRating CreatePlayerRating(int countryNumber, int? predictionRank)
@@ -242,7 +208,10 @@ public class PlayerRatingServiceTest
         var player = Utils.CreateInitialPlayerWithOneCountry();
 
         var rating = new PlayerRating(player, country);
-        rating.Prediction.SetCalculatedRank(predictionRank);
+        if (predictionRank.HasValue)
+        {
+            rating.Prediction.SetCalculatedRank((int)predictionRank);
+        }
         return rating;
     }
 
@@ -250,9 +219,9 @@ public class PlayerRatingServiceTest
     {
         return new UpdatePlayerRatingRequestDto()
         {
-            Category1Points = 1,
-            Category2Points = 2,
-            Category3Points = 3,
+            Category1Points = CATEGORY1_POINTS,
+            Category2Points = CATEGORY2_POINTS,
+            Category3Points = CATEGORY3_POINTS,
         };
     }
 }

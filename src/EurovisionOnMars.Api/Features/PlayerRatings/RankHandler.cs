@@ -4,7 +4,7 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface IRankHandler
 {
-    public List<PlayerRating> CalculateRanks(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
+    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings);
 }
 
 public class RankHandler : IRankHandler
@@ -18,11 +18,7 @@ public class RankHandler : IRankHandler
         _logger = logger;
     }
 
-    public List<PlayerRating> CalculateRanks(
-        PlayerRating editedRating, 
-        IReadOnlyList<PlayerRating> ratings, 
-        SimplePrediction oldPrediction
-        )
+    public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings)
     {
         var ratingsWithCalculatedRank = RankRatings(ratings);
         return ratingsWithCalculatedRank;

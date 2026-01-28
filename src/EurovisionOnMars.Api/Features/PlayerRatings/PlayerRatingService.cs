@@ -107,7 +107,7 @@ public class PlayerRatingService : IPlayerRatingService
         }
         else
         {
-            updatedRatings = _rankHandler.CalculateRanks(editedRating, ratings, oldPrediction);
+            updatedRatings = _rankHandler.CalculateRanks(ratings);
             _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldPrediction);
         }
 
