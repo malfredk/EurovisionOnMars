@@ -99,15 +99,15 @@ public class PlayerRatingService : IPlayerRatingService
         SimplePrediction oldPrediction
         )
     {
-        var updatedRatings = new List<PlayerRating>();
+        List<PlayerRating> updatedRatings;
         if (editedRating.Prediction.TotalGivenPoints == oldPrediction.TotalGivenPoints)
         {
             _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
-            updatedRatings.Add(editedRating);
+            updatedRatings = [editedRating];
         }
         else
         {
-            updatedRatings.AddRange(_rankHandler.CalculateRanks(editedRating, ratings, oldPrediction));
+            updatedRatings = _rankHandler.CalculateRanks(editedRating, ratings, oldPrediction);
             _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldPrediction);
         }
 
