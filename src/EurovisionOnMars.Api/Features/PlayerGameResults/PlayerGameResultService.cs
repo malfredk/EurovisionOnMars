@@ -57,7 +57,8 @@ public class PlayerGameResultService : IPlayerGameResultService
         var ratingGameResults = await _ratingGameResultService
             .GetRatingGameResults(playerGameResult.PlayerId);
 
-        playerGameResult.TotalPoints = SumBonusPoints(ratingGameResults) + SumRankDifferences(ratingGameResults);
+        var totalPoints = SumBonusPoints(ratingGameResults) + SumRankDifferences(ratingGameResults);
+        playerGameResult.SetTotalPoints(totalPoints);
     }
 
     private int SumBonusPoints(ImmutableList<RatingGameResult> ratingGameResults)
@@ -84,11 +85,11 @@ public class PlayerGameResultService : IPlayerGameResultService
             var current = orderedPlayerGameResults[i];
             if (previous != null && current.TotalPoints == previous.TotalPoints)
             {
-                current.Rank = previous.Rank;
+                current.SetRank((int)previous.Rank);
             }
             else
             {
-                current.Rank = i+1;
+                current.SetRank(i+1);
             }
             previous = current;
         }

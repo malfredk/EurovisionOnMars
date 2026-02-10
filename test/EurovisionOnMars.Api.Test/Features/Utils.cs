@@ -94,11 +94,11 @@ public class Utils
         return player.PlayerGameResult;
     }
 
-    public static PlayerGameResult CreatePlayerGameResult(int? rank, int? totalPoints)
+    public static PlayerGameResult CreatePlayerGameResult(int rank, int totalPoints)
     {
         var playerGameResult = CreateInitialPlayerGameResult();
-        playerGameResult.Rank = rank;
-        playerGameResult.TotalPoints = totalPoints;
+        playerGameResult.SetRank(rank);
+        playerGameResult.SetTotalPoints(totalPoints);
 
         return playerGameResult;
     }
