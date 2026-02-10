@@ -1,7 +1,11 @@
 ﻿using EurovisionOnMars.Entity;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features;
+public static class TestEntityExtensions
+{
+    public static T WithId<T>(this T entity, int id) where T : IdBase
+        => (T)(entity with { Id = id });
+}
 
 public class Utils
 {
@@ -18,78 +22,47 @@ public class Utils
 
     // country
 
-    public static Country CreateCountry()
-    {
-        var country = CreateInitialCountry();
-        country.SetActualRank(COUNTRY_RANK);
-        return country;
-    }
-
-    public static Country CreateInitialCountry() 
-    {
-        return CreateInitialCountry(COUNTRY_NUMBER);
-    }
-
-    public static Country CreateInitialCountry(int number)
+    public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
     {
         return new Country(number, COUNTRY_NAME)
         {
             Id = COUNTRY_ID
         };
     }
+
+    public static Country CreateRankedCountry()
+    {
+        var country = CreateInitialCountry();
+        country.SetActualRank(COUNTRY_RANK);
+        return country;
+    }
     
     // player
 
-    public static Player CreateInitialPlayerWithOneCountry()
-    {
-        return CreateInitialPlayerWithOneCountry(PLAYER_ID);
-    }
-
-    public static Player CreateInitialPlayerWithOneCountry(int playerId)
+    private static Player CreateInitialPlayer(int playerId = PLAYER_ID)
     {
         var country = CreateInitialCountry();
-        return CreateInitialPlayer(playerId, [country]);
-    }
-
-    public static Player CreateInitialPlayer(ImmutableList<Country> countries)
-    {
-        return CreateInitialPlayer(PLAYER_ID, countries);
-    }
-
-    private static Player CreateInitialPlayer(int playerId, ImmutableList<Country> countries)
-    {
-        return new Player(PLAYER_USERNAME, countries)
+        return new Player(PLAYER_USERNAME, [country])
         {
             Id = playerId
         };
     }
 
-
-    // player game result
-
-    public static PlayerGameResult CreatePlayerGameResult(int? rank, int? totalPoints)
-    {
-        var playerGameResult = CreateInitialPlayerGameResult(PLAYER_ID);
-        playerGameResult.Rank = rank;
-        playerGameResult.TotalPoints = totalPoints;
-
-        return playerGameResult;
-    }
-
-    public static PlayerGameResult CreateInitialPlayerGameResult()
-    {
-        return CreateInitialPlayerGameResult(PLAYER_ID);
-    }
-
-    public static PlayerGameResult CreateInitialPlayerGameResult(int playerId)
-    {
-        var player = CreateInitialPlayerWithOneCountry(playerId);
-        return new PlayerGameResult(player);
-    }
-
     // player rating
 
-    public static PlayerRating CreatePlayerRating(int category1Points, int category2Points, int category3Points, int rank)
+    public static PlayerRating CreateInitialPlayerRating(int ratingId = RATING_ID)
+    {
+        var player = CreateInitialPlayer();
+
+        return player.PlayerRatings.FirstOrDefault()!.WithId(ratingId);
+    }
+
+    public static PlayerRating CreatePlayerRating(
+        int category1Points, 
+        int category2Points, 
+        int category3Points, 
+        int rank
+    )
     {
         var rating = CreateInitialPlayerRating();
         rating.SetPoints(category1Points, category2Points, category3Points);
@@ -100,28 +73,33 @@ public class Utils
         return rating;
     }
 
-    public static PlayerRating CreateInitialPlayerRating(int ratingId = RATING_ID)
-    {
-        var country = CreateInitialCountry();
-        var player = CreateInitialPlayerWithOneCountry();
-
-        var rating = new PlayerRating(player, country)
-        {
-            Id = ratingId,
-        };
-        return rating;
-    }
-
     // rating game result
 
     public static RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
     {
-        var player = Utils.CreateInitialPlayerWithOneCountry();
+        var player = CreateInitialPlayer();
         var ratingGameResult = player.PlayerRatings.First().RatingGameResult;
 
         ratingGameResult.RankDifference = difference;
         ratingGameResult.BonusPoints = bonusPoints;
 
         return ratingGameResult;
+    }
+
+    // player game result
+
+    public static PlayerGameResult CreateInitialPlayerGameResult(int playerId = PLAYER_ID)
+    {
+        var player = CreateInitialPlayer(playerId);
+        return player.PlayerGameResult;
+    }
+
+    public static PlayerGameResult CreatePlayerGameResult(int? rank, int? totalPoints)
+    {
+        var playerGameResult = CreateInitialPlayerGameResult();
+        playerGameResult.Rank = rank;
+        playerGameResult.TotalPoints = totalPoints;
+
+        return playerGameResult;
     }
 }

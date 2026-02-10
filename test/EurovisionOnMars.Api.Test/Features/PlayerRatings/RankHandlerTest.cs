@@ -1,11 +1,20 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Entity;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
 public class RankHandlerTest
 {
-    private readonly IRankHandler _rankHandler = new RankHandler();
+    private readonly Mock<ILogger<RankHandler>> _loggerMock;
+    private readonly IRankHandler _rankHandler;
+
+    public RankHandlerTest()
+    {
+        _loggerMock = new Mock<ILogger<RankHandler>>();
+        _rankHandler = new RankHandler(_loggerMock.Object);
+    }
 
     [Fact]
     public void CalculateRanks()

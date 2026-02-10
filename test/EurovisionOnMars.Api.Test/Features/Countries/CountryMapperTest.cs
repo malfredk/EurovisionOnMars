@@ -10,7 +10,7 @@ public class CountryMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = Utils.CreateCountry();
+        var entity = Utils.CreateRankedCountry();
 
         // act
         var dto = _mapper.ToDto(entity);
