@@ -9,7 +9,7 @@ public interface IPlayerGameResultRepository
 {
     Task<IReadOnlyList<PlayerGameResult>> GetPlayerGameResults();
     Task<PlayerGameResult?> GetPlayerGameResult(int playerId);
-    Task<PlayerGameResult> UpdatePlayerGameResult(PlayerGameResult playerResult);
+    Task SaveChanges();
 }
 
 public class PlayerGameResultRepository : IPlayerGameResultRepository
@@ -40,11 +40,8 @@ public class PlayerGameResultRepository : IPlayerGameResultRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<PlayerGameResult> UpdatePlayerGameResult(PlayerGameResult playerResult)
+    public async Task SaveChanges()
     {
-        _logger.LogDebug("Updating player result: {playerResult}.", JsonSerializer.Serialize(playerResult));
-        var updatedPlayerResult = _context.PlayerGameResults.Update(playerResult);
         await _context.SaveChangesAsync();
-        return updatedPlayerResult.Entity;
     }
 }

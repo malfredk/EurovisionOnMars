@@ -41,7 +41,7 @@ public class PlayerGameResultService : IPlayerGameResultService
         var playerGameResults = await _playerGameResultRepository.GetPlayerGameResults();
         await CalculateTotalPoints(playerGameResults);
         CalculateRanks(playerGameResults);
-        SavePlayerGameResults(playerGameResults);
+        await _playerGameResultRepository.SaveChanges();
     }
 
     private async Task CalculateTotalPoints(IReadOnlyList<PlayerGameResult> playerGameResults)
@@ -92,14 +92,6 @@ public class PlayerGameResultService : IPlayerGameResultService
                 current.SetRank(i+1);
             }
             previous = current;
-        }
-    }
-
-    private void SavePlayerGameResults(IReadOnlyList<PlayerGameResult> playerGameResults)
-    {
-        foreach (var playerGameResult in playerGameResults)
-        {
-            _playerGameResultRepository.UpdatePlayerGameResult(playerGameResult);
         }
     }
 }

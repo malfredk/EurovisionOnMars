@@ -20,6 +20,9 @@ public class Utils
     public const int RATING_ID = 77;
     public const int TIE_BREAK_DEMOTION = 0;
 
+    public const int PLAYER_GAME_RESULT_RANK = 10;
+    public const int PLAYER_GAME_RESULT_POINTS = 300;
+
     // country
 
     public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
@@ -94,11 +97,23 @@ public class Utils
         return player.PlayerGameResult;
     }
 
-    public static PlayerGameResult CreatePlayerGameResult(int rank, int totalPoints)
+    public static PlayerGameResult CreatePlayerGameResult(
+        int totalPoints = PLAYER_GAME_RESULT_RANK
+    )
     {
         var playerGameResult = CreateInitialPlayerGameResult();
-        playerGameResult.SetRank(rank);
         playerGameResult.SetTotalPoints(totalPoints);
+
+        return playerGameResult;
+    }
+
+    public static PlayerGameResult CreatePlayerGameResult(
+        int rank = PLAYER_GAME_RESULT_RANK, 
+        int totalPoints = PLAYER_GAME_RESULT_RANK
+    )
+    {
+        var playerGameResult = CreatePlayerGameResult(totalPoints);
+        playerGameResult.SetRank(rank);
 
         return playerGameResult;
     }
