@@ -20,12 +20,6 @@ public class RankHandler : IRankHandler
 
     public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings)
     {
-        var ratingsWithCalculatedRank = RankRatings(ratings);
-        return ratingsWithCalculatedRank;
-    }
-
-    private List<PlayerRating> RankRatings(IReadOnlyList<PlayerRating> ratings)
-    {
         var orderedRatings = SortRatingsByDescendingPoints(ratings);
         List<PlayerRating> ratingsWithCalculatedRank = new();
 

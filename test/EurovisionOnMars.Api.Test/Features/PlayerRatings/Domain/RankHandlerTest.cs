@@ -8,12 +8,12 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings.Domain;
 public class RankHandlerTest
 {
     private readonly Mock<ILogger<RankHandler>> _loggerMock;
-    private readonly IRankHandler _rankHandler;
+    private readonly IRankHandler _handler;
 
     public RankHandlerTest()
     {
         _loggerMock = new Mock<ILogger<RankHandler>>();
-        _rankHandler = new RankHandler(_loggerMock.Object);
+        _handler = new RankHandler(_loggerMock.Object);
     }
 
     [Fact]
@@ -41,11 +41,22 @@ public class RankHandlerTest
             rating5Points,
         };
 
+        var expectedRankedRatings = new List<PlayerRating>
+        {
+            rating14Points,
+            rating14Points2,
+            rating5Points,
+            rating5Points2,
+            rating5Points3,
+            rating3Points,
+        };
+
         // act
-        var rankedRatings = _rankHandler.CalculateRanks(ratings);
+        var rankedRatings = _handler.CalculateRanks(ratings);
 
         // assert
         Assert.Equal(6, rankedRatings.Count);
+        Assert.Equal(expectedRankedRatings, rankedRatings);
 
         Assert.Equal(1, rating14Points.Prediction.CalculatedRank);
         Assert.Equal(1, rating14Points2.Prediction.CalculatedRank);
@@ -59,8 +70,10 @@ public class RankHandlerTest
 
     private static PlayerRating CreatePlayerRating(int category1Points)
     {
-        var rating = Utils.CreateInitialPlayerRating();
-        rating.SetPoints(category1Points, 1, 1);
-        return rating;
+        return Utils.CreatePlayerRating(
+            category1Points: category1Points,
+            category2Points: 1,
+            category3Points: 1
+        );
     }
 }
