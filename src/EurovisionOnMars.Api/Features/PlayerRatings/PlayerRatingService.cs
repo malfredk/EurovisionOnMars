@@ -62,7 +62,7 @@ public class PlayerRatingService : IPlayerRatingService
         var oldTotalPoints = editedRating.Prediction.TotalGivenPoints;
 
         UpdatePoints(editedRating, ratingRequestDto, ratings);
-        var updatedRatings = UpdatePredictions(editedRating, ratings, oldTotalPoints);
+        CalculatePredictions(editedRating, ratings, oldTotalPoints);
 
         await _repository.SaveChanges();
     }
@@ -89,24 +89,20 @@ public class PlayerRatingService : IPlayerRatingService
         _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
     }
 
-    private List<PlayerRating> UpdatePredictions(
+    private void CalculatePredictions(
         PlayerRating editedRating, 
         IReadOnlyList<PlayerRating> ratings, 
         int? oldTotalGivenPoints
         )
     {
-        List<PlayerRating> updatedRatings;
         if (editedRating.Prediction.TotalGivenPoints == oldTotalGivenPoints)
         {
             _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
-            updatedRatings = [editedRating];
         }
         else
         {
-            updatedRatings = _rankHandler.CalculateRanks(ratings);
-            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldTotalGivenPoints);
+            var ratingsWithCalculatedRank = _rankHandler.CalculateRanks(ratings);
+            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, ratingsWithCalculatedRank, oldTotalGivenPoints);
         }
-
-        return updatedRatings;
     }
 }
