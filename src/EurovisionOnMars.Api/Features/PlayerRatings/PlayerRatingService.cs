@@ -59,14 +59,10 @@ public class PlayerRatingService : IPlayerRatingService
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
         var editedRating = ratings.First(r => r.Id == id);
 
-        var oldPrediction = new SimplePrediction()
-        {
-            TotalGivenPoints = editedRating.Prediction.TotalGivenPoints,
-            CalculatedRank = editedRating.Prediction.CalculatedRank
-        };
+        var oldTotalPoints = editedRating.Prediction.TotalGivenPoints;
 
         UpdatePoints(editedRating, ratingRequestDto, ratings);
-        var updatedRatings = UpdatePredictions(editedRating, ratings, oldPrediction);
+        var updatedRatings = UpdatePredictions(editedRating, ratings, oldTotalPoints);
 
         await SaveUpdatedRatings(updatedRatings);
     }
@@ -96,11 +92,11 @@ public class PlayerRatingService : IPlayerRatingService
     private List<PlayerRating> UpdatePredictions(
         PlayerRating editedRating, 
         IReadOnlyList<PlayerRating> ratings, 
-        SimplePrediction oldPrediction
+        int? oldTotalGivenPoints
         )
     {
         List<PlayerRating> updatedRatings;
-        if (editedRating.Prediction.TotalGivenPoints == oldPrediction.TotalGivenPoints)
+        if (editedRating.Prediction.TotalGivenPoints == oldTotalGivenPoints)
         {
             _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
             updatedRatings = [editedRating];
@@ -108,7 +104,7 @@ public class PlayerRatingService : IPlayerRatingService
         else
         {
             updatedRatings = _rankHandler.CalculateRanks(ratings);
-            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldPrediction);
+            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, updatedRatings, oldTotalGivenPoints);
         }
 
         return updatedRatings;

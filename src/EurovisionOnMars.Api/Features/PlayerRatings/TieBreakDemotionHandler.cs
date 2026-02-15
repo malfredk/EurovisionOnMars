@@ -4,7 +4,7 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
 public interface ITieBreakDemotionHandler
 {
-    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction);
+    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints);
 }
 
 public class TieBreakDemotionHandler : ITieBreakDemotionHandler
@@ -18,7 +18,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
         _logger = logger;
     }
 
-    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, SimplePrediction oldPrediction)
+    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints)
     {
         ResetTieBreakDemotion(newPrediction);
 
@@ -27,7 +27,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
             .GroupBy(p => p.TotalGivenPoints)
             .ToList();
 
-        HandleOldPointsGroup(predictionsGroupedByPoints, oldPrediction);
+        HandleOldPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
         HandleNewPointsGroup(predictionsGroupedByPoints, newPrediction);
     }
 
@@ -36,9 +36,9 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
         prediction.SetTieBreakDemotion(null);
     }
 
-    private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, SimplePrediction oldPrediction)
+    private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
     {
-        var oldGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, oldPrediction.TotalGivenPoints);
+        var oldGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
 
         if (oldGroup == null)
         {
