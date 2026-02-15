@@ -11,6 +11,8 @@ public class RatingTimeValidatorTest
     private readonly Mock<IDateTimeNow> _dateTimeNowMock;
     private readonly Mock<ILogger<RatingTimeValidator>> _loggerMock;
     private readonly RatingTimeValidator _validator;
+    
+    // TODO 
 
     public RatingTimeValidatorTest()
     {

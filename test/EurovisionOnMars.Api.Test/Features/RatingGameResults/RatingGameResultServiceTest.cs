@@ -15,6 +15,8 @@ public class RatingGameResultServiceTest
     private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
     private readonly RatingGameResultService _service;
 
+    // TODO
+
     public RatingGameResultServiceTest()
     {
         _ratingGameResultRepositoryMock = new Mock<IRatingGameResultRepository>();

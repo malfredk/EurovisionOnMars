@@ -9,6 +9,8 @@ public class RatingGameResultMapperTest
 
     private readonly RatingGameResultMapper _mapper = new RatingGameResultMapper();
 
+    // TODO
+
     [Fact]
     public void ToDto()
     {
