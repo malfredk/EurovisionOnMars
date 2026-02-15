@@ -64,7 +64,7 @@ public class PlayerRatingService : IPlayerRatingService
         UpdatePoints(editedRating, ratingRequestDto, ratings);
         var updatedRatings = UpdatePredictions(editedRating, ratings, oldTotalPoints);
 
-        await SaveUpdatedRatings(updatedRatings);
+        await _repository.SaveChanges();
     }
 
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
@@ -108,14 +108,5 @@ public class PlayerRatingService : IPlayerRatingService
         }
 
         return updatedRatings;
-    }
-
-    private async Task SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)
-    {
-        foreach (var rating in ratings)
-        {
-            _logger.LogDebug("Updating rating with id={id}.", rating.Id);
-            await _repository.UpdateRating(rating);
-        }
     }
 }

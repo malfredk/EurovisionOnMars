@@ -11,7 +11,7 @@ public interface IPlayerRatingRepository
     Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetPlayerRatingsByPlayerId(int playerId);
     Task<IReadOnlyList<PlayerRating>> GetPlayerRatingsForPlayer(int id);
-    Task<PlayerRating> UpdateRating(PlayerRating rating);
+    Task SaveChanges();
 }
 
 public class PlayerRatingRepository : IPlayerRatingRepository
@@ -56,11 +56,8 @@ public class PlayerRatingRepository : IPlayerRatingRepository
             .ToListAsync();
     }
 
-    public async Task<PlayerRating> UpdateRating(PlayerRating rating)
+    public async Task SaveChanges()
     {
-        _logger.LogDebug("Updating rating: {rating}.", JsonSerializer.Serialize(rating));
-        var updatedRating = _context.PlayerRatings.Update(rating);
         await _context.SaveChangesAsync();
-        return updatedRating.Entity;
     }
 }
