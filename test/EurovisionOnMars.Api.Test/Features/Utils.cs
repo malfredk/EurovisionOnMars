@@ -54,6 +54,11 @@ public class Utils
     private static Player CreateInitialPlayer(int playerId = PLAYER_ID)
     {
         var country = CreateInitialCountry();
+        return CreateInitialPlayer(country, playerId);
+    }
+
+    public static Player CreateInitialPlayer(Country country, int playerId = PLAYER_ID)
+    {
         return new Player(PLAYER_USERNAME, [country])
         {
             Id = playerId

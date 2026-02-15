@@ -11,10 +11,6 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
 public class PlayerRatingServiceTest
 {
-    private const int CATEGORY1_POINTS = 4;
-    private const int CATEGORY2_POINTS = 5;
-    private const int CATEGORY3_POINTS = 6;
-
     private readonly Mock<IPlayerRatingRepository> _repositoryMock;
     private readonly Mock<IRatingTimeValidator> _ratingTimeValidatorMock;
     private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
@@ -42,7 +38,7 @@ public class PlayerRatingServiceTest
             );
     }
 
-    // tests for getting all ratings
+    // tests for GetAllPlayerRatings
 
     [Fact]
     public async Task GetAllPlayerRatings()
@@ -61,15 +57,15 @@ public class PlayerRatingServiceTest
         _repositoryMock.Verify(r => r.GetAllPlayerRatings(), Times.Once());
     }
 
-    // tests for getting ratings by player id
+    // tests for GetPlayerRatingsByPlayerId
 
     [Fact]
     public async Task GetRatingsByPlayerId()
     {
         // arrange
         var rating1 = CreatePlayerRating(1, 26);
-        var rating2 = CreatePlayerRating(10, null);
-        var rating3 = CreatePlayerRating(8, null);
+        var rating2 = CreateInitialPlayerRating(10);
+        var rating3 = CreateInitialPlayerRating(8);
         var rating4 = CreatePlayerRating(26, 1);
         ImmutableList<PlayerRating> ratings = [rating1, rating2, rating3, rating4];
         ImmutableList<PlayerRating> expectedRatings = [rating4, rating1, rating3, rating2];
@@ -104,7 +100,7 @@ public class PlayerRatingServiceTest
         _repositoryMock.Verify(r => r.GetPlayerRatingsByPlayerId(Utils.PLAYER_ID), Times.Once());
     }
 
-    // tests for updating points in rating
+    // tests for UpdatePlayerRating
 
     [Fact]
     public async Task UpdatePlayerRating()
@@ -202,26 +198,28 @@ public class PlayerRatingServiceTest
 
     // helpers
 
-    private static PlayerRating CreatePlayerRating(int countryNumber, int? predictionRank)
+    private static PlayerRating CreatePlayerRating(int countryNumber, int predictionRank)
+    {
+        var rating = CreateInitialPlayerRating(countryNumber);
+        rating.Prediction.SetCalculatedRank((int)predictionRank);
+        return rating;
+    }
+
+    private static PlayerRating CreateInitialPlayerRating(int countryNumber)
     {
         var country = Utils.CreateInitialCountry(countryNumber);
-        var player = Utils.CreateInitialPlayerWithOneCountry();
+        var player = Utils.CreateInitialPlayer(country);
 
-        var rating = new PlayerRating(player, country);
-        if (predictionRank.HasValue)
-        {
-            rating.Prediction.SetCalculatedRank((int)predictionRank);
-        }
-        return rating;
+        return player.PlayerRatings.FirstOrDefault()!;
     }
 
     private static UpdatePlayerRatingRequestDto CreateRequestDto()
     {
         return new UpdatePlayerRatingRequestDto()
         {
-            Category1Points = CATEGORY1_POINTS,
-            Category2Points = CATEGORY2_POINTS,
-            Category3Points = CATEGORY3_POINTS,
+            Category1Points = Utils.CATEGORY1_POINTS,
+            Category2Points = Utils.CATEGORY2_POINTS,
+            Category3Points = Utils.CATEGORY3_POINTS,
         };
     }
 }
