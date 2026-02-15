@@ -52,7 +52,7 @@ public class Utils
     
     // player
 
-    private static Player CreateInitialPlayer(int playerId = PLAYER_ID)
+    public static Player CreateInitialPlayer(int playerId = PLAYER_ID)
     {
         var country = CreateInitialCountry();
         return CreateInitialPlayer(country, playerId);

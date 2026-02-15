@@ -10,7 +10,7 @@ public class PlayerMapperTest
     public void ToDto()
     {
         // arrange
-        var playerEntity = Utils.CreateInitialPlayerWithOneCountry();
+        var playerEntity = Utils.CreateInitialPlayer();
 
         // act
         var playerDto = _mapper.ToDto(playerEntity);
