@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
 public interface IRankHandler
 {

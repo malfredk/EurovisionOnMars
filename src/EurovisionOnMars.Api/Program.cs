@@ -4,6 +4,7 @@ using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.GameResults;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Predictions;
 using EurovisionOnMars.Api.Features.RatingGameResults;
@@ -131,6 +132,7 @@ static void AddPlayerRatingsFeature(WebApplicationBuilder builder)
     builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
     builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 
+    builder.Services.AddScoped<IPlayerRatingProcessor, PlayerRatingProcessor>();
     builder.Services.AddScoped<IRankHandler, RankHandler>();
     builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
     builder.Services.AddScoped<ITieBreakDemotionHandler, TieBreakDemotionHandler>();

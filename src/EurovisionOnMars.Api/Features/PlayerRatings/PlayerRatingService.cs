@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 
@@ -16,25 +17,19 @@ public class PlayerRatingService : IPlayerRatingService
     private readonly IPlayerRatingRepository _repository;
     private readonly IRatingTimeValidator _ratingTimeValidator;
     private readonly ILogger<PlayerRatingService> _logger;
-    private readonly ISpecialPointsValidator _specialPointsValidator;
-    private readonly IRankHandler _rankHandler;
-    private readonly ITieBreakDemotionHandler _tieBreakDemotionHandler;
+    private readonly IPlayerRatingProcessor _playerRatingProcessor;
 
     public PlayerRatingService(
         IPlayerRatingRepository repository,
         IRatingTimeValidator ratingTimeValidator,
         ILogger<PlayerRatingService> logger,
-        ISpecialPointsValidator specialPointsValidator,
-        IRankHandler rankHandler,
-        ITieBreakDemotionHandler tieBreakDemotionHandler
+        IPlayerRatingProcessor playerRatingProcessor
         )
     {
         _repository = repository;
         _ratingTimeValidator = ratingTimeValidator;
         _logger = logger;
-        _specialPointsValidator = specialPointsValidator;
-        _rankHandler = rankHandler;
-        _tieBreakDemotionHandler = tieBreakDemotionHandler;
+        _playerRatingProcessor = playerRatingProcessor;
     }
 
     public async Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings()
@@ -59,10 +54,7 @@ public class PlayerRatingService : IPlayerRatingService
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
         var editedRating = ratings.First(r => r.Id == id);
 
-        var oldTotalPoints = editedRating.Prediction.TotalGivenPoints;
-
-        UpdatePoints(editedRating, ratingRequestDto, ratings);
-        CalculatePredictions(editedRating, ratings, oldTotalPoints);
+        _playerRatingProcessor.UpdatePlayerRatings(ratingRequestDto, editedRating, ratings);
 
         await _repository.SaveChanges();
     }
@@ -73,36 +65,5 @@ public class PlayerRatingService : IPlayerRatingService
             .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
             .ThenBy(r => r.Country.Number)
             .ToImmutableList();
-    }
-
-    private void UpdatePoints(
-        PlayerRating rating,
-        UpdatePlayerRatingRequestDto ratingRequest,  
-        IReadOnlyList<PlayerRating> ratings
-        )
-    {
-        rating.SetPoints(
-            ratingRequest.Category1Points,
-            ratingRequest.Category2Points,
-            ratingRequest.Category3Points
-            );
-        _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
-    }
-
-    private void CalculatePredictions(
-        PlayerRating editedRating, 
-        IReadOnlyList<PlayerRating> ratings, 
-        int? oldTotalGivenPoints
-        )
-    {
-        if (editedRating.Prediction.TotalGivenPoints == oldTotalGivenPoints)
-        {
-            _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
-        }
-        else
-        {
-            var ratingsWithCalculatedRank = _rankHandler.CalculateRanks(ratings);
-            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, ratingsWithCalculatedRank, oldTotalGivenPoints);
-        }
     }
 }
