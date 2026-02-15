@@ -3,7 +3,7 @@ using EurovisionOnMars.Entity;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Test.Features.PlayerRatings.Domain;
 
 public class SpecialPointsValidatorTest
 {
