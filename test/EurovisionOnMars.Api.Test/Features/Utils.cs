@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Dto.PlayerRatings;
+using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Features;
 public static class TestEntityExtensions
@@ -131,5 +132,17 @@ public class Utils
         playerGameResult.SetRank(rank);
 
         return playerGameResult;
+    }
+
+    // update player rating request
+
+    public static UpdatePlayerRatingRequestDto CreateUpdatePlayerRatingRequest()
+    {
+        return new UpdatePlayerRatingRequestDto()
+        {
+            Category1Points = CATEGORY1_POINTS,
+            Category2Points = CATEGORY2_POINTS,
+            Category3Points = CATEGORY3_POINTS,
+        };
     }
 }

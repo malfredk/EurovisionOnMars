@@ -5,7 +5,7 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
 public interface IPlayerRatingProcessor
 {
-    public void UpdatePlayerRatings(
+    public void UpdatePlayerRating(
         UpdatePlayerRatingRequestDto ratingRequestDto,
         PlayerRating editedRating,
         IReadOnlyList<PlayerRating> ratings
@@ -32,7 +32,7 @@ public class PlayerRatingProcessor : IPlayerRatingProcessor
         _tieBreakDemotionHandler = tieBreakDemotionHandler;
     }
 
-    public void UpdatePlayerRatings(
+    public void UpdatePlayerRating(
         UpdatePlayerRatingRequestDto ratingRequestDto,
         PlayerRating editedRating,
         IReadOnlyList<PlayerRating> ratings

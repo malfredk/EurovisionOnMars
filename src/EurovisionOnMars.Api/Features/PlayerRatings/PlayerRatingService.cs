@@ -54,7 +54,7 @@ public class PlayerRatingService : IPlayerRatingService
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
         var editedRating = ratings.First(r => r.Id == id);
 
-        _playerRatingProcessor.UpdatePlayerRatings(ratingRequestDto, editedRating, ratings);
+        _playerRatingProcessor.UpdatePlayerRating(ratingRequestDto, editedRating, ratings);
 
         await _repository.SaveChanges();
     }
