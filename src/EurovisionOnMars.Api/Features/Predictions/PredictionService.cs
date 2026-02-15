@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using EurovisionOnMars.Dto.Predictions;
+﻿using EurovisionOnMars.Dto.Predictions;
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
