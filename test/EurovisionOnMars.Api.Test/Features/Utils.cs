@@ -18,7 +18,16 @@ public class Utils
     public const int PLAYER_ID = 1234;
 
     public const int RATING_ID = 77;
-    public const int TIE_BREAK_DEMOTION = 0;
+    public const int CATEGORY1_POINTS = 4;
+    public const int CATEGORY2_POINTS = 12;
+    public const int CATEGORY3_POINTS = 8;
+
+    public const int PREDICTION_ID = 8888;
+    public const int PREDICTION_TOTAL_POINTS = 24;
+    public const int PREDICTION_CALCULATED_RANK = 20;
+    public const int PREDICTION_RANK = 21;
+    public const int TIE_BREAK_DEMOTION = 1;
+    
 
     public const int PLAYER_GAME_RESULT_RANK = 10;
     public const int PLAYER_GAME_RESULT_POINTS = 300;
@@ -61,15 +70,16 @@ public class Utils
     }
 
     public static PlayerRating CreatePlayerRating(
-        int category1Points, 
-        int category2Points, 
-        int category3Points, 
-        int rank
+        int category1Points = CATEGORY1_POINTS, 
+        int category2Points = CATEGORY2_POINTS, 
+        int category3Points = CATEGORY3_POINTS, 
+        int rank = PREDICTION_CALCULATED_RANK
     )
     {
         var rating = CreateInitialPlayerRating();
         rating.SetPoints(category1Points, category2Points, category3Points);
 
+        rating.Prediction.WithId(PREDICTION_ID);
         rating.Prediction.SetCalculatedRank(rank);
         rating.Prediction.SetTieBreakDemotion(TIE_BREAK_DEMOTION);
 
