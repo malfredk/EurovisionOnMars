@@ -9,7 +9,7 @@ public interface ITieBreakDemotionHandler
 
 public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 {
-    private const int DEFAULT_TIE_BREAK_DEMOTION_SORT_VALUE = -1;
+    private const int DEFAULT_SORT_VALUE = -1;
 
     private readonly ILogger<TieBreakDemotionHandler> _logger;
 
@@ -108,7 +108,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
     private void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
     {
         var sortedPredictions = predictionsWithSamePoints
-            .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_TIE_BREAK_DEMOTION_SORT_VALUE);
+            .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_SORT_VALUE);
 
         int tieBreakDemotion = 0;
         foreach (var prediction in sortedPredictions)
