@@ -27,13 +27,13 @@ public class PlayerServiceTest
             );
     }
 
-    // tests for getting player by username
+    // tests for GetPlayer
 
     [Fact]
-    public async Task GetPlayer_ValidUsername()
+    public async Task GetPlayer()
     {
         // arrange
-        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
+        var expectedPlayer = Utils.CreateInitialPlayer();
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync(expectedPlayer);
@@ -78,14 +78,14 @@ public class PlayerServiceTest
             .Verify(r => r.GetPlayer(Utils.PLAYER_USERNAME), Times.Once);
     }
 
-    // tests for creating player
+    // tests for CreatePlayer
 
     [Fact]
-    public async Task CreatePlayer_ValidUsername()
+    public async Task CreatePlayer()
     {
         // arrange
         var country = Utils.CreateInitialCountry();
-        var expectedPlayer = Utils.CreateInitialPlayerWithOneCountry();
+        var expectedPlayer = Utils.CreateInitialPlayer();
         Player capturedNewPlayer = null!;
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
@@ -111,7 +111,7 @@ public class PlayerServiceTest
     }
 
     [Fact]
-    public async Task CreatePlayer_NotValidUsername()
+    public async Task CreatePlayer_InvalidUsername()
     {
         // arrange
         var username = "= injection attack";
@@ -123,6 +123,8 @@ public class PlayerServiceTest
         
         _playerRepositoryMock
             .Verify(r => r.GetPlayer(It.IsAny<string>()), Times.Never());
+        _countryServiceMock
+            .Verify(r => r.GetCountries(), Times.Never());
         _playerRepositoryMock
             .Verify(r => r.CreatePlayer(It.IsAny<Player>()), Times.Never());
     }
@@ -131,7 +133,7 @@ public class PlayerServiceTest
     public async Task CreatePlayer_ExistingUsername()
     {
         // arrange
-        var existingPlayer = Utils.CreateInitialPlayerWithOneCountry();
+        var existingPlayer = Utils.CreateInitialPlayer();
 
         _playerRepositoryMock.Setup(r => r.GetPlayer(Utils.PLAYER_USERNAME))
             .ReturnsAsync(existingPlayer);
