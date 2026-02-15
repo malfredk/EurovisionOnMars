@@ -34,44 +34,44 @@ public class PlayerRatingProcessor : IPlayerRatingProcessor
 
     public void UpdatePlayerRating(
         UpdatePlayerRatingRequestDto ratingRequestDto,
-        PlayerRating editedRating,
+        PlayerRating ratingToUpdate,
         IReadOnlyList<PlayerRating> ratings
     )
     {
-        var oldTotalPoints = editedRating.Prediction.TotalGivenPoints;
+        var oldTotalPoints = ratingToUpdate.Prediction.TotalGivenPoints;
 
-        UpdatePoints(editedRating, ratingRequestDto, ratings);
-        CalculatePredictions(editedRating, ratings, oldTotalPoints);
+        UpdatePoints(ratingToUpdate, ratingRequestDto, ratings);
+        CalculatePredictions(ratingToUpdate, ratings, oldTotalPoints);
     }
 
     private void UpdatePoints(
-        PlayerRating rating,
+        PlayerRating ratingToUpdate,
         UpdatePlayerRatingRequestDto ratingRequest,
         IReadOnlyList<PlayerRating> ratings
         )
     {
-        rating.SetPoints(
+        ratingToUpdate.SetPoints(
             ratingRequest.Category1Points,
             ratingRequest.Category2Points,
             ratingRequest.Category3Points
             );
-        _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
+        _specialPointsValidator.ValidateSpecialCategoryPoints(ratingToUpdate, ratings);
     }
 
     private void CalculatePredictions(
-        PlayerRating editedRating,
+        PlayerRating ratingWithUpdatedPoints,
         IReadOnlyList<PlayerRating> ratings,
         int? oldTotalGivenPoints
         )
     {
-        if (editedRating.Prediction.TotalGivenPoints == oldTotalGivenPoints)
+        if (ratingWithUpdatedPoints.Prediction.TotalGivenPoints == oldTotalGivenPoints)
         {
             _logger.LogDebug("Skipping calculation of prediction since TotalGivenPoints is unchanged.");
         }
         else
         {
             var ratingsWithCalculatedRank = _rankHandler.CalculateRanks(ratings);
-            _tieBreakDemotionHandler.CalculateTieBreakDemotions(editedRating.Prediction, ratingsWithCalculatedRank, oldTotalGivenPoints);
+            _tieBreakDemotionHandler.CalculateTieBreakDemotions(ratingWithUpdatedPoints.Prediction, ratingsWithCalculatedRank, oldTotalGivenPoints);
         }
     }
 }

@@ -52,9 +52,9 @@ public class PlayerRatingService : IPlayerRatingService
         _ratingTimeValidator.EnsureRatingIsOpen();
 
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
-        var editedRating = ratings.First(r => r.Id == id);
+        var ratingToUpdate = ratings.First(r => r.Id == id);
 
-        _playerRatingProcessor.UpdatePlayerRating(ratingRequestDto, editedRating, ratings);
+        _playerRatingProcessor.UpdatePlayerRating(ratingRequestDto, ratingToUpdate, ratings);
 
         await _repository.SaveChanges();
     }
