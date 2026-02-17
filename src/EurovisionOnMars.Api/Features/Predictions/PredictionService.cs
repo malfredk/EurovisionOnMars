@@ -61,7 +61,7 @@ public class PredictionService : IPredictionService
     {
         var firstPrediction = await GetFirstPrediction(request);
 
-        var tiedPredictions = await _repository.GetPredictions(
+        var tiedPredictions = await _repository.GetTiedPredictions(
             firstPrediction.PlayerRating!.PlayerId,
             (int)firstPrediction.CalculatedRank!);
 
@@ -77,7 +77,7 @@ public class PredictionService : IPredictionService
             throw new KeyNotFoundException($"Prediction with id={firstPredictionId} does not exist.");
 
         if (firstPrediction.CalculatedRank == null)
-            throw new InvalidOperationException("Prediction is not eligible for tie breaking since CalculatedRank is null.");
+            throw new ArgumentException("Prediction is not eligible for tie breaking since CalculatedRank is null.");
 
         return firstPrediction;
     }
