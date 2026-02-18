@@ -14,17 +14,20 @@ public class RatingGameResultService : IRatingGameResultService
 {
     private readonly IRatingGameResultRepository _ratingGameResultRepository;
     private readonly IPlayerRatingService _playerRatingService;
+    private readonly IRatingGameResultCalculator _ratingGameResultCalculator;
     private readonly ILogger<RatingGameResultService> _logger;
 
     public RatingGameResultService
         (
         IRatingGameResultRepository ratingResultRepository,
         IPlayerRatingService playerRatingService,
+        IRatingGameResultCalculator ratingGameResultCalculator,
         ILogger<RatingGameResultService> logger
         )
     {
         _ratingGameResultRepository = ratingResultRepository;
         _playerRatingService = playerRatingService;
+        _ratingGameResultCalculator = ratingGameResultCalculator;
         _logger = logger;
     }
 
@@ -36,99 +39,18 @@ public class RatingGameResultService : IRatingGameResultService
     public async Task CalculateRatingGameResults()
     {
         var playerRatings = await _playerRatingService.GetAllPlayerRatings();
-        foreach (var playerRating in playerRatings)
-        {
-            CalculateRatingGameResult(playerRating, playerRatings);
-            await UpdateRatingGameResult(playerRating.RatingGameResult);
-        }
+        CalculateRatingGameResults(playerRatings);
+        await _ratingGameResultRepository.SaveChanges();
     }
 
-    private void CalculateRatingGameResult(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
+    private void CalculateRatingGameResults(IReadOnlyList<PlayerRating> ratings)
     {
-        CalculateRankDifference(rating);
-        CalculateBonusPoints(rating, ratings);
-    }
-
-    private async Task UpdateRatingGameResult(RatingGameResult ratingGameResult)
-    {
-         await _ratingGameResultRepository.UpdateRatingGameResult(ratingGameResult);
-    }
-
-    internal void CalculateRankDifference(PlayerRating rating)
-    {
-        var actualRank = rating.Country.ActualRank;
-        var predictedRank = rating.Prediction.GetPredictedRank();
-        int rankDifference;
-
-        if (actualRank == null)
+        var ratingsByPlayer = ratings
+            .GroupBy(r => r.PlayerId).ToDictionary(g => g.Key, g => g.ToList());
+        foreach (var rating in ratings)
         {
-            throw new Exception("Country is missing rank.");
-        }
-        else if (predictedRank == null)
-        {
-            // player is penalized for not rating a country
-            rankDifference = 26;
-        }
-        else
-        {
-            rankDifference = (int)(actualRank - predictedRank);
-        }
-        rating.RatingGameResult.RankDifference = rankDifference;
-    }
-
-    internal void CalculateBonusPoints(
-        PlayerRating rating,
-        IReadOnlyList<PlayerRating> ratings
-    )
-    {
-        var ratingGameResult = rating.RatingGameResult;
-        int bonusPoints;
-        if (ratingGameResult.RankDifference == 0 && HasUniqueRank(rating, ratings))
-        {
-            bonusPoints = DetermineBonusPoints((int)rating.Prediction.GetPredictedRank());
-        } else
-        {
-            bonusPoints = 0;
-        }
-        ratingGameResult.BonusPoints = bonusPoints;
-    }
-
-    private bool HasUniqueRank(PlayerRating rating, IReadOnlyList<PlayerRating> ratings)
-    {
-        var sameRankAndPlayerCount = ratings
-            .Count(r => 
-            r.PlayerId == rating.PlayerId && 
-            r.Prediction.GetPredictedRank() == rating.Prediction.GetPredictedRank()
-            );
-        return sameRankAndPlayerCount == 1;
-    }
-
-    private int DetermineBonusPoints(int rank)
-    {
-        switch (rank)
-        {
-            case 1:
-                return -25;
-            case 2:
-                return -18;
-            case 3:
-                return -15;
-            case 4:
-                return -12;
-            case 5:
-                return -10;
-            case 6:
-                return -8;
-            case 7:
-                return -6;
-            case 8:
-                return -4;
-            case 9:
-                return -2;
-            case 10:
-                return -1;
-            default:
-                return 0;
+            _ratingGameResultCalculator
+                .CalculateRatingGameResult(rating, ratingsByPlayer[rating.PlayerId]);
         }
     }
 }

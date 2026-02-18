@@ -28,7 +28,6 @@ public class Utils
     public const int PREDICTION_CALCULATED_RANK = 20;
     public const int PREDICTION_RANK = 21;
     public const int TIE_BREAK_DEMOTION = 1;
-    
 
     public const int PLAYER_GAME_RESULT_RANK = 10;
     public const int PLAYER_GAME_RESULT_POINTS = 300;
@@ -68,9 +67,12 @@ public class Utils
 
     // player rating
 
-    public static PlayerRating CreateInitialPlayerRating(int ratingId = RATING_ID)
+    public static PlayerRating CreateInitialPlayerRating(
+        int ratingId = RATING_ID,
+        int playerId = PLAYER_ID
+    )
     {
-        var player = CreateInitialPlayer();
+        var player = CreateInitialPlayer(playerId);
 
         return player.PlayerRatings.FirstOrDefault()!.WithId(ratingId);
     }
@@ -96,13 +98,18 @@ public class Utils
 
     public static RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
     {
-        var player = CreateInitialPlayer();
-        var ratingGameResult = player.PlayerRatings.First().RatingGameResult;
+        var ratingGameResult = CreateInitialRatingGameResult();
 
         ratingGameResult.RankDifference = difference;
         ratingGameResult.BonusPoints = bonusPoints;
 
         return ratingGameResult;
+    }
+
+    public static RatingGameResult CreateInitialRatingGameResult()
+    {
+        var player = CreateInitialPlayer();
+        return player.PlayerRatings.First().RatingGameResult;
     }
 
     // player game result
