@@ -112,7 +112,9 @@ public class Utils
     public static PlayerGameResult CreateInitialPlayerGameResult(int playerId = PLAYER_ID)
     {
         var player = CreateInitialPlayer(playerId);
-        return player.PlayerGameResult;
+        var playerGameResult = player.PlayerGameResult;
+        playerGameResult.PlayerId = playerId;
+        return playerGameResult;
     }
 
     public static PlayerGameResult CreatePlayerGameResult(

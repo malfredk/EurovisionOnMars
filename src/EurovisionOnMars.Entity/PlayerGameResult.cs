@@ -6,7 +6,7 @@ public class PlayerGameResult : IdBase
 {
     public int? Rank { get; private set; }
     public int? TotalPoints { get; private set; }
-    public int PlayerId { get; private set; }
+    public int PlayerId { get; internal set; }
     [JsonIgnore]
     public Player? Player { get; private set; }
 
