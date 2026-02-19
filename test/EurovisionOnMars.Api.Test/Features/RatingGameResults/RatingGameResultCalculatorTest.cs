@@ -7,6 +7,33 @@ public class RatingGameResultCalculatorTest
 {
     private readonly RatingGameResultCalculator _calculator = new RatingGameResultCalculator();
 
+    // tests for CalculateRatingGameResult
+
+    [Fact]
+    public void CalculateRatingGameResult()
+    {
+        // arrange
+        var rating = CreatePlayerRating(10, 7);
+
+        var otherRating = CreatePlayerRating(1, 1);
+
+        var ratings = new List<PlayerRating>
+        {
+            rating,
+            otherRating
+        };
+
+        // act
+        _calculator.CalculateRatingGameResult(rating, ratings);
+
+        // assert
+        Assert.Equal(-3, rating.RatingGameResult.RankDifference);
+        Assert.Equal(0, rating.RatingGameResult.BonusPoints);
+
+        Assert.Null(otherRating.RatingGameResult.RankDifference);
+        Assert.Null(otherRating.RatingGameResult.BonusPoints);
+    }
+
     // tests for CalculateRankDifference
 
     [Theory]
@@ -58,8 +85,8 @@ public class RatingGameResultCalculatorTest
     public void CalculateBonusPoints_ZeroRankDifferenceAndUniqueRank(int actualRank, int expectedBonusPoints)
     {
         // arrange
-        var rating = CreatePlayerRating(actualRank, actualRank, 0);
-        var ratingWithDifferentPredictedRank = CreatePlayerRating(4, 13, 0);
+        var rating = CreatePlayerRatingWithRankDifference(actualRank, actualRank, 0);
+        var ratingWithDifferentPredictedRank = CreatePlayerRatingWithRankDifference(4, 13, 0);
         var otherRatingWithoutCalculatedRank = CreateUnrankedPlayerRating(13);
 
         var ratings = new List<PlayerRating>
@@ -81,7 +108,7 @@ public class RatingGameResultCalculatorTest
     {
         // arrange
         var calculatedRank = 1;
-        var correctRating = CreatePlayerRating(calculatedRank, calculatedRank, 0);
+        var correctRating = CreatePlayerRatingWithRankDifference(calculatedRank, calculatedRank, 0);
         var ratingWithSameRank = CreatePlayerRating(10, calculatedRank);
 
         var ratings = new List<PlayerRating>
@@ -101,7 +128,7 @@ public class RatingGameResultCalculatorTest
     public void CalculateBonusPoints_NonZeroRankDifference()
     {
         // arrange
-        var rating = CreatePlayerRating(1, 1, 23);
+        var rating = CreatePlayerRatingWithRankDifference(1, 1, 23);
         var ratings = new List<PlayerRating>
         {
             rating
@@ -135,7 +162,7 @@ public class RatingGameResultCalculatorTest
         return rating;
     }
 
-    private static PlayerRating CreatePlayerRating(
+    private static PlayerRating CreatePlayerRatingWithRankDifference(
         int actualRank,
         int calculatedRank,
         int rankDifference
