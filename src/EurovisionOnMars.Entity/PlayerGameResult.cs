@@ -2,7 +2,7 @@
 
 namespace EurovisionOnMars.Entity;
 
-public record PlayerGameResult : IdBase
+public class PlayerGameResult : IdBase
 {
     public int? Rank { get; private set; }
     public int? TotalPoints { get; private set; }
@@ -15,7 +15,6 @@ public record PlayerGameResult : IdBase
     internal PlayerGameResult(Player player)
     {
         Player = player;
-        PlayerId = player.Id;
     }
 
     public void SetRank(int rank)

@@ -2,7 +2,7 @@
 
 namespace EurovisionOnMars.Entity;
 
-public record RatingGameResult : IdBase
+public class RatingGameResult : IdBase
 {
     public int? RankDifference { get; set; } // actual minus predicted
     public int? BonusPoints { get; set; }
@@ -15,6 +15,5 @@ public record RatingGameResult : IdBase
     internal RatingGameResult(PlayerRating playerRating)
     {
         PlayerRating = playerRating;
-        PlayerRatingId = playerRating.Id;
     }
 }

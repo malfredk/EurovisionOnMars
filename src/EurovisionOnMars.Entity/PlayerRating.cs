@@ -2,7 +2,7 @@
 
 namespace EurovisionOnMars.Entity;
 
-public record PlayerRating : IdBase
+public class PlayerRating : IdBase
 {
     private static List<int> VALID_POINTS = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 10, 12 };
 
@@ -24,9 +24,7 @@ public record PlayerRating : IdBase
     internal PlayerRating(Player player, Country country)
     {
         Player = player;
-        PlayerId = player.Id;
         Country = country;
-        CountryId = country.Id;
         Prediction = new Prediction(this);
         RatingGameResult = new RatingGameResult(this);
     }

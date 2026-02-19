@@ -2,7 +2,7 @@
 
 namespace EurovisionOnMars.Entity;
 
-public record Prediction : IdBase
+public class Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public int? CalculatedRank { get; private set; }
@@ -16,7 +16,6 @@ public record Prediction : IdBase
     internal Prediction(PlayerRating playerRating)
     {
         PlayerRating = playerRating;
-        PlayerRatingId = playerRating.Id;
     }
 
     internal void CalculateTotalGivenPoints()

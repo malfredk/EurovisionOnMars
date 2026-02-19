@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace EurovisionOnMars.Entity;
 
-public record Country : IdBase
+public class Country : IdBase
 {
     private static int MIN_NUMBER = 1;
     private static int MAX_NUMBER = 26;
