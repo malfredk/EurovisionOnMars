@@ -15,7 +15,7 @@ public class PlayerRating : IdBase
     public int CountryId { get; private set; }
     public Country? Country { get; private set; }
     public RatingGameResult RatingGameResult { get; private set; } = null!;
-    public int PlayerId { get; private set; }
+    public int PlayerId { get; internal set; }
     [JsonIgnore]
     public Player? Player { get; private set; }
 
