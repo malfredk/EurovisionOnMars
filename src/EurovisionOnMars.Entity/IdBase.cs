@@ -2,5 +2,5 @@
 
 public abstract record IdBase
 {
-    public int Id { get; init; }
+    public int Id { get; internal set; }
 }
