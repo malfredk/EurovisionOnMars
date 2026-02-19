@@ -136,19 +136,15 @@ public class PlayerRatingServiceTest
         _ratingTimeValidatorMock.Setup(m => m.EnsureRatingIsOpen())
             .Throws<RatingIsClosedException>();
 
-        // act
-        await _service.UpdatePlayerRating(Utils.RATING_ID, request);
+        // act and assert
+        await Assert.ThrowsAsync<RatingIsClosedException>(
+            () => _service.UpdatePlayerRating(Utils.RATING_ID, request)
+        );
 
-        // assert
-        _repositoryMock
-            .Verify(m => m.GetPlayerRatingsForPlayer(It.IsAny<int>()), Times.Never);
-        _playerRatingProcessorMock
-            .Verify(
-            m => m.UpdatePlayerRating(It.IsAny<UpdatePlayerRatingRequestDto>(), It.IsAny<PlayerRating>(), It.IsAny<IReadOnlyList<PlayerRating>>()), 
-            Times.Never
-            );
-        _repositoryMock
-            .Verify(m => m.SaveChanges(), Times.Never);
+        _ratingTimeValidatorMock.Verify(m => m.EnsureRatingIsOpen(), Times.Once);
+
+        _repositoryMock.VerifyNoOtherCalls();
+        _playerRatingProcessorMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -158,20 +154,18 @@ public class PlayerRatingServiceTest
         var request = Utils.CreateUpdatePlayerRatingRequest();
 
         var otherRating = Utils.CreateInitialPlayerRating(1222);
-        var ratings = new List<PlayerRating>() { otherRating };
         _repositoryMock.Setup(m => m.GetPlayerRatingsForPlayer(Utils.RATING_ID))
-            .ReturnsAsync(ratings);
+            .ReturnsAsync([otherRating]);
 
         // act and assert
-        await Assert.ThrowsAsync<Exception>(() => _service.UpdatePlayerRating(Utils.RATING_ID, request));
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.UpdatePlayerRating(Utils.RATING_ID, request)
+        );
 
-        _playerRatingProcessorMock
-            .Verify(
-            m => m.UpdatePlayerRating(It.IsAny<UpdatePlayerRatingRequestDto>(), It.IsAny<PlayerRating>(), It.IsAny<IReadOnlyList<PlayerRating>>()),
-            Times.Never
-            );
-        _repositoryMock
-            .Verify(m => m.SaveChanges(), Times.Never);
+        _repositoryMock.Verify(m => m.GetPlayerRatingsForPlayer(Utils.RATING_ID), Times.Once);
+
+        _playerRatingProcessorMock.VerifyNoOtherCalls();
+        _repositoryMock.VerifyNoOtherCalls();
     }
 
     // helpers

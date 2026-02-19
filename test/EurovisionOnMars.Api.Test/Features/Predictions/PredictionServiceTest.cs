@@ -145,10 +145,7 @@ public class PredictionServiceTest
             .Setup(r => r.GetTiedPredictions(Utils.PLAYER_ID, Utils.PREDICTION_CALCULATED_RANK))
             .ReturnsAsync(predictions);
 
-        // act
-        await _service.UpdateTieBreakDemotions(request);
-
-        // assert
+        // act and assert
         await Assert.ThrowsAsync<ArgumentException>(
             async () => await _service.UpdateTieBreakDemotions(request)
         );
@@ -169,14 +166,11 @@ public class PredictionServiceTest
         return Utils.CreateInitialPlayerRating().Prediction;
     }
 
-    private static Prediction CreatePrediction(
-        int id = Utils.PREDICTION_ID,
-        int calculatedRank = Utils.PREDICTION_CALCULATED_RANK
-    )
+    private static Prediction CreatePrediction(int id)
     {
         var prediction = CreateInitialPrediciton();
-        prediction.SetCalculatedRank(calculatedRank);
-        prediction.WithId(id);
+        prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
+        prediction.Id = id;
         return prediction;
     }
 }

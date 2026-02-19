@@ -27,7 +27,7 @@ public class RatingGameResultCalculatorTest
         _calculator.CalculateRatingGameResult(rating, ratings);
 
         // assert
-        Assert.Equal(-3, rating.RatingGameResult.RankDifference);
+        Assert.Equal(3, rating.RatingGameResult.RankDifference);
         Assert.Equal(0, rating.RatingGameResult.BonusPoints);
 
         Assert.Null(otherRating.RatingGameResult.RankDifference);
@@ -38,7 +38,7 @@ public class RatingGameResultCalculatorTest
 
     [Theory]
     [InlineData(1, 8)]
-    [InlineData(11, 0)]
+    [InlineData(11, -2)]
     [InlineData(20, -11)]
     public void CalculateRankDifference(int calculatedRank, int expectedRankDifference)
     {

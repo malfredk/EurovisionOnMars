@@ -2,11 +2,6 @@
 using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Features;
-public static class TestEntityExtensions
-{
-    public static T WithId<T>(this T entity, int id) where T : IdBase
-        => (T)(entity with { Id = id });
-}
 
 public class Utils
 {
@@ -23,8 +18,6 @@ public class Utils
     public const int CATEGORY2_POINTS = 12;
     public const int CATEGORY3_POINTS = 8;
 
-    public const int PREDICTION_ID = 8888;
-    public const int PREDICTION_TOTAL_POINTS = 24;
     public const int PREDICTION_CALCULATED_RANK = 20;
     public const int PREDICTION_RANK = 21;
     public const int TIE_BREAK_DEMOTION = 1;
@@ -74,7 +67,10 @@ public class Utils
     {
         var player = CreateInitialPlayer(playerId);
 
-        return player.PlayerRatings.FirstOrDefault()!.WithId(ratingId);
+        var rating = player.PlayerRatings.FirstOrDefault()!;
+        rating.Id = ratingId;
+        rating.PlayerId = playerId;
+        return rating;
     }
 
     public static PlayerRating CreatePlayerRating(
@@ -87,7 +83,6 @@ public class Utils
         var rating = CreateInitialPlayerRating();
         rating.SetPoints(category1Points, category2Points, category3Points);
 
-        rating.Prediction.WithId(PREDICTION_ID);
         rating.Prediction.SetCalculatedRank(rank);
         rating.Prediction.SetTieBreakDemotion(TIE_BREAK_DEMOTION);
 

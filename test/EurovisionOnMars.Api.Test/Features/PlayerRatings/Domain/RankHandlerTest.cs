@@ -45,9 +45,9 @@ public class RankHandlerTest
         {
             rating14Points,
             rating14Points2,
-            rating5Points,
             rating5Points2,
             rating5Points3,
+            rating5Points,
             rating3Points,
         };
 

@@ -66,22 +66,15 @@ public class RatingGameResultServiceTest
         var player1Id = 10;
         var player2Id = 20;
 
-        var rating1Player1 = Utils.CreatePlayerRating(100, player1Id);
-        var rating2Player1 = Utils.CreatePlayerRating(200, player1Id);
-        var rating3Player2 = Utils.CreatePlayerRating(300, player2Id);
-
-        var ratingsPlayer1 = new List<PlayerRating> 
-        {
-            rating1Player1,
-            rating2Player1
-        };
-        var ratingsPlayer2 = new List<PlayerRating> { rating3Player2 };
+        var player1Rating1 = Utils.CreateInitialPlayerRating(100, player1Id);
+        var player1Rating2 = Utils.CreateInitialPlayerRating(200, player1Id);
+        var player2Rating1 = Utils.CreateInitialPlayerRating(300, player2Id);
 
         var allRatings = new List<PlayerRating>
         {
-            rating2Player1,
-            rating3Player2,
-            rating1Player1
+            player1Rating2,
+            player2Rating1,
+            player1Rating1
         };
         _playerRatingServiceMock.Setup(m => m.GetAllPlayerRatings())
             .ReturnsAsync(allRatings);
@@ -93,13 +86,20 @@ public class RatingGameResultServiceTest
         _playerRatingServiceMock
             .Verify(m => m.GetAllPlayerRatings(), Times.Once);
 
-        _ratingGameResultCalculatorMock
-            .Verify(m => m.CalculateRatingGameResult(rating1Player1, ratingsPlayer1), Times.Once);
-        _ratingGameResultCalculatorMock
-            .Verify(m => m.CalculateRatingGameResult(rating2Player1, ratingsPlayer1), Times.Once);
-        _ratingGameResultCalculatorMock
-            .Verify(m => m.CalculateRatingGameResult(rating3Player2, ratingsPlayer2), Times.Once);
-        _ratingGameResultCalculatorMock.VerifyNoOtherCalls();
+        Func<IReadOnlyList<PlayerRating>, bool> isPlayer1Group = l =>
+            l.Count == 2 && l.Contains(player1Rating1) && l.Contains(player1Rating2);
+        Func<IReadOnlyList<PlayerRating>, bool> isPlayer2Group = l =>
+            l.Count == 1 && l.Contains(player2Rating1);
+
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player1Rating1, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer1Group(l))),
+            Times.Once);
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player1Rating2, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer1Group(l))),
+            Times.Once);
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player2Rating1, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer2Group(l))),
+            Times.Once);
 
         _ratingGameResultRepositoryMock
             .Verify(m => m.SaveChanges(), Times.Once);

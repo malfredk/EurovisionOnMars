@@ -67,44 +67,44 @@ public class PlayerGameResultServiceTest
     public async Task CalculatePlayerGameResults()
     {
         // arrange
-        var playerId1 = 10;
-        var playerId2 = 20;
+        var player1Id = 10;
+        var player2Id = 20;
 
-        var playerResult1 = Utils.CreateInitialPlayerGameResult(playerId1);
-        var playerResult2 = Utils.CreateInitialPlayerGameResult(playerId2);
+        var player1Result = Utils.CreateInitialPlayerGameResult(player1Id);
+        var player2Result = Utils.CreateInitialPlayerGameResult(player2Id);
         var playerResults = 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(
             [
-                playerResult1,
-                playerResult2
+                player1Result,
+                player2Result
             ]
         );
 
-        var ratingResult1 = Utils.CreateRatingGameResult(-5, 0);
-        var ratingResult2 = Utils.CreateRatingGameResult(10, -3);
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId1))
-            .ReturnsAsync([ratingResult1]);
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId2))
-            .ReturnsAsync([ratingResult2]);
+        var player1RatingResult = Utils.CreateRatingGameResult(-5, 0);
+        var player2RatingResult = Utils.CreateRatingGameResult(10, -3);
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player1Id))
+            .ReturnsAsync([player1RatingResult]);
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player2Id))
+            .ReturnsAsync([player2RatingResult]);
 
         // act
         await _service.CalculatePlayerGameResults();
 
         // assert
-        Assert.Equal(5, playerResult1.TotalPoints);
-        Assert.Equal(7, playerResult2.TotalPoints);
+        Assert.Equal(5, player1Result.TotalPoints);
+        Assert.Equal(7, player2Result.TotalPoints);
 
-        Assert.Equal(1, playerResult1.Rank);
-        Assert.Equal(2, playerResult2.Rank);
+        Assert.Equal(1, player1Result.Rank);
+        Assert.Equal(2, player2Result.Rank);
 
         _playerResultRepositoryMock
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
 
         _ratingGameResultServiceMock
-            .Verify(m => m.GetRatingGameResults(playerId1), Times.Once);
+            .Verify(m => m.GetRatingGameResults(player1Id), Times.Once);
         _ratingGameResultServiceMock
-            .Verify(m => m.GetRatingGameResults(playerId2), Times.Once);
+            .Verify(m => m.GetRatingGameResults(player2Id), Times.Once);
 
         _playerResultRepositoryMock
             .Verify(m => m.SaveChanges(), Times.Once);
