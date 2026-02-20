@@ -161,5 +161,6 @@ static void AddRatingGameResultsFeature(WebApplicationBuilder builder)
 {
     builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
     builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
+    builder.Services.AddScoped<IRatingGameResultCalculator, RatingGameResultCalculator>();
     builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
 }
