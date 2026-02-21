@@ -23,28 +23,31 @@ public class CountryServiceTest
             _loggerMock.Object);
     }
 
+    // tests for GetCountries
+
     [Fact]
     public async Task GetCountries()
     {
         // arrange
-        var country1 = Utils.CreateInitialCountry(21);
-        var country2 = Utils.CreateInitialCountry(4);
-        var country3 = Utils.CreateInitialCountry(7);
+        var countryNumber21 = Utils.CreateInitialCountry(21);
+        var countryNumber4 = Utils.CreateInitialCountry(4);
+        var countryNumber7 = Utils.CreateInitialCountry(7);
+
         var countries = new List<Country> 
         { 
-            country1,
-            country2,
-            country3
+            countryNumber21,
+            countryNumber4,
+            countryNumber7
         }.ToImmutableList();
-        var expectedCountries = new List<Country>
-        {
-            country2,
-            country3,
-            country1
-        }.ToImmutableList();
-
         _countryRepositoryMock.Setup(m => m.GetCountries())
             .ReturnsAsync(countries);
+
+        var expectedCountries = new List<Country>
+        {
+            countryNumber4,
+            countryNumber7,
+            countryNumber21
+        }.ToImmutableList();
 
         // act
         var actualCountries = await _service.GetCountries();
@@ -55,13 +58,15 @@ public class CountryServiceTest
         _countryRepositoryMock.Verify(m => m.GetCountries(), Times.Once);
     }
 
+    // tests for CreateCountry
+
     [Fact]
     public async Task CreateCountry()
     {
         // arrange
         var countryRequest = CreateCountryRequest();
-        var expectedCountry = Utils.CreateInitialCountry(6);
 
+        var expectedCountry = Utils.CreateInitialCountry();
         _countryRepositoryMock.Setup(m => m.CreateCountry(It.IsAny<Country>()))
             .ReturnsAsync(expectedCountry);
 
@@ -78,26 +83,30 @@ public class CountryServiceTest
             Times.Once);
     }
 
+    // tests for UpdateCountry
+
     [Fact]
     public async Task UpdateCountry()
     {
         // arrange
-        var existingCountry = Utils.CreateInitialCountry(1);
-        var expectedCountry = Utils.CreateInitialCountry(2);
-
+        var fetchedCountry = Utils.CreateInitialCountry(1);
         _countryRepositoryMock.Setup(m => m.GetCountry(Utils.COUNTRY_ID))
-            .ReturnsAsync(existingCountry);
-        _countryRepositoryMock.Setup(m => m.UpdateCountry(existingCountry))
+            .ReturnsAsync(fetchedCountry);
+
+        var expectedCountry = Utils.CreateInitialCountry(2);
+        _countryRepositoryMock.Setup(m => m.UpdateCountry(fetchedCountry))
             .ReturnsAsync(expectedCountry);
 
         // act
         var actualCountry = await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK);
 
         // assert
-        Assert.Equal(Utils.COUNTRY_RANK, existingCountry.ActualRank);
+        Assert.Equal(expectedCountry, actualCountry);
+
+        Assert.Equal(Utils.COUNTRY_RANK, fetchedCountry.ActualRank);
 
         _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
-        _countryRepositoryMock.Verify(m => m.UpdateCountry(existingCountry), Times.Once);
+        _countryRepositoryMock.Verify(m => m.UpdateCountry(fetchedCountry), Times.Once);
     }
 
     [Fact]
@@ -108,11 +117,15 @@ public class CountryServiceTest
             .ReturnsAsync((Country)null);
 
         // act and assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK));
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            async () => await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK)
+        );
 
         _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
         _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
     }
+
+    // helper methods
 
     private NewCountryRequestDto CreateCountryRequest()
     {

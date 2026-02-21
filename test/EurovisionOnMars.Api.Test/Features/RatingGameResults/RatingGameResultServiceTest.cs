@@ -12,6 +12,7 @@ public class RatingGameResultServiceTest
 {
     private readonly Mock<IRatingGameResultRepository> _ratingGameResultRepositoryMock;
     private readonly Mock<IPlayerRatingService> _playerRatingServiceMock;
+    private readonly Mock<IRatingGameResultCalculator> _ratingGameResultCalculatorMock;
     private readonly Mock<ILogger<RatingGameResultService>> _loggerMock;
     private readonly RatingGameResultService _service;
 
@@ -19,20 +20,24 @@ public class RatingGameResultServiceTest
     {
         _ratingGameResultRepositoryMock = new Mock<IRatingGameResultRepository>();
         _playerRatingServiceMock = new Mock<IPlayerRatingService>();
+        _ratingGameResultCalculatorMock = new Mock<IRatingGameResultCalculator>();
         _loggerMock = new Mock<ILogger<RatingGameResultService>>();
 
         _service = new RatingGameResultService(
             _ratingGameResultRepositoryMock.Object,
             _playerRatingServiceMock.Object,
+            _ratingGameResultCalculatorMock.Object,
             _loggerMock.Object);
     }
+
+    // tests for GetRatingGameResults
 
     [Fact]
     public async Task GetRatingGameResults()
     {
         // arrange
-        var ratingGameResult1 = CreateRatingGameResult(1);
-        var ratingGameResult2 = CreateRatingGameResult(2);
+        var ratingGameResult1 = Utils.CreateInitialRatingGameResult();
+        var ratingGameResult2 = Utils.CreateInitialRatingGameResult();
         var ratingGameResults = new List<RatingGameResult>
         {
             ratingGameResult1,
@@ -52,19 +57,27 @@ public class RatingGameResultServiceTest
             .Verify(m => m.GetRatingGameResults(Utils.PLAYER_ID), Times.Once);
     }
 
+    // tests for CalculateRatingGameResults
+
     [Fact]
     public async Task CalculateRatingGameResults()
     {
         // arrange
-        var rating1 = CreatePlayerRating(1, null);
-        var rating2 = CreatePlayerRating(5, 6);
-        var ratings = new List<PlayerRating>
+        var player1Id = 10;
+        var player2Id = 20;
+
+        var player1Rating1 = Utils.CreateInitialPlayerRating(100, player1Id);
+        var player1Rating2 = Utils.CreateInitialPlayerRating(200, player1Id);
+        var player2Rating1 = Utils.CreateInitialPlayerRating(300, player2Id);
+
+        var allRatings = new List<PlayerRating>
         {
-            rating1,
-            rating2
+            player1Rating2,
+            player2Rating1,
+            player1Rating1
         };
         _playerRatingServiceMock.Setup(m => m.GetAllPlayerRatings())
-            .ReturnsAsync(ratings);
+            .ReturnsAsync(allRatings);
 
         // act
         await _service.CalculateRatingGameResults();
@@ -72,127 +85,23 @@ public class RatingGameResultServiceTest
         // assert
         _playerRatingServiceMock
             .Verify(m => m.GetAllPlayerRatings(), Times.Once);
+
+        Func<IReadOnlyList<PlayerRating>, bool> isPlayer1Group = l =>
+            l.Count == 2 && l.Contains(player1Rating1) && l.Contains(player1Rating2);
+        Func<IReadOnlyList<PlayerRating>, bool> isPlayer2Group = l =>
+            l.Count == 1 && l.Contains(player2Rating1);
+
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player1Rating1, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer1Group(l))),
+            Times.Once);
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player1Rating2, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer1Group(l))),
+            Times.Once);
+        _ratingGameResultCalculatorMock.Verify(m =>
+            m.CalculateRatingGameResult(player2Rating1, It.Is<IReadOnlyList<PlayerRating>>(l => isPlayer2Group(l))),
+            Times.Once);
+
         _ratingGameResultRepositoryMock
-            .Verify(m => m.UpdateRatingGameResult(rating1.RatingGameResult), Times.Once);
-        _ratingGameResultRepositoryMock
-            .Verify(m => m.UpdateRatingGameResult(rating2.RatingGameResult), Times.Once);
-    }
-
-    [Theory]
-    [InlineData(1, 9)]
-    [InlineData(null, 26)]
-    [InlineData(10, 0)]
-    [InlineData(20, -10)]
-    public void CalculateRankDifference_Valid(int? calculatedRank, int expectedRankDifference)
-    {
-        // arrange
-        int actualRank = 10;
-        var playerRating = CreatePlayerRating(actualRank, calculatedRank);
-
-        // act
-        _service.CalculateRankDifference(playerRating);
-
-        // assert
-        Assert.Equal(expectedRankDifference, playerRating.RatingGameResult.RankDifference);
-    }
-
-    [Theory]
-    [InlineData(1, -25)]
-    [InlineData(2, -18)]
-    [InlineData(3, -15)]
-    [InlineData(4, -12)]
-    [InlineData(5, -10)]
-    [InlineData(6, -8)]
-    [InlineData(7, -6)]
-    [InlineData(8, -4)]
-    [InlineData(9, -2)]
-    [InlineData(10, -1)]
-    [InlineData(11, 0)]
-    [InlineData(26, 0)]
-    public void CalculateBonusPoints_ZeroRankDifferenceAndUniqueRank(int calculatedRank, int expectedBonusPoints)
-    {
-        // arrange
-        var rating = CreatePlayerRatingWithRankDifference(calculatedRank, 0);
-        var otherRating = CreatePlayerRating(17, 17);
-        var otherRatingWithoutCalculatedRank = Utils.CreateInitialPlayerRating();
-
-        var ratings = new List<PlayerRating>
-        {
-            rating,
-            otherRating,
-            otherRatingWithoutCalculatedRank,
-        };
-
-        // act
-        _service.CalculateBonusPoints(rating, ratings);
-
-        // assert
-        Assert.Equal(expectedBonusPoints, rating.RatingGameResult.BonusPoints);
-    }
-
-    [Fact]
-    public void CalculateBonusPoints_ZeroRankDifferenceAndDuplicateRank()
-    {
-        // arrange
-        var rating = CreatePlayerRatingWithRankDifference(1, 0);
-        var otherRating = CreatePlayerRating(10, 1);
-
-        var ratings = new List<PlayerRating>
-        {
-            rating,
-            otherRating
-        };
-
-        // act
-        _service.CalculateBonusPoints(rating, ratings);
-
-        // assert
-        Assert.Equal(0, rating.RatingGameResult.BonusPoints);
-    }
-
-    [Fact]
-    public void CalculateBonusPoints_NonZeroRankDifference()
-    {
-        // arrange
-        var rating = CreatePlayerRatingWithRankDifference(1, 23);
-
-        var ratings = new List<PlayerRating>
-        {
-            rating
-        };
-
-        // act
-        _service.CalculateBonusPoints(rating, ratings);
-
-        // assert
-        Assert.Equal(0, rating.RatingGameResult.BonusPoints);
-    }
-
-    private RatingGameResult CreateRatingGameResult(int id)
-    {
-        var playerRating = Utils.CreateInitialPlayerRating();
-        return new RatingGameResult(playerRating)
-        {
-            Id = id
-        };
-    }
-
-    private PlayerRating CreatePlayerRating(int actualRank, int? calculatedRank)
-    {
-        var rating = Utils.CreateInitialPlayerRating();
-
-        rating.Country.SetActualRank(actualRank);
-        rating.Prediction.SetCalculatedRank(calculatedRank);
-
-        return rating;
-    }
-
-    private PlayerRating CreatePlayerRatingWithRankDifference(int calculatedRank, int rankDifference)
-    {
-        var rating = CreatePlayerRating(23, calculatedRank);
-
-        rating.RatingGameResult.RankDifference = rankDifference;
-
-        return rating;
+            .Verify(m => m.SaveChanges(), Times.Once);
     }
 }

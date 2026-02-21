@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
 using System.Collections.Immutable;
 
@@ -9,7 +10,6 @@ public interface IPlayerRatingService
     Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetPlayerRatingsByPlayerId(int playerId);
     Task UpdatePlayerRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto);
-    Task UpdatePlayerRating(int id, int rank);
 }
 
 public class PlayerRatingService : IPlayerRatingService
@@ -17,22 +17,19 @@ public class PlayerRatingService : IPlayerRatingService
     private readonly IPlayerRatingRepository _repository;
     private readonly IRatingTimeValidator _ratingTimeValidator;
     private readonly ILogger<PlayerRatingService> _logger;
-    private readonly ISpecialPointsValidator _specialPointsValidator;
-    private readonly IRankHandler _rankHandler;
+    private readonly IPlayerRatingProcessor _playerRatingProcessor;
 
     public PlayerRatingService(
         IPlayerRatingRepository repository,
         IRatingTimeValidator ratingTimeValidator,
         ILogger<PlayerRatingService> logger,
-        ISpecialPointsValidator specialPointsValidator,
-        IRankHandler rankHandler
+        IPlayerRatingProcessor playerRatingProcessor
         )
     {
         _repository = repository;
         _ratingTimeValidator = ratingTimeValidator;
         _logger = logger;
-        _specialPointsValidator = specialPointsValidator;
-        _rankHandler = rankHandler;
+        _playerRatingProcessor = playerRatingProcessor;
     }
 
     public async Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings()
@@ -55,60 +52,18 @@ public class PlayerRatingService : IPlayerRatingService
         _ratingTimeValidator.EnsureRatingIsOpen();
 
         var ratings = await _repository.GetPlayerRatingsForPlayer(id);
-        var rating = ratings.First(r => r.Id == id);
+        var ratingToUpdate = ratings.First(r => r.Id == id);
 
-        UpdatePoints(rating, ratingRequestDto, ratings);
-        var ratingsWithUpdatedRank = _rankHandler.CalculateRanks(ratings);
-        await SaveUpdatedRatings(ratingsWithUpdatedRank);
-    }
+        _playerRatingProcessor.UpdatePlayerRating(ratingRequestDto, ratingToUpdate, ratings);
 
-    public async Task UpdatePlayerRating(int id, int rank)
-    {
-        _ratingTimeValidator.EnsureRatingIsOpen();
-
-        var rating = await GetPlayerRating(id);
-        rating.Prediction.SetCalculatedRank(rank);
-        await _repository.UpdateRating(rating);
+        await _repository.SaveChanges();
     }
 
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
     {
         return ratings
-            .OrderBy(r => r.Prediction.CalculatedRank ?? 100)
+            .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
             .ThenBy(r => r.Country.Number)
             .ToImmutableList();
-    }
-
-    private async Task<PlayerRating> GetPlayerRating(int id)
-    {
-        var rating = await _repository.GetRating(id);
-        if (rating == null)
-        {
-            throw new KeyNotFoundException($"No rating with id={id} exists.");
-        }
-        return rating;
-    }
-
-    private void UpdatePoints(
-        PlayerRating rating,
-        UpdatePlayerRatingRequestDto ratingRequest,  
-        IReadOnlyList<PlayerRating> ratings
-        )
-    {
-        rating.SetPoints(
-            ratingRequest.Category1Points,
-            ratingRequest.Category2Points,
-            ratingRequest.Category3Points
-            );
-        _specialPointsValidator.ValidateSpecialCategoryPoints(rating, ratings);
-    }
-
-    private async Task SaveUpdatedRatings(IReadOnlyList<PlayerRating> ratings)
-    {
-        foreach (var rating in ratings)
-        {
-            _logger.LogDebug("Updating rating with id={id}.", rating.Id);
-            await _repository.UpdateRating(rating);
-        }
     }
 }

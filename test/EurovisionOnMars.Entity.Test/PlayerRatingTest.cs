@@ -37,6 +37,9 @@ public class PlayerRatingTest
 
         // act & assert
         Assert.Throws<ArgumentException>(() => rating.SetPoints(category1Points, category2Points, category3Points));
+        Assert.Null(rating.Category1Points);
+        Assert.Null(rating.Category2Points);
+        Assert.Null(rating.Category3Points);
     }
 
     [Theory]
@@ -50,6 +53,9 @@ public class PlayerRatingTest
 
         // act & assert
         Assert.Throws<ArgumentException>(() => rating.SetPoints(category1Points, category2Points, category3Points));
+        Assert.Null(rating.Category1Points);
+        Assert.Null(rating.Category2Points);
+        Assert.Null(rating.Category3Points);
     }
 
     [Theory]
@@ -63,6 +69,9 @@ public class PlayerRatingTest
 
         // act & assert
         Assert.Throws<ArgumentException>(() => rating.SetPoints(category1Points, category2Points, category3Points));
+        Assert.Null(rating.Category1Points);
+        Assert.Null(rating.Category2Points);
+        Assert.Null(rating.Category3Points);
     }
 
     public static IEnumerable<object[]> InvalidCategoryPointsData =>

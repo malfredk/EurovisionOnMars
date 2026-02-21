@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace EurovisionOnMars.Entity;
 
-public record Player : IdBase
+public class Player : IdBase
 {
     private static int USERNAME_MAX_LENGTH = 12;
     private static string USERNAME_PATTERN = @"^[a-zA-Z0-9æøåÆØÅ]*$";

@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
 public interface IRankHandler
 {
@@ -9,10 +9,19 @@ public interface IRankHandler
 
 public class RankHandler : IRankHandler
 {
+    private readonly ILogger<RankHandler> _logger;
+
+    public RankHandler(
+        ILogger<RankHandler> logger
+        )
+    {
+        _logger = logger;
+    }
+
     public List<PlayerRating> CalculateRanks(IReadOnlyList<PlayerRating> ratings)
     {
-        var orderedRatings = SortRatings(ratings);
-        List<PlayerRating> ratingsWithUpdatedRank = new();
+        var orderedRatings = SortRatingsByDescendingPoints(ratings);
+        List<PlayerRating> ratingsWithCalculatedRank = new();
 
         Prediction? previousPrediction = null;
         for (int i = 0; i < orderedRatings.Count; i++)
@@ -24,23 +33,22 @@ public class RankHandler : IRankHandler
             if (currentPoints == null)
             {
                 break;
-            } 
+            }
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
-                currentPrediction.SetCalculatedRank(previousPrediction.CalculatedRank);
+                currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank!);
             }
             else
             {
                 currentPrediction.SetCalculatedRank(i + 1);
             }
-            ratingsWithUpdatedRank.Add(currentRating);
+            ratingsWithCalculatedRank.Add(currentRating);
             previousPrediction = currentPrediction;
         }
-
-        return ratingsWithUpdatedRank;
+        return ratingsWithCalculatedRank;
     }
 
-    private IReadOnlyList<PlayerRating> SortRatings(IReadOnlyList<PlayerRating> ratings)
+    private IReadOnlyList<PlayerRating> SortRatingsByDescendingPoints(IReadOnlyList<PlayerRating> ratings)
     {
         return ratings
             .OrderByDescending(r => r.Prediction.TotalGivenPoints ?? 0)

@@ -27,28 +27,30 @@ public class PlayerGameResultServiceTest
             );
     }
 
+    // tests for GetPlayerGameResults
+
     [Fact]
     public async Task GetPlayerGameResults()
     {
         // arrange
-        var playerResult1 = CreatePlayerGameResultWithRank(4);
-        var playerResult2 = CreatePlayerGameResultWithRank(null);
-        var playerResult3 = CreatePlayerGameResultWithRank(2);
-
-        var expectedPlayerResults = new List<PlayerGameResult>
-        {
-            playerResult3,
-            playerResult1,
-            playerResult2,
-        }.ToImmutableList();
+        var bestRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 4);
+        var notRankedPlayerGameResult = Utils.CreateInitialPlayerGameResult();
+        var worstRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 10);
 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(new List<PlayerGameResult> 
             { 
-                playerResult1,
-                playerResult2,
-                playerResult3,
+                notRankedPlayerGameResult,
+                worstRankedPlayerGameResult,
+                bestRankedPlayerGameResult,
             });
+
+        var expectedPlayerResults = new List<PlayerGameResult>
+        {
+            bestRankedPlayerGameResult,
+            worstRankedPlayerGameResult,
+            notRankedPlayerGameResult,
+        }.ToImmutableList();
 
         // act
         var actualPlayerResults = await _service.GetPlayerGameResults();
@@ -59,49 +61,56 @@ public class PlayerGameResultServiceTest
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
     }
 
+    // tests for CalculatePlayerGameResults
+
     [Fact]
     public async Task CalculatePlayerGameResults()
     {
         // arrange
-        var playerId1 = 10;
-        var playerId2 = 20;
+        var player1Id = 10;
+        var player2Id = 20;
 
-        var playerResult1 = Utils.CreateInitialPlayerGameResult(playerId1);
-        var playerResult2 = Utils.CreateInitialPlayerGameResult(playerId2);
+        var player1Result = Utils.CreateInitialPlayerGameResult(player1Id);
+        var player2Result = Utils.CreateInitialPlayerGameResult(player2Id);
         var playerResults = 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(
             [
-                playerResult1,
-                playerResult2
+                player1Result,
+                player2Result
             ]
         );
 
-        var ratingResult1 = Utils.CreateRatingGameResult(-5, 0);
-        var ratingResult2 = Utils.CreateRatingGameResult(10, -3);
-
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId1))
-            .ReturnsAsync([ratingResult1]);
-        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(playerId2))
-            .ReturnsAsync([ratingResult2]);
+        var player1RatingResult = Utils.CreateRatingGameResult(-5, 0);
+        var player2RatingResult = Utils.CreateRatingGameResult(10, -3);
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player1Id))
+            .ReturnsAsync([player1RatingResult]);
+        _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player2Id))
+            .ReturnsAsync([player2RatingResult]);
 
         // act
         await _service.CalculatePlayerGameResults();
 
         // assert
+        Assert.Equal(5, player1Result.TotalPoints);
+        Assert.Equal(7, player2Result.TotalPoints);
+
+        Assert.Equal(1, player1Result.Rank);
+        Assert.Equal(2, player2Result.Rank);
+
         _playerResultRepositoryMock
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
 
         _ratingGameResultServiceMock
-            .Verify(m => m.GetRatingGameResults(playerId1), Times.Once);
+            .Verify(m => m.GetRatingGameResults(player1Id), Times.Once);
         _ratingGameResultServiceMock
-            .Verify(m => m.GetRatingGameResults(playerId2), Times.Once);
+            .Verify(m => m.GetRatingGameResults(player2Id), Times.Once);
 
         _playerResultRepositoryMock
-            .Verify(m => m.UpdatePlayerGameResult(playerResult1), Times.Once);
-        _playerResultRepositoryMock
-            .Verify(m => m.UpdatePlayerGameResult(playerResult2), Times.Once);
+            .Verify(m => m.SaveChanges(), Times.Once);
     }
+
+    // tests for CalculateTotalPoints
 
     [Fact]
     public async Task CalculateTotalPoints()
@@ -163,14 +172,16 @@ public class PlayerGameResultServiceTest
         );
     }
 
+    // tests for CalculateRanks
+
     [Fact]
     public void CalculateRanks()
     {
         // arrange
-        var playerResult1 = CreatePlayerGameResultWithPoints(400);
-        var playerResult2 = CreatePlayerGameResultWithPoints(300);
-        var playerResult3 = CreatePlayerGameResultWithPoints(200);
-        var playerResult4 = CreatePlayerGameResultWithPoints(300);
+        var playerResult1 = Utils.CreatePlayerGameResult(400);
+        var playerResult2 = Utils.CreatePlayerGameResult(300);
+        var playerResult3 = Utils.CreatePlayerGameResult(200);
+        var playerResult4 = Utils.CreatePlayerGameResult(300);
         var playerResults = new List<PlayerGameResult>
         {
             playerResult1,
@@ -187,15 +198,5 @@ public class PlayerGameResultServiceTest
         Assert.Equal(playerResult2.Rank, 2);
         Assert.Equal(playerResult3.Rank, 1);
         Assert.Equal(playerResult4.Rank, 2);
-    }
-
-    private PlayerGameResult CreatePlayerGameResultWithRank(int? rank)
-    {
-        return Utils.CreatePlayerGameResult(rank, null);
-    }
-
-    private PlayerGameResult CreatePlayerGameResultWithPoints(int totalPoints)
-    {
-        return Utils.CreatePlayerGameResult(null, totalPoints);
     }
 }

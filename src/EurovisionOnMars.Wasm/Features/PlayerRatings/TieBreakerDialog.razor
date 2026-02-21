@@ -1,0 +1,151 @@
+﻿@using EurovisionOnMars.Dto.PlayerRatings
+@using EurovisionOnMars.Dto.Predictions
+@using MudBlazor.Utilities
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudText>dra og dropp for å rangere land med samme plassering</MudText>
+        
+        <MudDropContainer T="TieRating"
+                          Items="@_orderedRatings"
+                          ItemsSelector="@( (item, zone) => item.Zone == zone )"
+                          ItemDropped="OnItemDropped">
+
+            <ChildContent>
+                <MudPaper>
+                    <MudList>
+                        <MudDropZone T="TieRating"
+                            Identifier="@ZONE_ID"
+                            AllowReorder="true"/>
+                    </MudList>
+                </MudPaper>
+            </ChildContent>
+
+            <ItemRenderer>
+                <MudPaper @key="context.PredictionId">
+                    <MudGrid AlignItems="AlignItems.Center">
+                        <MudItem>
+                            <MudText>
+                                @{
+                                    var showDemotedRanks = _tieBreakAlreadyResolved || _userReordered;
+                                    var displayRank = _calculatedRank + (showDemotedRanks ? context.Order : 0);
+                                }
+                                @(displayRank)
+                            </MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudText>
+                                @context.CountryName
+                            </MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudPaper>
+            </ItemRenderer>
+
+        </MudDropContainer>
+    </DialogContent>
+
+    <DialogActions>
+        <MudIconButton Variant="Variant.Filled" Color="Color.Secondary"
+                       Icon="@Icons.Material.Filled.Check"
+                       Disabled="!_userReordered"
+                       OnClick="SavePredictions">
+        </MudIconButton>
+        <MudIconButton Variant="Variant.Filled" Color="Color.Secondary"
+                       Icon="@Icons.Material.Filled.Close"
+                       OnClick="Cancel">
+        </MudIconButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = default!;
+    [Parameter] public List<PlayerRatingDto> TiedRatings { get; set; } = new();
+
+    private const string ZONE_ID = "TieBreakerZone";
+
+    private int _calculatedRank;
+    private List<TieRating> _orderedRatings = new();
+    private bool _tieBreakAlreadyResolved;
+    private bool _userReordered;
+
+    private sealed class TieRating
+    {
+        public int PredictionId { get; init; }
+        public int Order { get; set; }
+        public required string CountryName { get; init; }
+        public string Zone { get; set; } = ZONE_ID;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _calculatedRank = (int)TiedRatings.FirstOrDefault()!.Prediction!.CalculatedRank!;
+
+        _orderedRatings = TiedRatings
+            .OrderBy(r => r.Prediction.TieBreakDemotion ?? 0)
+            .Select((r, index) => new TieRating
+            {
+                PredictionId = r.Prediction!.Id,
+                Order = index,
+                CountryName = r.Country.Name,
+            })
+            .ToList();
+
+        _tieBreakAlreadyResolved = TiedRatings.Any(r => r.Prediction?.TieBreakDemotion is not null);
+    }
+
+    private void OnItemDropped(MudItemDropInfo<TieRating> dropInfo)
+    {
+        dropInfo.Item.Zone = dropInfo.DropzoneIdentifier;
+        _orderedRatings.UpdateOrder(dropInfo, r => r.Order);
+
+        _orderedRatings = _orderedRatings
+            .OrderBy(r => r.Order)
+            .ToList();
+
+        _userReordered = true;
+
+        StateHasChanged();
+    }
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+
+    private async Task SavePredictions()
+    {
+        var orderedPredictionIds = _orderedRatings
+            .OrderBy(r => r.Order)
+            .Select(r => r.PredictionId)
+            .ToList();
+
+        var request = new ResolveTieBreakRequestDto
+        {
+            OrderedPredictionIds = orderedPredictionIds
+        };
+
+        var response = await Http.PatchAsJsonAsync("/api/Predictions/TieBreakDemotions", request);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("rangering lagret", Severity.Success);
+            Dialog.Close();
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+        {
+            Snackbar.Add("stemming er stengt", Severity.Error);
+            Console.WriteLine($"Failed to update predictions due to: {response.StatusCode}");
+        }
+        else
+        {
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            Console.WriteLine($"Failed to update predictions due to: {response.StatusCode}");
+        }
+    }
+}

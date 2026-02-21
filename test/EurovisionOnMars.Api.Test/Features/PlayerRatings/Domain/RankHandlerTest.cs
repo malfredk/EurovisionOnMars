@@ -1,11 +1,20 @@
-﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.Entity;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Test.Features.PlayerRatings.Domain;
 
 public class RankHandlerTest
 {
-    private readonly IRankHandler _rankHandler = new RankHandler();
+    private readonly Mock<ILogger<RankHandler>> _loggerMock;
+    private readonly IRankHandler _handler;
+
+    public RankHandlerTest()
+    {
+        _loggerMock = new Mock<ILogger<RankHandler>>();
+        _handler = new RankHandler(_loggerMock.Object);
+    }
 
     [Fact]
     public void CalculateRanks()
@@ -32,11 +41,22 @@ public class RankHandlerTest
             rating5Points,
         };
 
+        var expectedRankedRatings = new List<PlayerRating>
+        {
+            rating14Points,
+            rating14Points2,
+            rating5Points2,
+            rating5Points3,
+            rating5Points,
+            rating3Points,
+        };
+
         // act
-        var rankedRatings = _rankHandler.CalculateRanks(ratings);
+        var rankedRatings = _handler.CalculateRanks(ratings);
 
         // assert
         Assert.Equal(6, rankedRatings.Count);
+        Assert.Equal(expectedRankedRatings, rankedRatings);
 
         Assert.Equal(1, rating14Points.Prediction.CalculatedRank);
         Assert.Equal(1, rating14Points2.Prediction.CalculatedRank);
@@ -50,8 +70,10 @@ public class RankHandlerTest
 
     private static PlayerRating CreatePlayerRating(int category1Points)
     {
-        var rating = Utils.CreateInitialPlayerRating();
-        rating.SetPoints(category1Points, 1, 1);
-        return rating;
+        return Utils.CreatePlayerRating(
+            category1Points: category1Points,
+            category2Points: 1,
+            category3Points: 1
+        );
     }
 }

@@ -41,7 +41,7 @@ public class PlayerGameResultService : IPlayerGameResultService
         var playerGameResults = await _playerGameResultRepository.GetPlayerGameResults();
         await CalculateTotalPoints(playerGameResults);
         CalculateRanks(playerGameResults);
-        SavePlayerGameResults(playerGameResults);
+        await _playerGameResultRepository.SaveChanges();
     }
 
     private async Task CalculateTotalPoints(IReadOnlyList<PlayerGameResult> playerGameResults)
@@ -57,7 +57,8 @@ public class PlayerGameResultService : IPlayerGameResultService
         var ratingGameResults = await _ratingGameResultService
             .GetRatingGameResults(playerGameResult.PlayerId);
 
-        playerGameResult.TotalPoints = SumBonusPoints(ratingGameResults) + SumRankDifferences(ratingGameResults);
+        var totalPoints = SumBonusPoints(ratingGameResults) + SumRankDifferences(ratingGameResults);
+        playerGameResult.SetTotalPoints(totalPoints);
     }
 
     private int SumBonusPoints(ImmutableList<RatingGameResult> ratingGameResults)
@@ -84,21 +85,13 @@ public class PlayerGameResultService : IPlayerGameResultService
             var current = orderedPlayerGameResults[i];
             if (previous != null && current.TotalPoints == previous.TotalPoints)
             {
-                current.Rank = previous.Rank;
+                current.SetRank((int)previous.Rank);
             }
             else
             {
-                current.Rank = i+1;
+                current.SetRank(i+1);
             }
             previous = current;
-        }
-    }
-
-    private void SavePlayerGameResults(IReadOnlyList<PlayerGameResult> playerGameResults)
-    {
-        foreach (var playerGameResult in playerGameResults)
-        {
-            _playerGameResultRepository.UpdatePlayerGameResult(playerGameResult);
         }
     }
 }

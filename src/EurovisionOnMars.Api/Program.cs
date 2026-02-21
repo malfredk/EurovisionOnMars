@@ -1,9 +1,12 @@
 using EurovisionOnMars.Api.Configurations;
+using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.GameResults;
 using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
+using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.Predictions;
 using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Entity.DataAccess;
@@ -26,7 +29,9 @@ AddDbContext(builder);
 AddCountriesFeature(builder);
 AddGameResultsFeature(builder);
 AddPlayerGameResultsFeature(builder);
+AddRatingTimeValidator(builder);
 AddPlayerRatingsFeature(builder);
+AddPredictionsFeature(builder);
 AddPlayersFeature(builder);
 AddRatingGameResultsFeature(builder);
 
@@ -127,10 +132,22 @@ static void AddPlayerRatingsFeature(WebApplicationBuilder builder)
     builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
     builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
 
+    builder.Services.AddScoped<IPlayerRatingProcessor, PlayerRatingProcessor>();
     builder.Services.AddScoped<IRankHandler, RankHandler>();
+    builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
+    builder.Services.AddScoped<ITieBreakDemotionHandler, TieBreakDemotionHandler>();
+}
+
+static void AddRatingTimeValidator(WebApplicationBuilder builder)
+{
     builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
     builder.Services.AddScoped<IRatingTimeValidator, RatingTimeValidator>();
-    builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
+}
+
+static void AddPredictionsFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
+    builder.Services.AddScoped<IPredictionService, PredictionService>();
 }
 
 static void AddPlayersFeature(WebApplicationBuilder builder)
@@ -144,5 +161,6 @@ static void AddRatingGameResultsFeature(WebApplicationBuilder builder)
 {
     builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
     builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
+    builder.Services.AddScoped<IRatingGameResultCalculator, RatingGameResultCalculator>();
     builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
 }

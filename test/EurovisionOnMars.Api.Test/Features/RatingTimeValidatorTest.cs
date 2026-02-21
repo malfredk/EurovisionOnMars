@@ -1,9 +1,9 @@
-﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Test.Features;
 
 public class RatingTimeValidatorTest
 {

@@ -2,10 +2,11 @@
 
 namespace EurovisionOnMars.Entity;
 
-public record Prediction : IdBase
+public class Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public int? CalculatedRank { get; private set; }
+    public int? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
     public PlayerRating? PlayerRating { get; private set; }
@@ -15,7 +16,6 @@ public record Prediction : IdBase
     internal Prediction(PlayerRating playerRating)
     {
         PlayerRating = playerRating;
-        PlayerRatingId = playerRating.Id;
     }
 
     internal void CalculateTotalGivenPoints()
@@ -29,12 +29,31 @@ public record Prediction : IdBase
             (PlayerRating.Category3Points ?? 0);
     }
 
-    public void SetCalculatedRank(int? rank)
+    public void SetCalculatedRank(int rank)
     {
         if (rank < 1 || rank > 26)
         {
-            throw new ArgumentException("Rank must be between 1 and 26");
+            throw new ArgumentException("Rank must be at least 1 and no more than 26.");
         }
         CalculatedRank = rank;
+    }
+
+    public void SetTieBreakDemotion(int? tieBreakDemotion)
+    {
+        if (tieBreakDemotion < 0 || tieBreakDemotion > 26)
+        {
+            throw new ArgumentException("TieBreakDemotion must be null, zero or positive and no more than 26.");
+        }
+        TieBreakDemotion = tieBreakDemotion;
+    }
+
+    public int? GetPredictedRank()
+    {
+        int? finalRank = null;
+        if (CalculatedRank.HasValue)
+        {
+            finalRank = CalculatedRank + (TieBreakDemotion ?? 0);
+        }
+        return finalRank;
     }
 }

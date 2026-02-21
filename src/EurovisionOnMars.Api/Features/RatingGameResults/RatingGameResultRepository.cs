@@ -2,14 +2,13 @@
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
-using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
 public interface IRatingGameResultRepository
 {
     Task<ImmutableList<RatingGameResult>> GetRatingGameResults(int playerId);
-    Task<RatingGameResult> UpdateRatingGameResult(RatingGameResult ratingResult);
+    Task SaveChanges();
 }
 
 public class RatingGameResultRepository : IRatingGameResultRepository
@@ -34,11 +33,8 @@ public class RatingGameResultRepository : IRatingGameResultRepository
         return ratingResults.ToImmutableList();
     }
 
-    public async Task<RatingGameResult> UpdateRatingGameResult(RatingGameResult ratingResult)
+    public async Task SaveChanges()
     {
-        _logger.LogDebug("Updating rating result: {ratingResult}.", JsonSerializer.Serialize(ratingResult));
-        var updatedRatingResult = _context.RatingGameResults.Update(ratingResult);
         await _context.SaveChangesAsync();
-        return updatedRatingResult.Entity;
     }
 }

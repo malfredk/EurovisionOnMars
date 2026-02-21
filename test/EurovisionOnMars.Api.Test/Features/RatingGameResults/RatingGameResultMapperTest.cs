@@ -22,8 +22,9 @@ public class RatingGameResultMapperTest
         // assert
         Assert.Equal(RANK_DIFFERENCE, dto.RankDifference);
         Assert.Equal(BONUS_POINTS, dto.BonusPoints);
-        Assert.NotNull(dto.Country);
-        Assert.Equal(Utils.COUNTRY_NAME, dto.Country.Name);
-        Assert.Equal(Utils.COUNTRY_RANK, dto.Country.ActualRank);
+
+        var countryDto = dto.Country;
+        Assert.Equal(Utils.COUNTRY_NAME, countryDto.Name);
+        Assert.Equal(Utils.COUNTRY_RANK, countryDto.ActualRank);
     }
 }
