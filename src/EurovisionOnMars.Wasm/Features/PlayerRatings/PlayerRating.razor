@@ -144,7 +144,12 @@
         var parameters = new DialogParameters<TieBreakerDialog>();
         parameters.Add(x => x.TiedRatings, tiedRatings);
 
-        var dialogResponse = await DialogService.ShowAsync<TieBreakerDialog>($"land på {tiedRating.Prediction.CalculatedRank}. plass", parameters);
+        var options = new DialogOptions
+        {
+            Position = DialogPosition.TopCenter
+        };
+
+        var dialogResponse = await DialogService.ShowAsync<TieBreakerDialog>($"land på {tiedRating.Prediction.CalculatedRank}. plass", parameters, options);
         var dialogResult = await dialogResponse.Result;
         if (!dialogResult.Canceled)
         {
