@@ -120,15 +120,12 @@
 
     private async Task SavePredictions()
     {
-        var orderedPredictionIds = _orderedRatings
-            .OrderBy(r => r.Order)
-            .Select(r => r.PredictionId)
-            .ToList();
-
-        var request = new ResolveTieBreakRequestDto
+        var request = CreateRequest();
+        if (request is null)
         {
-            OrderedPredictionIds = orderedPredictionIds
-        };
+            Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
+            return;
+        }
 
         var response = await Http.PatchAsJsonAsync("/api/Predictions/TieBreakDemotions", request);
         
@@ -147,5 +144,24 @@
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine($"Failed to update predictions due to: {response.StatusCode}");
         }
+    }
+
+    private ResolveTieBreakRequestDto? CreateRequest()
+    {
+        if (_orderedRatings == null || !_orderedRatings.Any())
+        {
+            Console.WriteLine("Ordered ratings is null or empty.");
+            return null;
+        }
+
+        var orderedPredictionIds = _orderedRatings
+            .OrderBy(r => r.Order)
+            .Select(r => r.PredictionId)
+            .ToList();
+
+        return new ResolveTieBreakRequestDto
+        {
+            OrderedPredictionIds = orderedPredictionIds
+        };
     }
 }
