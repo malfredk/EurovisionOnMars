@@ -16,8 +16,7 @@
     @bind-SelectedItem="selectedCountry"
     EditTrigger="TableEditTrigger.RowClick"
     OnCommitEditClick="@(async () => await UpdateRank(selectedCountry))"
-    RowEditPreview="SetBackupRank"
-    RowEditCancel="ResetCountry"
+    RowEditPreview="SetUpdatedRank"
     Class="mb-2">
     <ToolBarContent>
         <MudIconButton
@@ -44,7 +43,7 @@
         <MudTd DataLabel="#">@country.Number</MudTd>
         <MudTd DataLabel="land">@country.Name</MudTd>
         <MudTd DataLabel="plassering">
-            <MudNumericField @bind-Value="@country.ActualRank" Min="1" Max="26"></MudNumericField>
+            <MudNumericField @bind-Value="updatedRank" Min="1" Max="26"></MudNumericField>
         </MudTd>
     </RowEditingTemplate>
 </MudTable>
@@ -52,7 +51,7 @@
 @code {
     public List<CountryDto> Countries = new ();
     private CountryDto? selectedCountry;
-    private int? backupRank;
+    private int? updatedRank;
     private bool disableAddButton = false;
 
     protected override async Task OnInitializedAsync()
@@ -62,16 +61,17 @@
 
     private async Task UpdateRank(CountryDto country)
     {
-        var rank = country.ActualRank;
-        if (rank == null)
+        if (updatedRank == null)
         {
             Snackbar.Add("noe gikk galt, prøv igjen", Severity.Error);
             Console.WriteLine("Rank is null");
+            return;
         }
 
-        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)country.ActualRank!);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)updatedRank!);
         if (response.IsSuccessStatusCode)
         {
+            country.ActualRank = (int)updatedRank!;
             Snackbar.Add("resultat lagret", Severity.Success);
         }
         else
@@ -96,14 +96,9 @@
         }
     }
 
-    private void SetBackupRank(object country)
+    private void SetUpdatedRank(object country)
     {
-        backupRank = ((CountryDto)country).ActualRank;
-    }
-
-    private void ResetCountry(object country)
-    {
-        ((CountryDto)country).ActualRank = backupRank;
+        updatedRank = ((CountryDto)country).ActualRank;
     }
 
     private async Task CreateCountry()
