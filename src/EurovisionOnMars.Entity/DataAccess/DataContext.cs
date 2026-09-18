@@ -18,15 +18,23 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Country>()
-            .HasIndex(e => e.Number)
-            .IsUnique();
-
-        modelBuilder.Entity<Player>()
-            .HasIndex(p => p.Username)
-            .IsUnique();
-
+        ConfigureCountry(modelBuilder);
+        ConfigurePlayer(modelBuilder);
         ConfigurePlayerRating(modelBuilder);
+    }
+
+    private static void ConfigureCountry(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Country>()
+            .HasIndex(country => country.Number)
+            .IsUnique();
+    }
+
+    private static void ConfigurePlayer(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Player>()
+            .HasIndex(player => player.Username)
+            .IsUnique();
     }
 
     private static void ConfigurePlayerRating(ModelBuilder modelBuilder)
