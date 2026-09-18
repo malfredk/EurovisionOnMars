@@ -51,9 +51,9 @@ public class PlayerRatingProcessor : IPlayerRatingProcessor
         )
     {
         ratingToUpdate.SetPoints(
-            ratingRequest.Category1Points,
-            ratingRequest.Category2Points,
-            ratingRequest.Category3Points
+            Points.Create(ratingRequest.Category1Points),
+            Points.Create(ratingRequest.Category2Points),
+            Points.Create(ratingRequest.Category3Points)
             );
         _specialPointsValidator.ValidateSpecialCategoryPoints(ratingToUpdate, ratings);
     }

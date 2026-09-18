@@ -81,7 +81,11 @@ public class Utils
     )
     {
         var rating = CreateInitialPlayerRating();
-        rating.SetPoints(category1Points, category2Points, category3Points);
+        rating.SetPoints(
+            Points.Create(category1Points),
+            Points.Create(category2Points), 
+            Points.Create(category3Points)
+            );
 
         rating.Prediction.SetCalculatedRank(rank);
         rating.Prediction.SetTieBreakDemotion(TIE_BREAK_DEMOTION);

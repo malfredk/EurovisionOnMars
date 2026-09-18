@@ -24,9 +24,9 @@ public class Prediction : IdBase
             throw new InvalidOperationException("Prediction must be linked to a PlayerRating before calculation.");
 
         TotalGivenPoints =
-            (PlayerRating.Category1Points ?? 0) +
-            (PlayerRating.Category2Points ?? 0) +
-            (PlayerRating.Category3Points ?? 0);
+            (PlayerRating.Category1Points?.Value ?? 0) +
+            (PlayerRating.Category2Points?.Value ?? 0) +
+            (PlayerRating.Category3Points?.Value ?? 0);
     }
 
     public void SetCalculatedRank(int rank)
