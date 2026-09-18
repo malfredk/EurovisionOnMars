@@ -32,7 +32,7 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
         }
         else
         {
-            rankDifference = (int)(actualRank - predictedRank);
+            rankDifference = (int)(actualRank.Value - predictedRank);
         }
         rating.RatingGameResult.RankDifference = rankDifference;
     }
@@ -44,7 +44,7 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
     {
         var ratingGameResult = rating.RatingGameResult;
         int bonusPoints;
-        int actualRank = (int)rating.Country.ActualRank;
+        int actualRank = (int)rating.Country!.ActualRank!.Value;
         if (ratingGameResult.RankDifference == 0 && HasUniqueRank(actualRank, ratingsForPlayer))
         {
             bonusPoints = DetermineBonusPoints(actualRank);

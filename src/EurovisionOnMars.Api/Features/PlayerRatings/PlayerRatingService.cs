@@ -63,7 +63,7 @@ public class PlayerRatingService : IPlayerRatingService
     {
         return ratings
             .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
-            .ThenBy(r => r.Country.Number)
+            .ThenBy(r => r.Country!.Number.Value)
             .ToImmutableList();
     }
 }

@@ -146,7 +146,7 @@ public class RatingGameResultCalculatorTest
     )
     {
         var rating = Utils.CreateInitialPlayerRating();
-        rating.Country!.SetActualRank(actualRank);
+        rating.Country!.SetActualRank(CountryPosition.Create(actualRank));
         return rating;
     }
 

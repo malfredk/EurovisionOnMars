@@ -15,9 +15,9 @@ public class CountryMapper : ICountryMapper
         return new CountryDto
         {
             Id = entity.Id,
-            Number = entity.Number,
+            Number = entity.Number.Value,
             Name = entity.Name,
-            ActualRank = entity.ActualRank
+            ActualRank = entity.ActualRank?.Value
         };
     }
 }

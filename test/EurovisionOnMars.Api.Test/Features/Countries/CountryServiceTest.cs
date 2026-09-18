@@ -78,7 +78,7 @@ public class CountryServiceTest
 
         _countryRepositoryMock.Verify(m =>
             m.CreateCountry(It.Is<Country>(c =>
-                c.Number == Utils.COUNTRY_NUMBER &&
+                c.Number.Value == Utils.COUNTRY_NUMBER &&
                 c.Name == Utils.COUNTRY_NAME)),
             Times.Once);
     }
@@ -103,7 +103,7 @@ public class CountryServiceTest
         // assert
         Assert.Equal(expectedCountry, actualCountry);
 
-        Assert.Equal(Utils.COUNTRY_RANK, fetchedCountry.ActualRank);
+        Assert.Equal(Utils.COUNTRY_RANK, fetchedCountry.ActualRank?.Value);
 
         _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
         _countryRepositoryMock.Verify(m => m.UpdateCountry(fetchedCountry), Times.Once);

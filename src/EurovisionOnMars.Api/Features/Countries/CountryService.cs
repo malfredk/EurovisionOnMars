@@ -28,7 +28,7 @@ public class CountryService : ICountryService
     public async Task<ImmutableList<Country>> GetCountries()
     {
         var countries = await _countryRepository.GetCountries();
-        return countries.OrderBy(c => c.Number).ToImmutableList();
+        return countries.OrderBy(c => c.Number.Value).ToImmutableList();
     }
 
     public async Task<Country> CreateCountry(NewCountryRequestDto countryDto)
@@ -40,7 +40,7 @@ public class CountryService : ICountryService
     public async Task<Country> UpdateCountry(int id, int rank)
     {
         var country = await GetCountry(id);
-        country.SetActualRank(rank);
+        country.SetActualRank(CountryPosition.Create(rank));
         return await _countryRepository.UpdateCountry(country);
     }
 
@@ -56,6 +56,6 @@ public class CountryService : ICountryService
 
     private Country CreateCountryEntity(NewCountryRequestDto countryDto)
     {
-        return new Country(countryDto.Number, countryDto.Name);
+        return new Country(CountryPosition.Create(countryDto.Number), countryDto.Name);
     }
 }

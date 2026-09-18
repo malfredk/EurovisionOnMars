@@ -5,8 +5,6 @@ namespace EurovisionOnMars.Entity;
 
 public class Country : IdBase
 {
-    private static int MIN_NUMBER = 1;
-    private static int MAX_NUMBER = 26;
     private static ImmutableList<string> POSSIBLE_PARTICIPANTS =
     [
         "australia",
@@ -59,39 +57,25 @@ public class Country : IdBase
         "monaco"
     ];
 
-    public int Number { get; private set; }
+    public CountryPosition Number { get; private set; }
     public string Name { get; private set; } = null!;
-    public int? ActualRank { get; private set; }
+    public CountryPosition? ActualRank { get; private set; }
     [JsonIgnore]
     public List<PlayerRating>? PlayerRatings { get; }
 
     private Country() { }
 
-    public Country(int number, string name)
+    public Country(CountryPosition number, string name)
     {
-        ValidateNumber(number);
         ValidateName(name);
 
         Number = number;
         Name = name;
     }
 
-    public void SetActualRank(int rank)
+    public void SetActualRank(CountryPosition rank)
     {
-        ValidateNumber(rank);
         ActualRank = rank;
-    }
-
-    private void ValidateNumber(int? number)
-    {
-        var isValid = number != null
-            && number >= MIN_NUMBER
-            && number <= MAX_NUMBER;
-
-        if (!isValid)
-        {
-            throw new ArgumentException("Invalid number or rank for country");
-        }
     }
 
     private void ValidateName(string name)

@@ -27,7 +27,7 @@ public class RatingGameResultMapper : IRatingGameResultMapper
         return new RatingGameResultCountryDto
         {
             Name = country.Name,
-            ActualRank = country.ActualRank
+            ActualRank = country.ActualRank?.Value
         };
     }
 }

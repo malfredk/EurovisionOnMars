@@ -29,7 +29,7 @@ public class Utils
 
     public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
     {
-        return new Country(number, COUNTRY_NAME)
+        return new Country(CountryPosition.Create(number), COUNTRY_NAME)
         {
             Id = COUNTRY_ID
         };
@@ -38,7 +38,7 @@ public class Utils
     public static Country CreateRankedCountry()
     {
         var country = CreateInitialCountry();
-        country.SetActualRank(COUNTRY_RANK);
+        country.SetActualRank(CountryPosition.Create(COUNTRY_RANK));
         return country;
     }
     

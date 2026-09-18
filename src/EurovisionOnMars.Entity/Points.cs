@@ -19,7 +19,7 @@ public sealed record Points
     public static Points Create(int value)
     {
         if (!ValidValues.Contains(value))
-            throw new ArgumentException($"Invalid points amount: {value}");
+            throw new ArgumentException($"Invalid points amount: {value}.");
 
         return new Points(value);
     }

@@ -49,7 +49,7 @@ public class PlayerRatingMapper : IPlayerRatingMapper
 
         return new PlayerRatingCountryDto
         {
-            Number = country.Number,
+            Number = country.Number.Value,
             Name = country.Name
         };
     }

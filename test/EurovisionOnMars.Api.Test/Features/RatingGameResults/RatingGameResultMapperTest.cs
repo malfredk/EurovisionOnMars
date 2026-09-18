@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.RatingGameResults;
+using EurovisionOnMars.Entity;
 
 namespace EurovisionOnMars.Api.Test.Features.RatingGameResults;
 
@@ -14,7 +15,7 @@ public class RatingGameResultMapperTest
     {
         // arrange
         var ratingGameResult = Utils.CreateRatingGameResult(RANK_DIFFERENCE, BONUS_POINTS);
-        ratingGameResult.PlayerRating?.Country?.SetActualRank(Utils.COUNTRY_RANK);
+        ratingGameResult.PlayerRating!.Country!.SetActualRank(CountryPosition.Create(Utils.COUNTRY_RANK));
 
         // act
         var dto = _mapper.ToDto(ratingGameResult);

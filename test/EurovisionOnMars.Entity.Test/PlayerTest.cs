@@ -64,8 +64,8 @@ public class PlayerTest
     {
         return new List<Country>
         {
-            new Country(1, "norge"),
-            new Country(3, "danmark")
+            new Country(CountryPosition.Create(1), "norge"),
+            new Country(CountryPosition.Create(3), "danmark")
         }.ToImmutableList();
     }
 }
