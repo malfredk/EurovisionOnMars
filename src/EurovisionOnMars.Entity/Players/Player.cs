@@ -32,4 +32,26 @@ public class Player : IdBase
             throw new InvalidOperationException("Country list is empty; therefore user cannot be created.");
         }
     }
+
+    public void CalculateTotalPoints() // TODO: test
+    {
+        var totalPoints = PlayerRatings.Sum(rating =>
+        {
+            var result = rating.RatingGameResult
+                ?? throw new InvalidOperationException(
+                    "Rating game result is missing.");
+
+            var bonusPoints = result.BonusPoints
+                ?? throw new InvalidOperationException(
+                    "Bonus points are missing.");
+
+            var rankDifference = result.RankDifference
+                ?? throw new InvalidOperationException(
+                    "Rank difference is missing.");
+
+            return bonusPoints + Math.Abs(rankDifference);
+        });
+
+        PlayerGameResult.SetTotalPoints(totalPoints);
+    }
 }

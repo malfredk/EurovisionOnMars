@@ -37,6 +37,7 @@ public class Prediction : IdBase
 
     public void SetTieBreakDemotion(int? tieBreakDemotion)
     {
+        // TODO: cannot be set if CalculatedRank is null or if CalculatedRank + tieBreakDemotion > 26
         if (tieBreakDemotion < 0 || tieBreakDemotion > 26)
         {
             throw new ArgumentException("TieBreakDemotion must be null, zero or positive and no more than 26.");
