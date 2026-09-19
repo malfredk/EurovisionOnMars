@@ -79,7 +79,7 @@ public class CountryServiceTest
         _countryRepositoryMock.Verify(m =>
             m.CreateCountry(It.Is<Country>(c =>
                 c.Number.Value == Utils.COUNTRY_NUMBER &&
-                c.Name == Utils.COUNTRY_NAME)),
+                c.Name.Value == Utils.COUNTRY_NAME)),
             Times.Once);
     }
 

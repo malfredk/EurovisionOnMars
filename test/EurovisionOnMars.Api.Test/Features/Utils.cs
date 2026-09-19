@@ -29,7 +29,7 @@ public class Utils
 
     public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
     {
-        return new Country(CountryPosition.Create(number), COUNTRY_NAME)
+        return new Country(CountryPosition.Create(number), CountryName.Create(COUNTRY_NAME))
         {
             Id = COUNTRY_ID
         };

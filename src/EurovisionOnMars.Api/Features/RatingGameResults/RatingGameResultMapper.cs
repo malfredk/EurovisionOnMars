@@ -26,7 +26,7 @@ public class RatingGameResultMapper : IRatingGameResultMapper
             ?? throw new Exception("RatingGameResult is missing PlayerRating or related PlayerRating is missing Country.");
         return new RatingGameResultCountryDto
         {
-            Name = country.Name,
+            Name = country.Name.Value,
             ActualRank = country.ActualRank?.Value
         };
     }

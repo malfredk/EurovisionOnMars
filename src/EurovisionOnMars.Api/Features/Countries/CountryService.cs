@@ -56,6 +56,8 @@ public class CountryService : ICountryService
 
     private Country CreateCountryEntity(NewCountryRequestDto countryDto)
     {
-        return new Country(CountryPosition.Create(countryDto.Number), countryDto.Name);
+        CountryPosition number = CountryPosition.Create(countryDto.Number);
+        CountryName name = CountryName.Create(countryDto.Name);
+        return new Country(number, name);
     }
 }
