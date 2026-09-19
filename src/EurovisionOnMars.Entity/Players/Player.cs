@@ -49,7 +49,7 @@ public class Player : IdBase
                 ?? throw new InvalidOperationException(
                     "Rank difference is missing.");
 
-            return bonusPoints + Math.Abs(rankDifference);
+            return bonusPoints.Value + Math.Abs(rankDifference);
         });
 
         PlayerGameResult.SetTotalPoints(totalPoints);

@@ -65,7 +65,7 @@ public class PlayerGameResultService : IPlayerGameResultService
     private int SumBonusPoints(ImmutableList<RatingGameResult> ratingGameResults)
     {
         return ratingGameResults
-            .Sum(r => r.BonusPoints ?? throw new Exception("Missing bonus points"));
+            .Sum(r => r.BonusPoints?.Value ?? throw new Exception("Missing bonus points"));
     }
 
     private int SumRankDifferences(ImmutableList<RatingGameResult> ratingGameResults)

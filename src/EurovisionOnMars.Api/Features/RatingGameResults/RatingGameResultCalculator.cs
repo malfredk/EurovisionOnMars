@@ -44,15 +44,15 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
     )
     {
         var ratingGameResult = rating.RatingGameResult;
-        int bonusPoints;
+        BonusPoints bonusPoints;
         CountryPosition actualRank = rating.Country!.ActualRank!;
         if (ratingGameResult.RankDifference == 0 && HasUniqueRank(actualRank, ratingsForPlayer))
         {
-            bonusPoints = DetermineBonusPoints(actualRank);
+            bonusPoints = BonusPoints.FromRank(actualRank);
         }
         else
         {
-            bonusPoints = 0;
+            bonusPoints = new BonusPoints(0);
         }
         ratingGameResult.BonusPoints = bonusPoints;
     }
@@ -62,34 +62,5 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
         var sameRankCount = ratings
             .Count(r => r.Prediction.GetPredictedRank() == actualRank);
         return sameRankCount == 1;
-    }
-
-    private int DetermineBonusPoints(CountryPosition rank)
-    {
-        switch (rank.Value)
-        {
-            case 1:
-                return -25;
-            case 2:
-                return -18;
-            case 3:
-                return -15;
-            case 4:
-                return -12;
-            case 5:
-                return -10;
-            case 6:
-                return -8;
-            case 7:
-                return -6;
-            case 8:
-                return -4;
-            case 9:
-                return -2;
-            case 10:
-                return -1;
-            default:
-                return 0;
-        }
     }
 }

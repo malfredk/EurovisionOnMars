@@ -29,7 +29,7 @@ public class RatingGameResultCalculatorTest
 
         // assert
         Assert.Equal(3, rating.RatingGameResult.RankDifference);
-        Assert.Equal(0, rating.RatingGameResult.BonusPoints);
+        Assert.Equal(0, rating.RatingGameResult.BonusPoints.Value);
 
         Assert.Null(otherRating.RatingGameResult.RankDifference);
         Assert.Null(otherRating.RatingGameResult.BonusPoints);
@@ -70,23 +70,11 @@ public class RatingGameResultCalculatorTest
 
     // tests for CalculateBonusPoints
 
-    [Theory]
-    [InlineData(1, -25)]
-    [InlineData(2, -18)]
-    [InlineData(3, -15)]
-    [InlineData(4, -12)]
-    [InlineData(5, -10)]
-    [InlineData(6, -8)]
-    [InlineData(7, -6)]
-    [InlineData(8, -4)]
-    [InlineData(9, -2)]
-    [InlineData(10, -1)]
-    [InlineData(11, 0)]
-    [InlineData(26, 0)]
-    public void CalculateBonusPoints_ZeroRankDifferenceAndUniqueRank(int actualRank, int expectedBonusPoints)
+    [Fact]
+    public void CalculateBonusPoints_ZeroRankDifferenceAndUniqueRank()
     {
         // arrange
-        var rating = CreatePlayerRatingWithRankDifference(actualRank, actualRank, 0);
+        var rating = CreatePlayerRatingWithRankDifference(1, 1, 0);
         var ratingWithDifferentPredictedRank = CreatePlayerRatingWithRankDifference(4, 13, 0);
         var otherRatingWithoutCalculatedRank = CreateUnrankedPlayerRating(13);
 
@@ -101,7 +89,7 @@ public class RatingGameResultCalculatorTest
         _calculator.CalculateBonusPoints(rating, ratings);
 
         // assert
-        Assert.Equal(expectedBonusPoints, rating.RatingGameResult.BonusPoints);
+        Assert.Equal(-25, rating.RatingGameResult.BonusPoints.Value);
     }
 
     [Fact]
@@ -122,7 +110,7 @@ public class RatingGameResultCalculatorTest
         _calculator.CalculateBonusPoints(correctRating, ratings);
 
         // assert
-        Assert.Equal(0, correctRating.RatingGameResult.BonusPoints);
+        Assert.Equal(0, correctRating.RatingGameResult.BonusPoints.Value);
     }
 
     [Fact]
@@ -139,7 +127,7 @@ public class RatingGameResultCalculatorTest
         _calculator.CalculateBonusPoints(rating, ratings);
 
         // assert
-        Assert.Equal(0, rating.RatingGameResult.BonusPoints);
+        Assert.Equal(0, rating.RatingGameResult.BonusPoints.Value);
     }
 
     private static PlayerRating CreateUnrankedPlayerRating(

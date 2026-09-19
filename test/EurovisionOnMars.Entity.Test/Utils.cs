@@ -128,24 +128,6 @@ public class Utils
         return rating;
     }
 
-    // rating game result
-
-    public static RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
-    {
-        var ratingGameResult = CreateInitialRatingGameResult();
-
-        ratingGameResult.RankDifference = difference;
-        ratingGameResult.BonusPoints = bonusPoints;
-
-        return ratingGameResult;
-    }
-
-    public static RatingGameResult CreateInitialRatingGameResult()
-    {
-        var player = CreateInitialPlayer();
-        return player.PlayerRatings.First().RatingGameResult;
-    }
-
     // player game result
 
     public static PlayerGameResult CreateInitialPlayerGameResult()

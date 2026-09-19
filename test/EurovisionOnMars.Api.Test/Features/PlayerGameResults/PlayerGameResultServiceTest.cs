@@ -83,7 +83,7 @@ public class PlayerGameResultServiceTest
         );
 
         var player1RatingResult = Utils.CreateRatingGameResult(-5, 0);
-        var player2RatingResult = Utils.CreateRatingGameResult(10, -3);
+        var player2RatingResult = Utils.CreateRatingGameResult(10, -4);
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player1Id))
             .ReturnsAsync([player1RatingResult]);
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player2Id))
@@ -94,7 +94,7 @@ public class PlayerGameResultServiceTest
 
         // assert
         Assert.Equal(5, player1Result.TotalPoints);
-        Assert.Equal(7, player2Result.TotalPoints);
+        Assert.Equal(6, player2Result.TotalPoints);
 
         Assert.Equal(1, player1Result.Rank);
         Assert.Equal(2, player2Result.Rank);
@@ -122,7 +122,7 @@ public class PlayerGameResultServiceTest
         var ratingResults = new List<RatingGameResult> {
             Utils.CreateRatingGameResult(-5, 0),
             Utils.CreateRatingGameResult(100, -25),
-            Utils.CreateRatingGameResult(3, 7),
+            Utils.CreateRatingGameResult(3, 0),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
@@ -131,7 +131,7 @@ public class PlayerGameResultServiceTest
         await _service.CalculateTotalPoints(playerResult);
 
         // assert
-        Assert.Equal(90, playerResult.TotalPoints);
+        Assert.Equal(83, playerResult.TotalPoints);
 
         _ratingGameResultServiceMock
             .Verify(m => m.GetRatingGameResults(Utils.PLAYER_ID), Times.Once);
@@ -144,7 +144,7 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(10, null),
+            Utils.CreateRatingGameResult(10),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
@@ -162,7 +162,7 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(null, 3),
+            Utils.CreateRatingGameResult(null, -4),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);

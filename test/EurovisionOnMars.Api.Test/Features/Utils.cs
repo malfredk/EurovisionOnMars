@@ -139,12 +139,21 @@ public class Utils
 
     // rating game result
 
-    public static RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
+    public static RatingGameResult CreateRatingGameResult(int? difference, int bonusPoints)
+    {
+        var ratingGameResult = CreateRatingGameResult(difference);
+
+        ratingGameResult.RankDifference = difference;
+        ratingGameResult.BonusPoints = new BonusPoints(bonusPoints);
+
+        return ratingGameResult;
+    }
+
+    public static RatingGameResult CreateRatingGameResult(int? difference)
     {
         var ratingGameResult = CreateInitialRatingGameResult();
 
         ratingGameResult.RankDifference = difference;
-        ratingGameResult.BonusPoints = bonusPoints;
 
         return ratingGameResult;
     }

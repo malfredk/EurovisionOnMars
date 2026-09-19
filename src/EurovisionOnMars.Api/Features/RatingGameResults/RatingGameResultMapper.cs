@@ -15,7 +15,7 @@ public class RatingGameResultMapper : IRatingGameResultMapper
         return new RatingGameResultDto
         {
             RankDifference = entity.RankDifference,
-            BonusPoints = entity.BonusPoints,
+            BonusPoints = entity.BonusPoints?.Value,
             Country = ToCountryDto(entity)
         };
     }
