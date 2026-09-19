@@ -49,9 +49,9 @@ public class PlayerRatingProcessorTest
         _processor.UpdatePlayerRating(request, ratingToUpdate, ratings);
 
         // assert
-        Assert.Equal(Utils.CATEGORY1_POINTS, ratingToUpdate.Category1Points!.Value);
-        Assert.Equal(Utils.CATEGORY2_POINTS, ratingToUpdate.Category2Points!.Value);
-        Assert.Equal(Utils.CATEGORY3_POINTS, ratingToUpdate.Category3Points!.Value);
+        Assert.Equal(Utils.CATEGORY1_POINTS, ratingToUpdate.Category1Points);
+        Assert.Equal(Utils.CATEGORY2_POINTS, ratingToUpdate.Category2Points);
+        Assert.Equal(Utils.CATEGORY3_POINTS, ratingToUpdate.Category3Points);
 
         _specialPointsValidator
             .Verify(v => v.ValidateSpecialCategoryPoints(ratingToUpdate, ratings), Times.Once);
@@ -68,7 +68,8 @@ public class PlayerRatingProcessorTest
         var request = Utils.CreateUpdatePlayerRatingRequest();
         var ratingToUpdate = Utils.CreatePlayerRating(
             category1Points: Utils.CATEGORY2_POINTS,
-            category2Points: Utils.CATEGORY1_POINTS
+            category2Points: Utils.CATEGORY1_POINTS,
+            category3Points: Utils.CATEGORY3_POINTS
         );
         var ratings = new List<PlayerRating> { ratingToUpdate };
 
@@ -76,9 +77,9 @@ public class PlayerRatingProcessorTest
         _processor.UpdatePlayerRating(request, ratingToUpdate, ratings);
 
         // assert
-        Assert.Equal(Utils.CATEGORY1_POINTS, ratingToUpdate.Category1Points!.Value);
-        Assert.Equal(Utils.CATEGORY2_POINTS, ratingToUpdate.Category2Points!.Value);
-        Assert.Equal(Utils.CATEGORY3_POINTS, ratingToUpdate.Category3Points!.Value);
+        Assert.Equal(Utils.CATEGORY1_POINTS, ratingToUpdate.Category1Points);
+        Assert.Equal(Utils.CATEGORY2_POINTS, ratingToUpdate.Category2Points);
+        Assert.Equal(Utils.CATEGORY3_POINTS, ratingToUpdate.Category3Points);
 
         _specialPointsValidator
             .Verify(v => v.ValidateSpecialCategoryPoints(ratingToUpdate, ratings), Times.Once);

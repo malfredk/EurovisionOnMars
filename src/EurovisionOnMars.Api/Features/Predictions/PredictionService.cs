@@ -63,7 +63,7 @@ public class PredictionService : IPredictionService
 
         var tiedPredictions = await _repository.GetTiedPredictions(
             firstPrediction.PlayerRating!.PlayerId,
-            (int)firstPrediction.CalculatedRank!);
+            firstPrediction.CalculatedRank!);
 
         return tiedPredictions;
     }

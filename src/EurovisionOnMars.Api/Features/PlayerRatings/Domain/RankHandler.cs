@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity.Players;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
@@ -36,11 +37,11 @@ public class RankHandler : IRankHandler
             }
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
-                currentPrediction.SetCalculatedRank((int)previousPrediction.CalculatedRank!);
+                currentPrediction.SetCalculatedRank(new CountryPosition((int)previousPrediction.CalculatedRank!.Value));
             }
             else
             {
-                currentPrediction.SetCalculatedRank(i + 1);
+                currentPrediction.SetCalculatedRank(new CountryPosition(i + 1));
             }
             ratingsWithCalculatedRank.Add(currentRating);
             previousPrediction = currentPrediction;

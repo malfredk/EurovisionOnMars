@@ -158,7 +158,7 @@ public class RatingGameResultCalculatorTest
     )
     {
         var rating = CreateUnrankedPlayerRating(actualRank);
-        rating.Prediction.SetCalculatedRank(calculatedRank);
+        rating.Prediction.SetCalculatedRank(new CountryPosition(calculatedRank));
         rating.Prediction.SetTieBreakDemotion(tieBreakDemotion);
         return rating;
     }

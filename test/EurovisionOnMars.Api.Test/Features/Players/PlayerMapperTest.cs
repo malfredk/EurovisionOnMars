@@ -16,7 +16,7 @@ public class PlayerMapperTest
         var playerDto = _mapper.ToDto(playerEntity);
 
         // assert
-        Assert.Equal(Utils.PLAYER_USERNAME, playerDto.Username);
+        Assert.Equal(Utils.PLAYER_USERNAME.Value, playerDto.Username);
         Assert.Equal(Utils.PLAYER_ID, playerDto.Id);
     }
 }

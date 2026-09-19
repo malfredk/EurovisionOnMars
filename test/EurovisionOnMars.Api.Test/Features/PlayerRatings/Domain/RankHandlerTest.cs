@@ -58,12 +58,13 @@ public class RankHandlerTest
         Assert.Equal(6, rankedRatings.Count);
         Assert.Equal(expectedRankedRatings, rankedRatings);
 
-        Assert.Equal(1, rating14Points.Prediction.CalculatedRank);
-        Assert.Equal(1, rating14Points2.Prediction.CalculatedRank);
-        Assert.Equal(3, rating5Points.Prediction.CalculatedRank);
-        Assert.Equal(3, rating5Points2.Prediction.CalculatedRank);
-        Assert.Equal(3, rating5Points3.Prediction.CalculatedRank);
-        Assert.Equal(6, rating3Points.Prediction.CalculatedRank);
+        Assert.Equal(1, rating14Points.Prediction.CalculatedRank!.Value);
+        Assert.Equal(1, rating14Points2.Prediction.CalculatedRank!.Value);
+        Assert.Equal(3, rating5Points.Prediction.CalculatedRank!.Value);
+        Assert.Equal(3, rating5Points2.Prediction.CalculatedRank!.Value);
+        Assert.Equal(3, rating5Points3.Prediction.CalculatedRank!.Value);
+        Assert.Equal(6, rating3Points.Prediction.CalculatedRank!.Value);
+
         Assert.Null(ratingMissingPoints.Prediction.CalculatedRank);
         Assert.Null(ratingMissingPoints2.Prediction.CalculatedRank);
     }

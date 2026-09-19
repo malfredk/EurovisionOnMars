@@ -62,7 +62,7 @@ public class PlayerRatingService : IPlayerRatingService
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
     {
         return ratings
-            .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
+            .OrderBy(r => r.Prediction.GetPredictedRank()?.Value ?? 100)
             .ThenBy(r => r.Country!.Number.Value)
             .ToImmutableList();
     }

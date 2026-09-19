@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity.Players;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
@@ -32,7 +33,7 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
         }
         else
         {
-            rankDifference = (int)(actualRank.Value - predictedRank);
+            rankDifference = (int)(actualRank.Value - predictedRank.Value);
         }
         rating.RatingGameResult.RankDifference = rankDifference;
     }
@@ -44,7 +45,7 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
     {
         var ratingGameResult = rating.RatingGameResult;
         int bonusPoints;
-        int actualRank = (int)rating.Country!.ActualRank!.Value;
+        CountryPosition actualRank = rating.Country!.ActualRank!;
         if (ratingGameResult.RankDifference == 0 && HasUniqueRank(actualRank, ratingsForPlayer))
         {
             bonusPoints = DetermineBonusPoints(actualRank);
@@ -56,16 +57,16 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
         ratingGameResult.BonusPoints = bonusPoints;
     }
 
-    private bool HasUniqueRank(int actualRank, IReadOnlyList<PlayerRating> ratings)
+    private bool HasUniqueRank(CountryPosition actualRank, IReadOnlyList<PlayerRating> ratings)
     {
         var sameRankCount = ratings
             .Count(r => r.Prediction.GetPredictedRank() == actualRank);
         return sameRankCount == 1;
     }
 
-    private int DetermineBonusPoints(int rank)
+    private int DetermineBonusPoints(CountryPosition rank)
     {
-        switch (rank)
+        switch (rank.Value)
         {
             case 1:
                 return -25;

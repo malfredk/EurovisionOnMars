@@ -20,20 +20,20 @@ public class PlayerRatingMapperTest
 
         // assert
         Assert.Equal(Utils.RATING_ID, dto.Id);
-        Assert.Equal(Utils.CATEGORY1_POINTS, dto.Category1Points);
-        Assert.Equal(Utils.CATEGORY2_POINTS, dto.Category2Points);
-        Assert.Equal(Utils.CATEGORY3_POINTS, dto.Category3Points);
+        Assert.Equal(Utils.CATEGORY1_POINTS.Value, dto.Category1Points);
+        Assert.Equal(Utils.CATEGORY2_POINTS.Value, dto.Category2Points);
+        Assert.Equal(Utils.CATEGORY3_POINTS.Value, dto.Category3Points);
 
         var predictionDto = dto.Prediction;
         Assert.Equal(PREDICTION_ID, predictionDto.Id);
         Assert.Equal(24, predictionDto.TotalGivenPoints);
-        Assert.Equal(Utils.PREDICTION_CALCULATED_RANK, predictionDto.CalculatedRank);
+        Assert.Equal(Utils.PREDICTION_CALCULATED_RANK.Value, predictionDto.CalculatedRank);
         Assert.Equal(Utils.TIE_BREAK_DEMOTION, predictionDto.TieBreakDemotion);
-        Assert.Equal(Utils.PREDICTION_RANK, predictionDto.PredictedRank);
+        Assert.Equal(Utils.PREDICTION_RANK.Value, predictionDto.PredictedRank);
 
         var countryDto = dto.Country;
-        Assert.Equal(Utils.COUNTRY_NAME, countryDto.Name);
-        Assert.Equal(Utils.COUNTRY_NUMBER, countryDto.Number);
+        Assert.Equal(Utils.COUNTRY_NAME.Value, countryDto.Name);
+        Assert.Equal(Utils.COUNTRY_NUMBER.Value, countryDto.Number);
     }
 
     private static PlayerRating CreatePlayerRating()

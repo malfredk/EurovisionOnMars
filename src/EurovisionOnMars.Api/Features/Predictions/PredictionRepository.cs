@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.DataAccess;
 using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace EurovisionOnMars.Api.Features.Predictions;
 public interface IPredictionRepository
 {
     Task<Prediction?> GetPrediction(int id);
-    Task<List<Prediction>> GetTiedPredictions(int playerId, int calculatedRank);
+    Task<List<Prediction>> GetTiedPredictions(int playerId, CountryPosition calculatedRank);
     Task SaveChanges();
 }
 
@@ -29,7 +30,7 @@ public class PredictionRepository : IPredictionRepository
             .SingleOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<List<Prediction>> GetTiedPredictions(int playerId, int calculatedRank)
+    public async Task<List<Prediction>> GetTiedPredictions(int playerId, CountryPosition calculatedRank)
     {
         return await _dataContext.Predictions
             .Include(p => p.PlayerRating)

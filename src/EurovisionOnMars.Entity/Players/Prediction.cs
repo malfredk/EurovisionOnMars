@@ -1,11 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using EurovisionOnMars.Entity.Countries;
+using System.Text.Json.Serialization;
 
 namespace EurovisionOnMars.Entity.Players;
 
 public class Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
-    public int? CalculatedRank { get; private set; }
+    public CountryPosition? CalculatedRank { get; private set; }
     public int? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
@@ -29,12 +30,8 @@ public class Prediction : IdBase
             (PlayerRating.Category3Points?.Value ?? 0);
     }
 
-    public void SetCalculatedRank(int rank)
+    public void SetCalculatedRank(CountryPosition rank)
     {
-        if (rank < 1 || rank > 26)
-        {
-            throw new ArgumentException("Rank must be at least 1 and no more than 26.");
-        }
         CalculatedRank = rank;
     }
 
@@ -47,13 +44,14 @@ public class Prediction : IdBase
         TieBreakDemotion = tieBreakDemotion;
     }
 
-    public int? GetPredictedRank()
+    public CountryPosition? GetPredictedRank()
     {
-        int? finalRank = null;
-        if (CalculatedRank.HasValue)
+        CountryPosition? predictedRank = null;
+        if (CalculatedRank != null)
         {
-            finalRank = CalculatedRank + (TieBreakDemotion ?? 0);
+            int value = CalculatedRank.Value + (TieBreakDemotion ?? 0);
+            predictedRank = new CountryPosition(value);
         }
-        return finalRank;
+        return predictedRank;
     }
 }
