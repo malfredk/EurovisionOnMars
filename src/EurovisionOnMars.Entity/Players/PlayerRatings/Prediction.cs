@@ -35,23 +35,23 @@ public class Prediction : IdBase
         CalculatedRank = rank;
     }
 
-    public void SetTieBreakDemotion(TieBreakDemotion? tieBreakDemotion)
+    public void ResetTieBreakDemotion()
+    {
+        TieBreakDemotion = null;
+    }
+
+    public void SetTieBreakDemotion(TieBreakDemotion tieBreakDemotion)
     {
         ValidateTieBreakDemotion(tieBreakDemotion);
         TieBreakDemotion = tieBreakDemotion;
     }
 
-    private void ValidateTieBreakDemotion(TieBreakDemotion? tieBreakDemotion)
+    private void ValidateTieBreakDemotion(TieBreakDemotion tieBreakDemotion)
     {
-        if (tieBreakDemotion == null)
-        {
-            return;
-        }
-
         if (CalculatedRank == null)
-            {
-                throw new InvalidOperationException("Cannot set TieBreakDemotion when CalculatedRank is null.");
-            }
+        {
+            throw new InvalidOperationException("Cannot set TieBreakDemotion when CalculatedRank is null.");
+        }
         
         try
         {

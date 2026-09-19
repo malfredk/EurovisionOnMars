@@ -39,13 +39,15 @@ public class PredictionTest
     }
 
     [Fact]
-    public void SetTieBreakDemotion_Null_Valid()
+    public void ResetTieBreakDemotion_Valid()
     {
         // arrange
         var prediction = GetPrediction();
+        prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
+        prediction.SetTieBreakDemotion(Utils.TIE_BREAK_DEMOTION);
 
         // act
-        prediction.SetTieBreakDemotion(null);
+        prediction.ResetTieBreakDemotion();
 
         // assert
         Assert.Null(prediction.TieBreakDemotion);

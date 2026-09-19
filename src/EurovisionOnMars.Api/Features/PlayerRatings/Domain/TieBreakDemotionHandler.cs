@@ -20,7 +20,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
     public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints)
     {
-        ResetTieBreakDemotion(newPrediction);
+        newPrediction.ResetTieBreakDemotion();
 
         var predictionsGroupedByPoints = ratings
             .Select(r => r.Prediction)
@@ -29,11 +29,6 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
         HandleOldPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
         HandleNewPointsGroup(predictionsGroupedByPoints, newPrediction);
-    }
-
-    private void ResetTieBreakDemotion(Prediction prediction)
-    {
-        prediction.SetTieBreakDemotion(null);
     }
 
     private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
@@ -97,7 +92,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
     private void HandleSingletonList(List<Prediction> singlePredictionList)
     {
         var singlePrediction = singlePredictionList.First();
-        ResetTieBreakDemotion(singlePrediction);
+        singlePrediction.ResetTieBreakDemotion();
     }
 
     private bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
