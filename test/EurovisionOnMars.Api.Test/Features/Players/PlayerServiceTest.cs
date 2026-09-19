@@ -101,7 +101,7 @@ public class PlayerServiceTest
 
         // assert
         Assert.Equal(expectedPlayer, actualPlayer);
-        Assert.Equal(Utils.PLAYER_USERNAME, capturedNewPlayer.Username);
+        Assert.Equal(Utils.PLAYER_USERNAME, capturedNewPlayer.Username.Value);
         Assert.Equal(country, capturedNewPlayer.PlayerRatings.First().Country);
         Assert.Single(capturedNewPlayer.PlayerRatings);
 

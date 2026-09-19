@@ -15,7 +15,7 @@ public class PlayerMapper : IPlayerMapper
         return new PlayerDto
         {
             Id = entity.Id,
-            Username = entity.Username
+            Username = entity.Username.Value
         };
     }
 }

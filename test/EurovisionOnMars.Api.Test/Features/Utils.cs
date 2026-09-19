@@ -52,7 +52,7 @@ public class Utils
 
     public static Player CreateInitialPlayer(Country country, int playerId = PLAYER_ID)
     {
-        return new Player(PLAYER_USERNAME, [country])
+        return new Player(new Username(PLAYER_USERNAME), [country])
         {
             Id = playerId
         };

@@ -19,7 +19,7 @@ public class PlayerGameResultMapper : IPlayerGameResultMapper
         {
             Rank = entity.Rank,
             TotalPoints = entity.TotalPoints,
-            PlayerUsername = player.Username
+            PlayerUsername = player.Username.Value
         };
     }
 }

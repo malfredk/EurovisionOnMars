@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Numerics;
 
 namespace EurovisionOnMars.Entity.DataAccess;
 
@@ -71,9 +72,24 @@ public class DataContext : DbContext
 
     private static void ConfigurePlayer(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Player>()
+        var player = modelBuilder.Entity<Player>();
+
+        player
             .HasIndex(player => player.Username)
             .IsUnique();
+
+        var usernameConverter = CreateUsernameConverter();
+        player
+            .Property(player => player.Username)
+            .HasConversion(usernameConverter)
+            .IsRequired();
+    }
+
+    private static ValueConverter<Username, string> CreateUsernameConverter()
+    {
+        return new ValueConverter<Username, string>(
+            username => username.Value,
+            value => new Username(value));
     }
 
     private static void ConfigurePlayerRating(ModelBuilder modelBuilder)

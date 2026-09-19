@@ -4,17 +4,18 @@ namespace EurovisionOnMars.Entity.Test;
 
 public class PlayerTest
 {
+    private static readonly Username Username = new Username("hiæøÅ1278");
+
     [Fact]
     public void Player_Valid() {         
         // arrange
         var countries = GetCountries();
-        var username = "hiæøÅ1278";
 
         // act
-        var player = new Player(username, countries);
+        var player = new Player(Username, countries);
 
         // assert
-        Assert.Equal(username, player.Username);
+        Assert.Equal(Username, player.Username);
         Assert.Equal(countries.Count, player.PlayerRatings.Count);
         Assert.Equal(countries, player.PlayerRatings.Select(pr => pr.Country));
         Assert.All(player.PlayerRatings, pr =>
@@ -28,29 +29,11 @@ public class PlayerTest
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("hei ho")]
-    [InlineData("j*n")]
-    [InlineData("=ndwnfks")]
-    [InlineData("tretten123456")]
-    public void Player_InvalidUsername(string username)
-    {
-        // arrange
-        var countries = GetCountries();
-
-        // act & assert
-        Assert.Throws<ArgumentException>(() => new Player(username, countries));
-    }
-
-    [Theory]
     [MemberData(nameof(NoCountriesTestData))]
     public void Player_MissingCountries_ThrowException(ImmutableList<Country> countries)
     {
-        // arrange
-        var username = "hiæøÅ1278";
-
         // act and assert
-        Assert.Throws<InvalidOperationException>(() => new Player(username, countries));
+        Assert.Throws<InvalidOperationException>(() => new Player(Username, countries));
     }
 
     public static IEnumerable<object[]> NoCountriesTestData =>

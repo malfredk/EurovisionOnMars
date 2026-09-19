@@ -26,7 +26,7 @@ public class PlayerRatingTest
     {
         var country = new Country(new CountryPosition(1), new CountryName("norge"));
         var countries = new List<Country>{ country }.ToImmutableList();
-        var player = new Player("testuser", countries);
+        var player = new Player(new Username("testuser"), countries);
 
         return player.PlayerRatings.First();
     }

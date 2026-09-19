@@ -98,7 +98,7 @@ public class PredictionTest
     private Prediction GetPrediction()
     {
         var countries = new List<Country> { new Country(new CountryPosition(1), new CountryName("norge")) }.ToImmutableList();
-        var player = new Player("testuser", countries);
+        var player = new Player(new Username("testuser"), countries);
 
         return player.PlayerRatings.First().Prediction;
     }
