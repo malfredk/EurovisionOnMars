@@ -3,15 +3,12 @@
 namespace EurovisionOnMars.Entity.Test.Countries;
 
 public class CountryTest
-{
-    private readonly static CountryPosition Number = new CountryPosition(2);
-    private readonly static CountryName Name = new CountryName("norge");
-    
+{    
     [Fact]
     public void SetActualRank_Valid()
     {
         // arrange
-        var country = new Country(Number, Name);
+        var country = Utils.CreateInitialCountry();
         var rank = new CountryPosition(19);
 
         // act

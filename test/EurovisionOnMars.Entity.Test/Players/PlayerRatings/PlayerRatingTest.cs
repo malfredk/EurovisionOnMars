@@ -1,36 +1,19 @@
-﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
-using EurovisionOnMars.Entity.Players.PlayerRatings;
-using System.Collections.Immutable;
-
-namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
+﻿namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
 
 public class PlayerRatingTest
 {
     [Fact]
     public void SetPoints_Valid() {
         // arrange
-        var rating = GetPlayerRating();
-        var category1Points = new Points(2);
-        var category2Points = new Points(5);
-        var category3Points = new Points(3);
+        var rating = Utils.CreateInitialPlayerRating();
 
         // act
-        rating.SetPoints(category1Points, category2Points, category3Points);    
+        rating.SetPoints(Utils.CATEGORY1_POINTS, Utils.CATEGORY2_POINTS, Utils.CATEGORY3_POINTS);    
 
         // assert
-        Assert.Equal(category1Points, rating.Category1Points);
-        Assert.Equal(category2Points, rating.Category2Points);
-        Assert.Equal(category3Points, rating.Category3Points);
-        Assert.Equal(10, rating.Prediction.TotalGivenPoints);
-    }
-
-    private PlayerRating GetPlayerRating()
-    {
-        var country = new Country(new CountryPosition(1), new CountryName("norge"));
-        var countries = new List<Country>{ country }.ToImmutableList();
-        var player = new Player(new Username("testuser"), countries);
-
-        return player.PlayerRatings.First();
+        Assert.Equal(Utils.CATEGORY1_POINTS, rating.Category1Points);
+        Assert.Equal(Utils.CATEGORY2_POINTS, rating.Category2Points);
+        Assert.Equal(Utils.CATEGORY3_POINTS, rating.Category3Points);
+        Assert.Equal(24, rating.Prediction.TotalGivenPoints);
     }
 }

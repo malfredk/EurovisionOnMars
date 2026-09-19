@@ -1,7 +1,5 @@
 ﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
 
@@ -51,16 +49,14 @@ public class PredictionTest
         Assert.Null(prediction.TieBreakDemotion);
     }
 
-    [InlineData(null, 10)]
-    [InlineData(4, 14)]
+    [InlineData(null, 20)]
+    [InlineData(4, 24)]
     [Theory]
     public void GetPredictedRank(int? tieBreakDemotion, int expectedPredictedRankValue)
     {
         // arrange
         var prediction = GetPrediction();
-
-        var calculatedRank = new CountryPosition(10);
-        prediction.SetCalculatedRank(calculatedRank);
+        prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
 
         prediction.SetTieBreakDemotion(tieBreakDemotion);
 
@@ -89,9 +85,7 @@ public class PredictionTest
 
     private Prediction GetPrediction()
     {
-        var countries = new List<Country> { new Country(new CountryPosition(1), new CountryName("norge")) }.ToImmutableList();
-        var player = new Player(new Username("testuser"), countries);
-
-        return player.PlayerRatings.First().Prediction;
+        var playerRating = Utils.CreateInitialPlayerRating();
+        return playerRating.Prediction;
     }
 }
