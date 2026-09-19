@@ -31,6 +31,11 @@ public class DataContext : DbContext
             .HasIndex(country => country.Number)
             .IsUnique();
 
+        var countryNameConverter = CreateCountryNameConverter();
+        country
+            .Property(country => country.Name)
+            .HasConversion(countryNameConverter);
+
 
         var countryNumberConverter = CreateCountryPositionConverter();
         country
@@ -41,6 +46,13 @@ public class DataContext : DbContext
         country
             .Property(country => country.ActualRank)
             .HasConversion(countryRankConverter);
+    }
+
+    private static ValueConverter<CountryName, string> CreateCountryNameConverter()
+    {
+        return new ValueConverter<CountryName, string>(
+            name => name.Value,
+            value => CountryName.Create(value));
     }
 
     private static ValueConverter<CountryPosition, int> CreateCountryPositionConverter()
