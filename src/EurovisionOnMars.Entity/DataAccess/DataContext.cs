@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 

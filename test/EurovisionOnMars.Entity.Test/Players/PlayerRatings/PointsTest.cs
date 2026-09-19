@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Entity.Test.Players;
+namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
 
 public class PointsTests
 {

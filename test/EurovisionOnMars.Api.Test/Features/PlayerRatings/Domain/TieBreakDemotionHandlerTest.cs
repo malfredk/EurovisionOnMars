@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 

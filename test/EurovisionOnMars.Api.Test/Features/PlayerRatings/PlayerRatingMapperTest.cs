@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 

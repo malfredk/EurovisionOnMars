@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.DataAccess;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.EntityFrameworkCore;
 
 namespace EurovisionOnMars.Api.Features.Predictions;

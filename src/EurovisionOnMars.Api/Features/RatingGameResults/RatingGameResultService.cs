@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;

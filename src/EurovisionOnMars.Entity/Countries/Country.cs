@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity.Players;
+﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Text.Json.Serialization;
 
 namespace EurovisionOnMars.Entity.Countries;

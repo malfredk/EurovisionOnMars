@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Entity.Players;
+﻿namespace EurovisionOnMars.Entity.Players.PlayerRatings;
 
 public sealed record Points
 {

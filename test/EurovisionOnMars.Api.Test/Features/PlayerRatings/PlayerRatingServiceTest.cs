@@ -4,7 +4,7 @@ using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
