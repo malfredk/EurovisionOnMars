@@ -13,7 +13,7 @@ public class PlayerGameResultMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = Utils.CreatePlayerGameResult(RANK, POINTS);
+        var entity = Utils.CreatePlayerGameResult(new(RANK), POINTS);
 
         // act
         var dto = _mapper.ToDto(entity);

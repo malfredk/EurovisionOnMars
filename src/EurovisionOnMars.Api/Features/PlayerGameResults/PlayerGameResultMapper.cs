@@ -17,7 +17,7 @@ public class PlayerGameResultMapper : IPlayerGameResultMapper
 
         return new PlayerGameResultDto
         {
-            Rank = entity.Rank,
+            Rank = entity.Rank?.Value,
             TotalPoints = entity.TotalPoints,
             PlayerUsername = player.Username.Value
         };

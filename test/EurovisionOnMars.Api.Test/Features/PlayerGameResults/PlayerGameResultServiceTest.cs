@@ -34,9 +34,9 @@ public class PlayerGameResultServiceTest
     public async Task GetPlayerGameResults()
     {
         // arrange
-        var bestRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 4);
+        var bestRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: new(4));
         var notRankedPlayerGameResult = Utils.CreateInitialPlayerGameResult();
-        var worstRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 10);
+        var worstRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: new(10));
 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(new List<PlayerGameResult> 
@@ -96,8 +96,8 @@ public class PlayerGameResultServiceTest
         Assert.Equal(5, player1Result.TotalPoints);
         Assert.Equal(6, player2Result.TotalPoints);
 
-        Assert.Equal(1, player1Result.Rank);
-        Assert.Equal(2, player2Result.Rank);
+        Assert.Equal(1, player1Result.Rank?.Value);
+        Assert.Equal(2, player2Result.Rank?.Value);
 
         _playerResultRepositoryMock
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
@@ -195,9 +195,9 @@ public class PlayerGameResultServiceTest
         _service.CalculateRanks(playerResults);
 
         // assert
-        Assert.Equal(playerResult1.Rank, 4);
-        Assert.Equal(playerResult2.Rank, 2);
-        Assert.Equal(playerResult3.Rank, 1);
-        Assert.Equal(playerResult4.Rank, 2);
+        Assert.Equal(playerResult1.Rank?.Value, 4);
+        Assert.Equal(playerResult2.Rank?.Value, 2);
+        Assert.Equal(playerResult3.Rank?.Value, 1);
+        Assert.Equal(playerResult4.Rank?.Value, 2);
     }
 }

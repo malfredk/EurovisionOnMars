@@ -21,7 +21,7 @@ public class Utils
     public static readonly CountryPosition PREDICTION_RANK = new(21);
     public const int TIE_BREAK_DEMOTION = 1;
 
-    public const int PLAYER_GAME_RESULT_RANK = 10;
+    public static readonly PlayerRank PLAYER_GAME_RESULT_RANK = new(10);
     public const int PLAYER_GAME_RESULT_POINTS = 300;
 
     // country
@@ -138,22 +138,11 @@ public class Utils
     }
 
     public static PlayerGameResult CreatePlayerGameResult(
-        int totalPoints = PLAYER_GAME_RESULT_RANK
+        int totalPoints = PLAYER_GAME_RESULT_POINTS
     )
     {
         var playerGameResult = CreateInitialPlayerGameResult();
         playerGameResult.SetTotalPoints(totalPoints);
-
-        return playerGameResult;
-    }
-
-    public static PlayerGameResult CreatePlayerGameResult(
-        int rank = PLAYER_GAME_RESULT_RANK, 
-        int totalPoints = PLAYER_GAME_RESULT_RANK
-    )
-    {
-        var playerGameResult = CreatePlayerGameResult(totalPoints);
-        playerGameResult.SetRank(rank);
 
         return playerGameResult;
     }

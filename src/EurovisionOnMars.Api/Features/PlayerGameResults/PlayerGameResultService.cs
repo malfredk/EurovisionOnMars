@@ -33,7 +33,7 @@ public class PlayerGameResultService : IPlayerGameResultService
     {
         var playerGameResults = await _playerGameResultRepository.GetPlayerGameResults();
         return playerGameResults
-            .OrderBy(p => p.Rank ?? int.MaxValue)
+            .OrderBy(p => p.Rank?.Value ?? int.MaxValue)
             .ToImmutableList();
     }
 
@@ -86,11 +86,11 @@ public class PlayerGameResultService : IPlayerGameResultService
             var current = orderedPlayerGameResults[i];
             if (previous != null && current.TotalPoints == previous.TotalPoints)
             {
-                current.SetRank((int)previous.Rank);
+                current.SetRank(previous.Rank!);
             }
             else
             {
-                current.SetRank(i+1);
+                current.SetRank(new PlayerRank(i+1));
             }
             previous = current;
         }
