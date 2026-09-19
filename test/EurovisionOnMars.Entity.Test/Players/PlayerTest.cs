@@ -1,6 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players;
+using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Entity.Test;
+namespace EurovisionOnMars.Entity.Test.Players;
 
 public class PlayerTest
 {

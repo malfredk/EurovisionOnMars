@@ -1,11 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using EurovisionOnMars.Entity.Players;
+using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Countries;
 
 public class Country : IdBase
 {
-    public CountryPosition Number { get; private set; }
-    public CountryName Name { get; private set; }
+    public CountryPosition Number { get; private set; } = null!;
+    public CountryName Name { get; private set; } = null!;
     public CountryPosition? ActualRank { get; private set; }
     [JsonIgnore]
     public List<PlayerRating>? PlayerRatings { get; }

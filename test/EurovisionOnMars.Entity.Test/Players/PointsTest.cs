@@ -1,4 +1,6 @@
-﻿namespace EurovisionOnMars.Entity.Test;
+﻿using EurovisionOnMars.Entity.Players;
+
+namespace EurovisionOnMars.Entity.Test.Players;
 
 public class PointsTests
 {

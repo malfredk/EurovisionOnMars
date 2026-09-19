@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Countries;
 
 public sealed record CountryName
 {

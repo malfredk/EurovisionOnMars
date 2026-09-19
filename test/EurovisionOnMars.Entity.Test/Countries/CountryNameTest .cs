@@ -1,4 +1,6 @@
-﻿namespace EurovisionOnMars.Entity.Test;
+﻿using EurovisionOnMars.Entity.Countries;
+
+namespace EurovisionOnMars.Entity.Test.Countries;
 
 public class CountryNameTest
 {

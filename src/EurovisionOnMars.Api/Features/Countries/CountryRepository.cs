@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;

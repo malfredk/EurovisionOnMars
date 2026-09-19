@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.RatingGameResults;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;

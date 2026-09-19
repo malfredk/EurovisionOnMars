@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 

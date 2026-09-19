@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.Countries;

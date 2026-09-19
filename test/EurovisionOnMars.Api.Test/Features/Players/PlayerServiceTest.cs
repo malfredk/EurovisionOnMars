@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.CustomException;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 

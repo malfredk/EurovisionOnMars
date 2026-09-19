@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;

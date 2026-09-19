@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Entity;
+﻿namespace EurovisionOnMars.Entity.Countries;
 
 public sealed record CountryPosition
 {

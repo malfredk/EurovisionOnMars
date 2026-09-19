@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.Players;
 

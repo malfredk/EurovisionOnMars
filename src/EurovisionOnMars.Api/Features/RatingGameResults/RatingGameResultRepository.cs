@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity;
-using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Entity.DataAccess;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 

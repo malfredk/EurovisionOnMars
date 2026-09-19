@@ -1,6 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using EurovisionOnMars.Entity.Countries;
+using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Players;
 
 public class PlayerRating : IdBase
 {

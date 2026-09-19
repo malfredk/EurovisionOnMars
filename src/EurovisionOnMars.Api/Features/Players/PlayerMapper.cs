@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Players;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.Players;
 

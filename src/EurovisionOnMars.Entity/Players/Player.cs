@@ -1,7 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using EurovisionOnMars.Entity.Countries;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Players;
 
 public class Player : IdBase
 {

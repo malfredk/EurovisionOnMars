@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using EurovisionOnMars.Entity.Players;
 
-namespace EurovisionOnMars.Entity.Test;
+namespace EurovisionOnMars.Entity.Test.Players;
 
 public class UsernameTest
 {

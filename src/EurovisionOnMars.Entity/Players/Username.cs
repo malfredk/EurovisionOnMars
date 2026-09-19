@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Players;
 
 public sealed record Username
 {
