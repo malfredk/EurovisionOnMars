@@ -7,6 +7,6 @@ internal static class CommonConverters
 {
     internal static readonly ValueConverter<CountryPosition?, int?> NullableCountryPositionConverter = 
         new ValueConverter<CountryPosition?, int?>(
-            position => position == null ? null : position.Value,
+            countryPosition => countryPosition == null ? null : countryPosition.Value,
             value => value == null ? null : new CountryPosition(value.Value));
 }

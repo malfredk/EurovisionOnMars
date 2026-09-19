@@ -100,7 +100,8 @@ public class PredictionService : IPredictionService
         {
             var id = request.OrderedPredictionIds[i];
             var prediction = predictionsById[id];
-            prediction.SetTieBreakDemotion(i);
+            TieBreakDemotion tieBreakDemotion = new(i);
+            prediction.SetTieBreakDemotion(tieBreakDemotion);
         }
         await _repository.SaveChanges();
     }

@@ -21,20 +21,20 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
-        var newGroupRating1 = CreatePlayerRating(newPoints, tieBreakDemotion: 0);
-        var newGroupRating2 = CreatePlayerRating(newPoints, tieBreakDemotion: 5);
-        var newGroupRating3 = CreatePlayerRating(newPoints, tieBreakDemotion: 3);
+        var newGroupRating1 = CreatePlayerRating(newPoints, tieBreakDemotion: new(0));
+        var newGroupRating2 = CreatePlayerRating(newPoints, tieBreakDemotion: new(5));
+        var newGroupRating3 = CreatePlayerRating(newPoints, tieBreakDemotion: new(3));
 
         var oldPoints = 4;
-        var oldGroupRating1 = CreatePlayerRating(oldPoints, tieBreakDemotion: 4);
-        var oldGroupRating2 = CreatePlayerRating(oldPoints, tieBreakDemotion: 7);
+        var oldGroupRating1 = CreatePlayerRating(oldPoints, tieBreakDemotion: new(4));
+        var oldGroupRating2 = CreatePlayerRating(oldPoints, tieBreakDemotion: new(7));
 
-        var otherRating1 = CreatePlayerRating(givenPoints: 1, tieBreakDemotion: 2);
+        var otherRating1 = CreatePlayerRating(givenPoints: 1, tieBreakDemotion: new(2));
         var otherRating2 = CreatePlayerRating(givenPoints: 1, tieBreakDemotion: null);
-        var otherRating3 = CreatePlayerRating(givenPoints: 10, tieBreakDemotion: 7);
+        var otherRating3 = CreatePlayerRating(givenPoints: 10, tieBreakDemotion: new(7));
         var otherRating4 = Utils.CreateInitialPlayerRating();
 
         var allRatings = new List<PlayerRating>
@@ -55,18 +55,18 @@ public class TieBreakDemotionHandlerTest
         _handler.CalculateTieBreakDemotions(prediction, allRatings, oldPoints+2);
 
         // assert
-        Assert.Equal(0, prediction.TieBreakDemotion);
+        Assert.Equal(0, prediction.TieBreakDemotion!.Value);
         
-        Assert.Equal(1, newGroupRating1.Prediction.TieBreakDemotion);
-        Assert.Equal(2, newGroupRating3.Prediction.TieBreakDemotion);
-        Assert.Equal(3, newGroupRating2.Prediction.TieBreakDemotion);
+        Assert.Equal(1, newGroupRating1.Prediction.TieBreakDemotion!.Value);
+        Assert.Equal(2, newGroupRating3.Prediction.TieBreakDemotion!.Value);
+        Assert.Equal(3, newGroupRating2.Prediction.TieBreakDemotion!.Value);
 
-        Assert.Equal(0, oldGroupRating1.Prediction.TieBreakDemotion);
-        Assert.Equal(1, oldGroupRating2.Prediction.TieBreakDemotion);
+        Assert.Equal(0, oldGroupRating1.Prediction.TieBreakDemotion!.Value);
+        Assert.Equal(1, oldGroupRating2.Prediction.TieBreakDemotion!.Value);
 
-        Assert.Equal(2, otherRating1.Prediction.TieBreakDemotion);
+        Assert.Equal(2, otherRating1.Prediction.TieBreakDemotion!.Value);
         Assert.Null(otherRating2.Prediction.TieBreakDemotion);
-        Assert.Equal(7, otherRating3.Prediction.TieBreakDemotion);
+        Assert.Equal(7, otherRating3.Prediction.TieBreakDemotion!.Value);
         Assert.Null(otherRating4.Prediction.TieBreakDemotion);
     }
 
@@ -75,10 +75,10 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
-        var otherGroupRating = CreatePlayerRating(4, tieBreakDemotion: 4);
+        var otherGroupRating = CreatePlayerRating(4, tieBreakDemotion: new(4));
 
         var allRatings = new List<PlayerRating>
         {
@@ -99,11 +99,11 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
         var oldPoints = 4;
-        var oldGroupRating = CreatePlayerRating(oldPoints, tieBreakDemotion: 4);
+        var oldGroupRating = CreatePlayerRating(oldPoints, tieBreakDemotion: new(4));
 
         var allRatings = new List<PlayerRating>
         {
@@ -124,7 +124,7 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
         var oldPoints = 4;
@@ -151,10 +151,10 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
-        var otherGroupRating = CreatePlayerRating(4, tieBreakDemotion: 4);
+        var otherGroupRating = CreatePlayerRating(4, tieBreakDemotion: new(4));
 
         var allRatings = new List<PlayerRating>
         {
@@ -174,7 +174,7 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
         var newGroupRating1 = CreatePlayerRating(newPoints, tieBreakDemotion: null);
@@ -201,11 +201,12 @@ public class TieBreakDemotionHandlerTest
     {
         // arrange
         var newPoints = 8;
-        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: 1);
+        var rating = CreatePlayerRating(newPoints, tieBreakDemotion: new(1));
         var prediction = rating.Prediction;
 
         var nullPointRating = Utils.CreateInitialPlayerRating();
-        nullPointRating.Prediction.SetTieBreakDemotion(4);
+        nullPointRating.Prediction.SetCalculatedRank(new(1));
+        nullPointRating.Prediction.SetTieBreakDemotion(new(4));
 
         var allRatings = new List<PlayerRating>
         {
@@ -217,15 +218,16 @@ public class TieBreakDemotionHandlerTest
         _handler.CalculateTieBreakDemotions(prediction, allRatings, null);
 
         // assert
-        Assert.Equal(4, nullPointRating.Prediction.TieBreakDemotion);
+        Assert.Equal(4, nullPointRating.Prediction.TieBreakDemotion!.Value);
     }
 
     public static PlayerRating CreatePlayerRating(
         int givenPoints,
-        int? tieBreakDemotion = null
+        TieBreakDemotion? tieBreakDemotion = null
     )
     {
         var rating = Utils.CreatePlayerRating(1, 1, givenPoints);
+        rating.Prediction.SetCalculatedRank(new(1));
         rating.Prediction.SetTieBreakDemotion(tieBreakDemotion);
         return rating;
     }

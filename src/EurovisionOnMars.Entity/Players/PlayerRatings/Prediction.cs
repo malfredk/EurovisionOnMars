@@ -7,7 +7,7 @@ public class Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
     public CountryPosition? CalculatedRank { get; private set; }
-    public int? TieBreakDemotion { get; private set; }
+    public TieBreakDemotion? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
     public PlayerRating? PlayerRating { get; private set; }
@@ -35,22 +35,47 @@ public class Prediction : IdBase
         CalculatedRank = rank;
     }
 
-    public void SetTieBreakDemotion(int? tieBreakDemotion)
+    public void SetTieBreakDemotion(TieBreakDemotion? tieBreakDemotion)
     {
-        // TODO: cannot be set if CalculatedRank is null or if CalculatedRank + tieBreakDemotion > 26
-        if (tieBreakDemotion < 0 || tieBreakDemotion > 26)
-        {
-            throw new ArgumentException("TieBreakDemotion must be null, zero or positive and no more than 26.");
-        }
+        ValidateTieBreakDemotion(tieBreakDemotion);
         TieBreakDemotion = tieBreakDemotion;
+    }
+
+    private void ValidateTieBreakDemotion(TieBreakDemotion? tieBreakDemotion)
+    {
+        if (tieBreakDemotion == null)
+        {
+            return;
+        }
+
+        if (CalculatedRank == null)
+            {
+                throw new InvalidOperationException("Cannot set TieBreakDemotion when CalculatedRank is null.");
+            }
+        
+        try
+        {
+            CalculatePredictedRank(tieBreakDemotion);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException(
+                "TieBreakDemotion would result in an invalid predicted rank.",
+                ex);
+        }
     }
 
     public CountryPosition? GetPredictedRank()
     {
+        return CalculatePredictedRank(TieBreakDemotion);
+    }
+
+    private CountryPosition? CalculatePredictedRank(TieBreakDemotion? tieBreakDemotion)
+    {
         CountryPosition? predictedRank = null;
         if (CalculatedRank != null)
         {
-            int value = CalculatedRank.Value + (TieBreakDemotion ?? 0);
+            int value = CalculatedRank.Value + (tieBreakDemotion?.Value ?? 0);
             predictedRank = new CountryPosition(value);
         }
         return predictedRank;

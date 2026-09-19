@@ -108,13 +108,14 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
     private void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
     {
         var sortedPredictions = predictionsWithSamePoints
-            .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_SORT_VALUE);
+            .OrderBy(p => p.TieBreakDemotion?.Value ?? DEFAULT_SORT_VALUE);
 
-        int tieBreakDemotion = 0;
+        int tieBreakDemotionValue = 0;
         foreach (var prediction in sortedPredictions)
         {
+            TieBreakDemotion tieBreakDemotion = new(tieBreakDemotionValue);
             prediction.SetTieBreakDemotion(tieBreakDemotion);
-            tieBreakDemotion++;
+            tieBreakDemotionValue++;
         }
     }
 }

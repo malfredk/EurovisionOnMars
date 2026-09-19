@@ -19,15 +19,17 @@ public class PredictionTest
         Assert.Equal(calculatedRank, prediction.CalculatedRank);
     }
 
-    [InlineData(0)]
-    [InlineData(10)]
-    [InlineData(26)]
-    [InlineData(null)]
     [Theory]
-    public void SetTieBreakDemotion_Valid(int? tieBreakDemotion)
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(6)]
+    public void SetTieBreakDemotion_Valid(int value)
     {
         // arrange
         var prediction = GetPrediction();
+        prediction.SetCalculatedRank(new CountryPosition(20));
+
+        var tieBreakDemotion = new TieBreakDemotion(value);
 
         // act
         prediction.SetTieBreakDemotion(tieBreakDemotion);
@@ -36,31 +38,69 @@ public class PredictionTest
         Assert.Equal(tieBreakDemotion, prediction.TieBreakDemotion);
     }
 
-    [InlineData(-1)]
-    [InlineData(27)]
-    [Theory]
-    public void SetTieBreakDemotion_Invalid(int tieBreakDemotion)
+    [Fact]
+    public void SetTieBreakDemotion_Null_Valid()
     {
         // arrange
         var prediction = GetPrediction();
 
-        // act and assert
-        Assert.Throws<ArgumentException>(() => prediction.SetTieBreakDemotion(tieBreakDemotion));
+        // act
+        prediction.SetTieBreakDemotion(null);
+
+        // assert
         Assert.Null(prediction.TieBreakDemotion);
     }
 
-    [InlineData(null, 20)]
-    [InlineData(4, 24)]
+    [Fact]
+    public void SetTieBreakDemotion_NoCalculatedRank_ThrowsInvalidOperationException()
+    {
+        // arrange
+        var prediction = GetPrediction();
+        var tieBreakDemotion = new TieBreakDemotion(1);
+
+        // act and assert
+        Assert.Throws<InvalidOperationException>(
+            () => prediction.SetTieBreakDemotion(tieBreakDemotion));
+
+        Assert.Null(prediction.TieBreakDemotion);
+    }
+
+    [Fact]
+    public void SetTieBreakDemotion_PredictedRankWouldBeInvalid_ThrowsInvalidOperationException()
+    {
+        // arrange
+        var prediction = GetPrediction();
+        prediction.SetCalculatedRank(new CountryPosition(20));
+
+        var tieBreakDemotion = new TieBreakDemotion(7);
+
+        // act and assert
+        Assert.Throws<InvalidOperationException>(
+            () => prediction.SetTieBreakDemotion(tieBreakDemotion));
+
+        Assert.Null(prediction.TieBreakDemotion);
+    }
+
     [Theory]
-    public void GetPredictedRank(int? tieBreakDemotion, int expectedPredictedRankValue)
+    [InlineData(0, 20)]
+    [InlineData(1, 21)]
+    [InlineData(4, 24)]
+    [InlineData(6, 26)]
+    public void GetPredictedRank_WithTieBreakDemotion_ReturnsExpectedRank(
+        int tieBreakDemotionValue,
+        int expectedPredictedRankValue)
     {
         // arrange
         var prediction = GetPrediction();
         prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
 
+        var tieBreakDemotion =
+            new TieBreakDemotion(tieBreakDemotionValue);
+
         prediction.SetTieBreakDemotion(tieBreakDemotion);
 
-        var expectedPredictedRank = new CountryPosition(expectedPredictedRankValue);
+        var expectedPredictedRank =
+            new CountryPosition(expectedPredictedRankValue);
 
         // act
         var actualPredictedRank = prediction.GetPredictedRank();
@@ -70,11 +110,26 @@ public class PredictionTest
     }
 
     [Fact]
-    public void GetPredictedRank_NoCalculatedRank()
+    public void GetPredictedRank_NoTieBreakDemotion_ReturnsCalculatedRank()
     {
         // arrange
         var prediction = GetPrediction();
-        prediction.SetTieBreakDemotion(5);
+        prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
+
+        // act
+        var actualPredictedRank = prediction.GetPredictedRank();
+
+        // assert
+        Assert.Equal(
+            Utils.PREDICTION_CALCULATED_RANK,
+            actualPredictedRank);
+    }
+
+    [Fact]
+    public void GetPredictedRank_NoCalculatedRank_ReturnsNull()
+    {
+        // arrange
+        var prediction = GetPrediction();
 
         // act
         var actualPredictedRank = prediction.GetPredictedRank();

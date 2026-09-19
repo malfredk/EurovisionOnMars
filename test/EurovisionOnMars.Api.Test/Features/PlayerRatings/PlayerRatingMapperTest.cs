@@ -28,7 +28,7 @@ public class PlayerRatingMapperTest
         Assert.Equal(PREDICTION_ID, predictionDto.Id);
         Assert.Equal(24, predictionDto.TotalGivenPoints);
         Assert.Equal(Utils.PREDICTION_CALCULATED_RANK.Value, predictionDto.CalculatedRank);
-        Assert.Equal(Utils.TIE_BREAK_DEMOTION, predictionDto.TieBreakDemotion);
+        Assert.Equal(Utils.TIE_BREAK_DEMOTION!.Value, predictionDto.TieBreakDemotion);
         Assert.Equal(Utils.PREDICTION_RANK.Value, predictionDto.PredictedRank);
 
         var countryDto = dto.Country;

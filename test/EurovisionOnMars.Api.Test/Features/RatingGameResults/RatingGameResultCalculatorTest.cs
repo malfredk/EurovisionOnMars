@@ -45,7 +45,7 @@ public class RatingGameResultCalculatorTest
     {
         // arrange
         int actualRank = 10;
-        var playerRating = CreatePlayerRating(actualRank, calculatedRank, 1);
+        var playerRating = CreatePlayerRating(actualRank, calculatedRank, new(1));
 
         // act
         _calculator.CalculateRankDifference(playerRating);
@@ -142,7 +142,7 @@ public class RatingGameResultCalculatorTest
     private static PlayerRating CreatePlayerRating(
         int actualRank, 
         int calculatedRank,
-        int? tieBreakDemotion = null
+        TieBreakDemotion? tieBreakDemotion = null
     )
     {
         var rating = CreateUnrankedPlayerRating(actualRank);
