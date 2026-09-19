@@ -24,7 +24,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
             .Property(country => country.Number)
             .HasConversion(countryNumberConverter);
 
-        var countryRankConverter = CreateNullableCountryPositionConverter();
+        var countryRankConverter = CommonConverters.NullableCountryPositionConverter;
         country
             .Property(country => country.ActualRank)
             .HasConversion(countryRankConverter);
@@ -42,12 +42,5 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
         return new ValueConverter<CountryPosition, int>(
             position => position.Value,
             value => new CountryPosition(value));
-    }
-
-    private static ValueConverter<CountryPosition?, int?> CreateNullableCountryPositionConverter()
-    {
-        return new ValueConverter<CountryPosition?, int?>(
-            position => position == null ? null : position.Value,
-            value => value == null ? null : new CountryPosition(value.Value));
     }
 }
