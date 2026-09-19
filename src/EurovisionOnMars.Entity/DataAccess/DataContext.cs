@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Numerics;
 
 namespace EurovisionOnMars.Entity.DataAccess;
 
