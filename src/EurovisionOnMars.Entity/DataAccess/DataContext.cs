@@ -52,21 +52,21 @@ public class DataContext : DbContext
     {
         return new ValueConverter<CountryName, string>(
             name => name.Value,
-            value => CountryName.Create(value));
+            value => new CountryName(value));
     }
 
     private static ValueConverter<CountryPosition, int> CreateCountryPositionConverter()
     {
         return new ValueConverter<CountryPosition, int>(
             position => position.Value,
-            value => CountryPosition.Create(value));
+            value => new CountryPosition(value));
     }
 
     private static ValueConverter<CountryPosition?, int?> CreateNullableCountryPositionConverter()
     {
         return new ValueConverter<CountryPosition?, int?>(
             position => position == null ? null : position.Value,
-            value => value == null ? null : CountryPosition.Create(value.Value));
+            value => value == null ? null : new CountryPosition(value.Value));
     }
 
     private static void ConfigurePlayer(ModelBuilder modelBuilder)
@@ -99,6 +99,6 @@ public class DataContext : DbContext
     {
         return new ValueConverter<Points?, int?>(
             points => points == null ? null : points.Value,
-            value => value == null ? null : Points.Create(value.Value));
+            value => value == null ? null : new Points(value.Value));
     }
 }

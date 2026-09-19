@@ -15,7 +15,7 @@ public class PointsTests
     [InlineData(12)]
     public void Create_WithValidValue_ReturnsPoints(int value)
     {
-        var points = Points.Create(value);
+        var points = new Points(value);
 
         Assert.Equal(value, points.Value);
     }
@@ -28,7 +28,7 @@ public class PointsTests
     [InlineData(-1)]
     public void Create_WithInvalidValue_ThrowsException(int value)
     {
-        Assert.Throws<ArgumentException>(() => Points.Create(value));
+        Assert.Throws<ArgumentException>(() => new Points(value));
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class PointsTests
     [InlineData(12)]
     public void IsSpecial_WithSpecialPoints_ReturnsTrue(int value)
     {
-        var points = Points.Create(value);
+        var points = new Points(value);
 
         Assert.True(points.IsSpecial);
     }
@@ -52,7 +52,7 @@ public class PointsTests
     [InlineData(8)]
     public void IsSpecial_WithNonSpecialPoints_ReturnsFalse(int value)
     {
-        var points = Points.Create(value);
+        var points = new Points(value);
 
         Assert.False(points.IsSpecial);
     }

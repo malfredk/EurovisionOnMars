@@ -10,7 +10,7 @@ public class CountryPositionTests
     [InlineData(26)]
     public void Create_WithValidPosition_ReturnsCountryPosition(int value)
     {
-        var position = CountryPosition.Create(value);
+        var position = new CountryPosition(value);
 
         Assert.Equal(value, position.Value);
     }
@@ -23,6 +23,6 @@ public class CountryPositionTests
     public void Create_WithInvalidPosition_ThrowsArgumentException(int value)
     {
         Assert.Throws<ArgumentException>(() =>
-            CountryPosition.Create(value));
+            new CountryPosition(value));
     }
 }

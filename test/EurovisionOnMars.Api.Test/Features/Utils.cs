@@ -29,7 +29,7 @@ public class Utils
 
     public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
     {
-        return new Country(CountryPosition.Create(number), CountryName.Create(COUNTRY_NAME))
+        return new Country(new CountryPosition(number), new CountryName(COUNTRY_NAME))
         {
             Id = COUNTRY_ID
         };
@@ -38,7 +38,7 @@ public class Utils
     public static Country CreateRankedCountry()
     {
         var country = CreateInitialCountry();
-        country.SetActualRank(CountryPosition.Create(COUNTRY_RANK));
+        country.SetActualRank(new CountryPosition(COUNTRY_RANK));
         return country;
     }
     
@@ -82,9 +82,9 @@ public class Utils
     {
         var rating = CreateInitialPlayerRating();
         rating.SetPoints(
-            Points.Create(category1Points),
-            Points.Create(category2Points), 
-            Points.Create(category3Points)
+            new Points(category1Points),
+            new Points(category2Points), 
+            new Points(category3Points)
             );
 
         rating.Prediction.SetCalculatedRank(rank);

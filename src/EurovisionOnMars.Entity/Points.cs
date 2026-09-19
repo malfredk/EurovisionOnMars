@@ -11,17 +11,12 @@ public sealed record Points
 
     public int Value { get; }
 
-    private Points(int value)
-    {
-        Value = value;
-    }
-
-    public static Points Create(int value)
+    public Points(int value)
     {
         if (!ValidValues.Contains(value))
             throw new ArgumentException($"Invalid points amount: {value}.");
 
-        return new Points(value);
+        Value = value;
     }
 
     public bool IsSpecial => SpecialPoints.Contains(Value);

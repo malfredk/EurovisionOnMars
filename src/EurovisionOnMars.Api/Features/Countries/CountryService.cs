@@ -40,7 +40,7 @@ public class CountryService : ICountryService
     public async Task<Country> UpdateCountry(int id, int rank)
     {
         var country = await GetCountry(id);
-        country.SetActualRank(CountryPosition.Create(rank));
+        country.SetActualRank(new CountryPosition(rank));
         return await _countryRepository.UpdateCountry(country);
     }
 
@@ -56,8 +56,8 @@ public class CountryService : ICountryService
 
     private Country CreateCountryEntity(NewCountryRequestDto countryDto)
     {
-        CountryPosition number = CountryPosition.Create(countryDto.Number);
-        CountryName name = CountryName.Create(countryDto.Name);
+        CountryPosition number = new CountryPosition(countryDto.Number);
+        CountryName name =  new CountryName(countryDto.Name);
         return new Country(number, name);
     }
 }

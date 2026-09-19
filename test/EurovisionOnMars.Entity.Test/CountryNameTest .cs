@@ -9,7 +9,7 @@ public class CountryNameTest
     public void CountryName_Valid(string name)
     {
         // acts
-        var countryName = CountryName.Create(name);
+        var countryName = new CountryName(name);
 
         // assert
         Assert.Equal(name, countryName.Value);
@@ -23,6 +23,6 @@ public class CountryNameTest
     public void CountryName_Invalid(string name)
     {
         // act & assert
-        Assert.Throws<ArgumentException>(() => CountryName.Create(name));
+        Assert.Throws<ArgumentException>(() => new CountryName(name));
     }
 }

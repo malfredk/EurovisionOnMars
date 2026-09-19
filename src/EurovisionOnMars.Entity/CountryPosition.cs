@@ -7,16 +7,11 @@ public sealed record CountryPosition
 
     public int Value { get; }
 
-    private CountryPosition(int value)
-    {
-        Value = value;
-    }
-
-    public static CountryPosition Create(int value)
+    public CountryPosition(int value)
     {
         if (value < MinValue || value > MaxValue)
             throw new ArgumentException($"Invalid country position: {value}.");
 
-        return new CountryPosition(value);
+        Value = value;
     }
 }

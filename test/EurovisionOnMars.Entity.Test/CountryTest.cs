@@ -2,15 +2,15 @@
 
 public class CountryTest
 {
-    private readonly static CountryPosition Number = CountryPosition.Create(2);
-    private readonly static CountryName Name = CountryName.Create("norge");
+    private readonly static CountryPosition Number = new CountryPosition(2);
+    private readonly static CountryName Name = new CountryName("norge");
     
     [Fact]
     public void SetActualRank_Valid()
     {
         // arrange
         var country = new Country(Number, Name);
-        var rank = CountryPosition.Create(19);
+        var rank = new CountryPosition(19);
 
         // act
         country.SetActualRank(rank);

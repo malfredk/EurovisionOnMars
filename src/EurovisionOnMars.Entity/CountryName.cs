@@ -6,12 +6,7 @@ public sealed record CountryName
 {
     public string Value { get; }
 
-    private CountryName(string value)
-    {
-        Value = value;
-    }
-
-    public static CountryName Create(string value)
+    public CountryName(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
@@ -22,7 +17,7 @@ public sealed record CountryName
                 $"'{value}' is not a valid country name.",
                 nameof(value));
 
-        return new CountryName(normalized);
+        Value = normalized;
     }
 
     private static readonly ImmutableHashSet<string> ValidNames = [

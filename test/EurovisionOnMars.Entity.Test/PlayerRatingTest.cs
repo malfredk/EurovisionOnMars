@@ -8,9 +8,9 @@ public class PlayerRatingTest
     public void SetPoints_Valid() {
         // arrange
         var rating = GetPlayerRating();
-        var category1Points = Points.Create(2);
-        var category2Points = Points.Create(5);
-        var category3Points = Points.Create(3);
+        var category1Points = new Points(2);
+        var category2Points = new Points(5);
+        var category3Points = new Points(3);
 
         // act
         rating.SetPoints(category1Points, category2Points, category3Points);    
@@ -24,7 +24,7 @@ public class PlayerRatingTest
 
     private PlayerRating GetPlayerRating()
     {
-        var country = new Country(CountryPosition.Create(1), CountryName.Create("norge"));
+        var country = new Country(new CountryPosition(1), new CountryName("norge"));
         var countries = new List<Country>{ country }.ToImmutableList();
         var player = new Player("testuser", countries);
 
