@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
@@ -62,8 +62,8 @@ public class PlayerRatingService : IPlayerRatingService
     private ImmutableList<PlayerRating> SortRatings(ImmutableList<PlayerRating> ratings)
     {
         return ratings
-            .OrderBy(r => r.Prediction.GetPredictedRank() ?? 100)
-            .ThenBy(r => r.Country.Number)
+            .OrderBy(r => r.Prediction.GetPredictedRank()?.Value ?? 100)
+            .ThenBy(r => r.Country!.Number.Value)
             .ToImmutableList();
     }
 }

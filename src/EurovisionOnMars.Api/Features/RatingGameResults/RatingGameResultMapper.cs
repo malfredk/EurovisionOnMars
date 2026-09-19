@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.RatingGameResults;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
@@ -15,7 +15,7 @@ public class RatingGameResultMapper : IRatingGameResultMapper
         return new RatingGameResultDto
         {
             RankDifference = entity.RankDifference,
-            BonusPoints = entity.BonusPoints,
+            BonusPoints = entity.BonusPoints?.Value,
             Country = ToCountryDto(entity)
         };
     }
@@ -26,8 +26,8 @@ public class RatingGameResultMapper : IRatingGameResultMapper
             ?? throw new Exception("RatingGameResult is missing PlayerRating or related PlayerRating is missing Country.");
         return new RatingGameResultCountryDto
         {
-            Name = country.Name,
-            ActualRank = country.ActualRank
+            Name = country.Name.Value,
+            ActualRank = country.ActualRank?.Value
         };
     }
 }

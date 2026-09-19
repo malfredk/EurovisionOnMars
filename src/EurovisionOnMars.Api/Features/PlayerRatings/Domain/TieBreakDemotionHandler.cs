@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 

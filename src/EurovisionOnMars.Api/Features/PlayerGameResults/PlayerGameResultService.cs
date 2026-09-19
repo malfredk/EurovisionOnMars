@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.RatingGameResults;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.PlayerGameResults;
@@ -32,7 +33,7 @@ public class PlayerGameResultService : IPlayerGameResultService
     {
         var playerGameResults = await _playerGameResultRepository.GetPlayerGameResults();
         return playerGameResults
-            .OrderBy(p => p.Rank ?? int.MaxValue)
+            .OrderBy(p => p.Rank?.Value ?? int.MaxValue)
             .ToImmutableList();
     }
 
@@ -64,7 +65,7 @@ public class PlayerGameResultService : IPlayerGameResultService
     private int SumBonusPoints(ImmutableList<RatingGameResult> ratingGameResults)
     {
         return ratingGameResults
-            .Sum(r => r.BonusPoints ?? throw new Exception("Missing bonus points"));
+            .Sum(r => r.BonusPoints?.Value ?? throw new Exception("Missing bonus points"));
     }
 
     private int SumRankDifferences(ImmutableList<RatingGameResult> ratingGameResults)
@@ -85,11 +86,11 @@ public class PlayerGameResultService : IPlayerGameResultService
             var current = orderedPlayerGameResults[i];
             if (previous != null && current.TotalPoints == previous.TotalPoints)
             {
-                current.SetRank((int)previous.Rank);
+                current.SetRank(previous.Rank!);
             }
             else
             {
-                current.SetRank(i+1);
+                current.SetRank(new PlayerRank(i+1));
             }
             previous = current;
         }

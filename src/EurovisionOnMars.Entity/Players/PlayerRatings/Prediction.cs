@@ -1,11 +1,12 @@
-﻿using System.Text.Json.Serialization;
+﻿using EurovisionOnMars.Entity.Countries;
+using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Players.PlayerRatings;
 
 public class Prediction : IdBase
 {
     public int? TotalGivenPoints { get; private set; }
-    public int? CalculatedRank { get; private set; }
+    public CountryPosition? CalculatedRank { get; private set; }
     public int? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
@@ -24,22 +25,19 @@ public class Prediction : IdBase
             throw new InvalidOperationException("Prediction must be linked to a PlayerRating before calculation.");
 
         TotalGivenPoints =
-            (PlayerRating.Category1Points ?? 0) +
-            (PlayerRating.Category2Points ?? 0) +
-            (PlayerRating.Category3Points ?? 0);
+            (PlayerRating.Category1Points?.Value ?? 0) +
+            (PlayerRating.Category2Points?.Value ?? 0) +
+            (PlayerRating.Category3Points?.Value ?? 0);
     }
 
-    public void SetCalculatedRank(int rank)
+    public void SetCalculatedRank(CountryPosition rank)
     {
-        if (rank < 1 || rank > 26)
-        {
-            throw new ArgumentException("Rank must be at least 1 and no more than 26.");
-        }
         CalculatedRank = rank;
     }
 
     public void SetTieBreakDemotion(int? tieBreakDemotion)
     {
+        // TODO: cannot be set if CalculatedRank is null or if CalculatedRank + tieBreakDemotion > 26
         if (tieBreakDemotion < 0 || tieBreakDemotion > 26)
         {
             throw new ArgumentException("TieBreakDemotion must be null, zero or positive and no more than 26.");
@@ -47,13 +45,14 @@ public class Prediction : IdBase
         TieBreakDemotion = tieBreakDemotion;
     }
 
-    public int? GetPredictedRank()
+    public CountryPosition? GetPredictedRank()
     {
-        int? finalRank = null;
-        if (CalculatedRank.HasValue)
+        CountryPosition? predictedRank = null;
+        if (CalculatedRank != null)
         {
-            finalRank = CalculatedRank + (TieBreakDemotion ?? 0);
+            int value = CalculatedRank.Value + (TieBreakDemotion ?? 0);
+            predictedRank = new CountryPosition(value);
         }
-        return finalRank;
+        return predictedRank;
     }
 }

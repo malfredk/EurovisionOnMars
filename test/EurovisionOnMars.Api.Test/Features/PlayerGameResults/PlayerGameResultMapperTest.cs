@@ -13,7 +13,7 @@ public class PlayerGameResultMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = Utils.CreatePlayerGameResult(RANK, POINTS);
+        var entity = Utils.CreatePlayerGameResult(new(RANK), POINTS);
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -21,6 +21,6 @@ public class PlayerGameResultMapperTest
         // assert
         Assert.Equal(RANK, dto.Rank);
         Assert.Equal(POINTS, dto.TotalPoints);
-        Assert.Equal(Utils.PLAYER_USERNAME, dto.PlayerUsername);
+        Assert.Equal(Utils.PLAYER_USERNAME.Value, dto.PlayerUsername);
     }
 }

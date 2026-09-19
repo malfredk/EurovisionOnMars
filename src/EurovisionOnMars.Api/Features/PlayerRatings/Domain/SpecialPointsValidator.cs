@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
@@ -18,9 +18,9 @@ public class SpecialPointsValidator : ISpecialPointsValidator
 
     public void ValidateSpecialCategoryPoints(PlayerRating editedRating, IReadOnlyList<PlayerRating> ratings)
     {
-        Func<PlayerRating, int?> category1PointsGetter = r => r.Category1Points;
-        Func<PlayerRating, int?> category2PointsGetter = r => r.Category2Points;
-        Func<PlayerRating, int?> category3PointsGetter = r => r.Category3Points;
+        Func<PlayerRating, int?> category1PointsGetter = r => r.Category1Points?.Value;
+        Func<PlayerRating, int?> category2PointsGetter = r => r.Category2Points?.Value;
+        Func<PlayerRating, int?> category3PointsGetter = r => r.Category3Points?.Value;
 
         _logger.LogDebug("Validating points in rating for category 1.");
         ValidateSpecialCategoryPoints(editedRating, ratings, category1PointsGetter);
@@ -39,7 +39,7 @@ public class SpecialPointsValidator : ISpecialPointsValidator
         )
     {
         var points = (int)categoryPointsGetter(editedRating)!;
-        if (!PlayerRating.SPECIAL_POINTS.Contains(points))
+        if (!Points.SpecialPoints.Contains(points))
         {
             _logger.LogDebug("Skipping validation since edited rating does not have special points in this category.");
             return;

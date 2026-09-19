@@ -1,16 +1,15 @@
-﻿using System.Collections.Immutable;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Entity.Test;
+namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
 
 public class PredictionTest
 {
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(26)]
-    [Theory]
-    public void SetCalculatedRank_Valid(int calculatedRank)
+    [Fact]
+    public void SetCalculatedRank_Valid()
     {
         // arrange
+        var calculatedRank = new CountryPosition(2);
         var prediction = GetPrediction();
 
         // act
@@ -18,20 +17,6 @@ public class PredictionTest
 
         // assert
         Assert.Equal(calculatedRank, prediction.CalculatedRank);
-    }
-
-    [InlineData(0)]
-    [InlineData(-1)]
-    [InlineData(27)]
-    [Theory]
-    public void SetCalculatedRank_Invalid(int calculatedRank)
-    {
-        // arrange
-        var prediction = GetPrediction();
-
-        // act and assert
-        Assert.Throws<ArgumentException>(() => prediction.SetCalculatedRank(calculatedRank));
-        Assert.Null(prediction.CalculatedRank);
     }
 
     [InlineData(0)]
@@ -64,15 +49,18 @@ public class PredictionTest
         Assert.Null(prediction.TieBreakDemotion);
     }
 
-    [InlineData(10, null, 10)]
-    [InlineData(10, 4, 14)]
+    [InlineData(null, 20)]
+    [InlineData(4, 24)]
     [Theory]
-    public void GetPredictedRank(int calculatedRank, int? tieBreakDemotion, int expectedPredictedRank)
+    public void GetPredictedRank(int? tieBreakDemotion, int expectedPredictedRankValue)
     {
         // arrange
         var prediction = GetPrediction();
-        prediction.SetCalculatedRank(calculatedRank);
+        prediction.SetCalculatedRank(Utils.PREDICTION_CALCULATED_RANK);
+
         prediction.SetTieBreakDemotion(tieBreakDemotion);
+
+        var expectedPredictedRank = new CountryPosition(expectedPredictedRankValue);
 
         // act
         var actualPredictedRank = prediction.GetPredictedRank();
@@ -97,9 +85,7 @@ public class PredictionTest
 
     private Prediction GetPrediction()
     {
-        var countries = new List<Country> { new Country(1, "norge") }.ToImmutableList();
-        var player = new Player("testuser", countries);
-
-        return player.PlayerRatings.First().Prediction;
+        var playerRating = Utils.CreateInitialPlayerRating();
+        return playerRating.Prediction;
     }
 }

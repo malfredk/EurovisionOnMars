@@ -5,7 +5,7 @@ namespace EurovisionOnMars.Api.Test.Features.RatingGameResults;
 public class RatingGameResultMapperTest
 {
     private const int RANK_DIFFERENCE = 30;
-    private const int BONUS_POINTS = 500;
+    private const int BONUS_POINTS = -4;
 
     private readonly RatingGameResultMapper _mapper = new RatingGameResultMapper();
 
@@ -14,7 +14,7 @@ public class RatingGameResultMapperTest
     {
         // arrange
         var ratingGameResult = Utils.CreateRatingGameResult(RANK_DIFFERENCE, BONUS_POINTS);
-        ratingGameResult.PlayerRating?.Country?.SetActualRank(Utils.COUNTRY_RANK);
+        ratingGameResult.PlayerRating!.Country!.SetActualRank(Utils.COUNTRY_RANK);
 
         // act
         var dto = _mapper.ToDto(ratingGameResult);
@@ -24,7 +24,7 @@ public class RatingGameResultMapperTest
         Assert.Equal(BONUS_POINTS, dto.BonusPoints);
 
         var countryDto = dto.Country;
-        Assert.Equal(Utils.COUNTRY_NAME, countryDto.Name);
-        Assert.Equal(Utils.COUNTRY_RANK, countryDto.ActualRank);
+        Assert.Equal(Utils.COUNTRY_NAME.Value, countryDto.Name);
+        Assert.Equal(Utils.COUNTRY_RANK.Value, countryDto.ActualRank);
     }
 }

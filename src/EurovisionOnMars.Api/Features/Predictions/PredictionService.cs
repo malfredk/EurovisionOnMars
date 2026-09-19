@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Predictions;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
 
@@ -63,7 +63,7 @@ public class PredictionService : IPredictionService
 
         var tiedPredictions = await _repository.GetTiedPredictions(
             firstPrediction.PlayerRating!.PlayerId,
-            (int)firstPrediction.CalculatedRank!);
+            firstPrediction.CalculatedRank!);
 
         return tiedPredictions;
     }

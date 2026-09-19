@@ -1,5 +1,7 @@
 ﻿using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
@@ -51,9 +53,9 @@ public class PlayerRatingProcessor : IPlayerRatingProcessor
         )
     {
         ratingToUpdate.SetPoints(
-            ratingRequest.Category1Points,
-            ratingRequest.Category2Points,
-            ratingRequest.Category3Points
+            new Points(ratingRequest.Category1Points),
+            new Points(ratingRequest.Category2Points),
+            new Points(ratingRequest.Category3Points)
             );
         _specialPointsValidator.ValidateSpecialCategoryPoints(ratingToUpdate, ratings);
     }

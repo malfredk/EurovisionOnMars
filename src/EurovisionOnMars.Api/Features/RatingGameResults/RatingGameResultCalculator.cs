@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.RatingGameResults;
 
@@ -32,7 +33,7 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
         }
         else
         {
-            rankDifference = (int)(actualRank - predictedRank);
+            rankDifference = (int)(actualRank.Value - predictedRank.Value);
         }
         rating.RatingGameResult.RankDifference = rankDifference;
     }
@@ -43,52 +44,23 @@ public class RatingGameResultCalculator : IRatingGameResultCalculator
     )
     {
         var ratingGameResult = rating.RatingGameResult;
-        int bonusPoints;
-        int actualRank = (int)rating.Country.ActualRank;
+        BonusPoints bonusPoints;
+        CountryPosition actualRank = rating.Country!.ActualRank!;
         if (ratingGameResult.RankDifference == 0 && HasUniqueRank(actualRank, ratingsForPlayer))
         {
-            bonusPoints = DetermineBonusPoints(actualRank);
+            bonusPoints = BonusPoints.FromRank(actualRank);
         }
         else
         {
-            bonusPoints = 0;
+            bonusPoints = new BonusPoints(0);
         }
         ratingGameResult.BonusPoints = bonusPoints;
     }
 
-    private bool HasUniqueRank(int actualRank, IReadOnlyList<PlayerRating> ratings)
+    private bool HasUniqueRank(CountryPosition actualRank, IReadOnlyList<PlayerRating> ratings)
     {
         var sameRankCount = ratings
             .Count(r => r.Prediction.GetPredictedRank() == actualRank);
         return sameRankCount == 1;
-    }
-
-    private int DetermineBonusPoints(int rank)
-    {
-        switch (rank)
-        {
-            case 1:
-                return -25;
-            case 2:
-                return -18;
-            case 3:
-                return -15;
-            case 4:
-                return -12;
-            case 5:
-                return -10;
-            case 6:
-                return -8;
-            case 7:
-                return -6;
-            case 8:
-                return -4;
-            case 9:
-                return -2;
-            case 10:
-                return -1;
-            default:
-                return 0;
-        }
     }
 }
