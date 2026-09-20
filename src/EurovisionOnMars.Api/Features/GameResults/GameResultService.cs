@@ -1,4 +1,6 @@
-﻿namespace EurovisionOnMars.Api.Features.GameResults;
+﻿using EurovisionOnMars.Entity.Game;
+
+namespace EurovisionOnMars.Api.Features.GameResults;
 
 public interface IGameResultService
 {
@@ -7,13 +9,13 @@ public interface IGameResultService
 
 public class GameResultService : IGameResultService
 {
-    private readonly IPlayerRanksCalculator _playerRanksCalculator;
+    private readonly PlayerRanksCalculator _playerRanksCalculator;
     private readonly IGameResultRepository _gameResultRepository;
     private readonly ILogger<GameResultService> _logger;
 
     public GameResultService
         (
-        IPlayerRanksCalculator playerRanksCalculator,
+        PlayerRanksCalculator playerRanksCalculator,
         IGameResultRepository gameResultRepository,
         ILogger<GameResultService> logger
         )

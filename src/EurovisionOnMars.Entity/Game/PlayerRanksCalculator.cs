@@ -1,21 +1,9 @@
 ﻿using EurovisionOnMars.Entity.Players;
 
-namespace EurovisionOnMars.Api.Features.GameResults;
+namespace EurovisionOnMars.Entity.Game;
 
-public interface IPlayerRanksCalculator
+public class PlayerRanksCalculator
 {
-    void CalculatePlayerRanks(IReadOnlyList<Player> players);
-}
-
-public class PlayerRanksCalculator : IPlayerRanksCalculator
-{
-    private readonly ILogger<IPlayerRanksCalculator> _logger;
-
-    public PlayerRanksCalculator(ILogger<IPlayerRanksCalculator> logger)
-    {
-        _logger = logger;
-    }
-
     public void CalculatePlayerRanks(IReadOnlyList<Player> players)
     {
         var orderedPlayerGameResults = players
@@ -33,7 +21,7 @@ public class PlayerRanksCalculator : IPlayerRanksCalculator
             }
             else
             {
-                current.SetRank(new PlayerRank(i+1));
+                current.SetRank(new PlayerRank(i + 1));
             }
             previous = current;
         }
