@@ -123,7 +123,7 @@ static void AddPlayerGameResultsFeature(WebApplicationBuilder builder)
 {
     builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();
     builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
-    builder.Services.AddScoped<IPlayerGameResultService, PlayerGameResultService>();
+    builder.Services.AddScoped<IPlayerRanksCalculator, PlayerGameResultService>();
 }
 
 static void AddPlayerRatingsFeature(WebApplicationBuilder builder)

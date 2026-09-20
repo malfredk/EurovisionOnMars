@@ -49,7 +49,7 @@ public class CountryService : ICountryService
         var country = await _countryRepository.GetCountry(id);
         if (country == null)
         {
-            throw new KeyNotFoundException($"No country with id={id} exists");
+            throw new KeyNotFoundException($"No country with id={id} exists.");
         }
         return country;
     }

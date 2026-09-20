@@ -33,13 +33,58 @@ public class Player : IdBase
         }
     }
 
-    public void CalculateTotalPoints() // TODO: test
+    public void CalculateGamePoints()
+    {
+        CalculateRatingGameResults();
+        CalculateTotalPoints();
+    }
+
+    private void CalculateRatingGameResults()
+    {
+        CalculateRankDifferences();
+        CalculateBonusPoints();
+    }
+
+    private void CalculateRankDifferences()
+    {
+        foreach (var rating in PlayerRatings)
+        {
+            rating.CalculateRankDifference();
+        }
+    }
+
+    private void CalculateBonusPoints()
+    {
+        var uniquePredictedRanks = GetUniquePredictedRanks();
+
+        foreach (var rating in PlayerRatings)
+        {
+            var predictedRank = rating.Prediction.GetPredictedRank();
+
+            var hasUniquePredictedRank =
+                predictedRank != null &&
+                uniquePredictedRanks.Contains(predictedRank);
+
+            rating.CalculateBonusPoints(hasUniquePredictedRank);
+        }
+    }
+
+    private HashSet<CountryPosition> GetUniquePredictedRanks()
+    {
+        return PlayerRatings
+            .Select(r => r.Prediction.GetPredictedRank())
+            .Where(rank => rank != null)
+            .GroupBy(rank => rank!)
+            .Where(group => group.Count() == 1)
+            .Select(group => group.Key)
+            .ToHashSet();
+    }
+
+    private void CalculateTotalPoints()
     {
         var totalPoints = PlayerRatings.Sum(rating =>
         {
-            var result = rating.RatingGameResult
-                ?? throw new InvalidOperationException(
-                    "Rating game result is missing.");
+            var result = rating.RatingGameResult;
 
             var bonusPoints = result.BonusPoints
                 ?? throw new InvalidOperationException(

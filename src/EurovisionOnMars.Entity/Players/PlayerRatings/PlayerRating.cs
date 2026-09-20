@@ -46,4 +46,44 @@ public class PlayerRating : IdBase
         Category2Points = category2points;
         Category3Points = category3points;
     }
+
+    internal void CalculateRankDifference()
+    {
+        var actualRank = Country!.ActualRank;
+        var predictedRank = Prediction.GetPredictedRank();
+        int rankDifference;
+
+        if (actualRank == null)
+        {
+            throw new Exception("Country is missing rank.");
+        }
+        else if (predictedRank == null)
+        {
+            // player is penalized for not rating a country
+            rankDifference = 26; // TODO: make this a constant
+        }
+        else
+        {
+            rankDifference = (int)(actualRank.Value - predictedRank.Value);
+        }
+
+        RatingGameResult.SetRankDifference(rankDifference);
+    }
+
+    internal void CalculateBonusPoints(bool hasUniquePredictedRank)
+    {
+        BonusPoints bonusPoints;
+        CountryPosition? predictedRank = Prediction.GetPredictedRank();
+    
+        if (predictedRank !=null && RatingGameResult.RankDifference == 0 && hasUniquePredictedRank)
+        {
+            bonusPoints = BonusPoints.FromRank(predictedRank);
+        }
+        else
+        {
+            bonusPoints = new BonusPoints(0);
+        }
+
+        RatingGameResult.SetBonusPoints(bonusPoints);
+    }
 }

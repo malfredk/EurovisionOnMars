@@ -1,15 +1,12 @@
 ﻿using EurovisionOnMars.Entity.DataAccess;
 using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Features.PlayerGameResults;
 
 public interface IPlayerGameResultRepository
 {
     Task<IReadOnlyList<PlayerGameResult>> GetPlayerGameResults();
-    Task<PlayerGameResult?> GetPlayerGameResult(int playerId);
-    Task SaveChanges();
 }
 
 public class PlayerGameResultRepository : IPlayerGameResultRepository
@@ -29,19 +26,5 @@ public class PlayerGameResultRepository : IPlayerGameResultRepository
         return await _context.PlayerGameResults
             .Include(pgr => pgr.Player)
             .ToListAsync();
-    }
-
-    public async Task<PlayerGameResult?> GetPlayerGameResult(int playerId)
-    {
-        _logger.LogDebug("Getting player result for player with id={playerId}", playerId);
-        return await _context.Players
-            .Where(p => p.Id == playerId)
-            .Select(p => p.PlayerGameResult)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task SaveChanges()
-    {
-        await _context.SaveChangesAsync();
     }
 }
