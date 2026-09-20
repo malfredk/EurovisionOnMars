@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.Countries;
@@ -28,7 +28,7 @@ public class CountryService : ICountryService
     public async Task<ImmutableList<Country>> GetCountries()
     {
         var countries = await _countryRepository.GetCountries();
-        return countries.OrderBy(c => c.Number).ToImmutableList();
+        return countries.OrderBy(c => c.Number.Value).ToImmutableList();
     }
 
     public async Task<Country> CreateCountry(NewCountryRequestDto countryDto)
@@ -40,7 +40,7 @@ public class CountryService : ICountryService
     public async Task<Country> UpdateCountry(int id, int rank)
     {
         var country = await GetCountry(id);
-        country.SetActualRank(rank);
+        country.SetActualRank(new CountryPosition(rank));
         return await _countryRepository.UpdateCountry(country);
     }
 
@@ -49,13 +49,15 @@ public class CountryService : ICountryService
         var country = await _countryRepository.GetCountry(id);
         if (country == null)
         {
-            throw new KeyNotFoundException($"No country with id={id} exists");
+            throw new KeyNotFoundException($"No country with id={id} exists.");
         }
         return country;
     }
 
     private Country CreateCountryEntity(NewCountryRequestDto countryDto)
     {
-        return new Country(countryDto.Number, countryDto.Name);
+        CountryPosition number = new CountryPosition(countryDto.Number);
+        CountryName name =  new CountryName(countryDto.Name);
+        return new Country(number, name);
     }
 }

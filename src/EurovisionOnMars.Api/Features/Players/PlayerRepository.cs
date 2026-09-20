@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity;
-using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Entity.DataAccess;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -25,7 +25,7 @@ public class PlayerRepository : IPlayerRepository
     public async Task<Player?> GetPlayer(string username)
     {
         _logger.LogDebug("Getting player with username={username}.", username);
-        return await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
+        return await _context.Players.FirstOrDefaultAsync(p => p.Username.Value == username);
     }
 
     public async Task<Player> CreatePlayer(Player player)

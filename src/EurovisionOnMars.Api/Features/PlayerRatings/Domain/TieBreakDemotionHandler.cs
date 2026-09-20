@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 
@@ -20,7 +20,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
     public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints)
     {
-        ResetTieBreakDemotion(newPrediction);
+        newPrediction.ResetTieBreakDemotion();
 
         var predictionsGroupedByPoints = ratings
             .Select(r => r.Prediction)
@@ -29,11 +29,6 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
         HandleOldPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
         HandleNewPointsGroup(predictionsGroupedByPoints, newPrediction);
-    }
-
-    private void ResetTieBreakDemotion(Prediction prediction)
-    {
-        prediction.SetTieBreakDemotion(null);
     }
 
     private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
@@ -97,7 +92,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
     private void HandleSingletonList(List<Prediction> singlePredictionList)
     {
         var singlePrediction = singlePredictionList.First();
-        ResetTieBreakDemotion(singlePrediction);
+        singlePrediction.ResetTieBreakDemotion();
     }
 
     private bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
@@ -108,13 +103,14 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
     private void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
     {
         var sortedPredictions = predictionsWithSamePoints
-            .OrderBy(p => p.TieBreakDemotion ?? DEFAULT_SORT_VALUE);
+            .OrderBy(p => p.TieBreakDemotion?.Value ?? DEFAULT_SORT_VALUE);
 
-        int tieBreakDemotion = 0;
+        int tieBreakDemotionValue = 0;
         foreach (var prediction in sortedPredictions)
         {
+            TieBreakDemotion tieBreakDemotion = new(tieBreakDemotionValue);
             prediction.SetTieBreakDemotion(tieBreakDemotion);
-            tieBreakDemotion++;
+            tieBreakDemotionValue++;
         }
     }
 }

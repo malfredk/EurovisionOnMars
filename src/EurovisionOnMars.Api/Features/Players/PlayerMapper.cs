@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Players;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.Players;
 
@@ -15,7 +15,7 @@ public class PlayerMapper : IPlayerMapper
         return new PlayerDto
         {
             Id = entity.Id,
-            Username = entity.Username
+            Username = entity.Username.Value
         };
     }
 }

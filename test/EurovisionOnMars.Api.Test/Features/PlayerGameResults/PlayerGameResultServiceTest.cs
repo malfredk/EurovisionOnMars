@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
 using EurovisionOnMars.Api.Features.RatingGameResults;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -33,9 +34,9 @@ public class PlayerGameResultServiceTest
     public async Task GetPlayerGameResults()
     {
         // arrange
-        var bestRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 4);
+        var bestRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: new(4));
         var notRankedPlayerGameResult = Utils.CreateInitialPlayerGameResult();
-        var worstRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: 10);
+        var worstRankedPlayerGameResult = Utils.CreatePlayerGameResult(rank: new(10));
 
         _playerResultRepositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(new List<PlayerGameResult> 
@@ -82,7 +83,7 @@ public class PlayerGameResultServiceTest
         );
 
         var player1RatingResult = Utils.CreateRatingGameResult(-5, 0);
-        var player2RatingResult = Utils.CreateRatingGameResult(10, -3);
+        var player2RatingResult = Utils.CreateRatingGameResult(10, -4);
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player1Id))
             .ReturnsAsync([player1RatingResult]);
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(player2Id))
@@ -93,10 +94,10 @@ public class PlayerGameResultServiceTest
 
         // assert
         Assert.Equal(5, player1Result.TotalPoints);
-        Assert.Equal(7, player2Result.TotalPoints);
+        Assert.Equal(6, player2Result.TotalPoints);
 
-        Assert.Equal(1, player1Result.Rank);
-        Assert.Equal(2, player2Result.Rank);
+        Assert.Equal(1, player1Result.Rank?.Value);
+        Assert.Equal(2, player2Result.Rank?.Value);
 
         _playerResultRepositoryMock
             .Verify(m => m.GetPlayerGameResults(), Times.Once);
@@ -121,7 +122,7 @@ public class PlayerGameResultServiceTest
         var ratingResults = new List<RatingGameResult> {
             Utils.CreateRatingGameResult(-5, 0),
             Utils.CreateRatingGameResult(100, -25),
-            Utils.CreateRatingGameResult(3, 7),
+            Utils.CreateRatingGameResult(3, 0),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
@@ -130,7 +131,7 @@ public class PlayerGameResultServiceTest
         await _service.CalculateTotalPoints(playerResult);
 
         // assert
-        Assert.Equal(90, playerResult.TotalPoints);
+        Assert.Equal(83, playerResult.TotalPoints);
 
         _ratingGameResultServiceMock
             .Verify(m => m.GetRatingGameResults(Utils.PLAYER_ID), Times.Once);
@@ -143,7 +144,7 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(10, null),
+            Utils.CreateRatingGameResult(10),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
@@ -161,7 +162,7 @@ public class PlayerGameResultServiceTest
         var playerResult = Utils.CreateInitialPlayerGameResult();
 
         var ratingResults = new List<RatingGameResult> {
-            Utils.CreateRatingGameResult(null, 3),
+            Utils.CreateRatingGameResult(null, -4),
         }.ToImmutableList();
         _ratingGameResultServiceMock.Setup(m => m.GetRatingGameResults(Utils.PLAYER_ID))
             .ReturnsAsync(ratingResults);
@@ -194,9 +195,9 @@ public class PlayerGameResultServiceTest
         _service.CalculateRanks(playerResults);
 
         // assert
-        Assert.Equal(playerResult1.Rank, 4);
-        Assert.Equal(playerResult2.Rank, 2);
-        Assert.Equal(playerResult3.Rank, 1);
-        Assert.Equal(playerResult4.Rank, 2);
+        Assert.Equal(playerResult1.Rank?.Value, 4);
+        Assert.Equal(playerResult2.Rank?.Value, 2);
+        Assert.Equal(playerResult3.Rank?.Value, 1);
+        Assert.Equal(playerResult4.Rank?.Value, 2);
     }
 }

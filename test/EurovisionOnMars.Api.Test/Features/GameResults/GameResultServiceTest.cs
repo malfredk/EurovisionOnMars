@@ -1,51 +1,95 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults;
-using EurovisionOnMars.Api.Features.PlayerGameResults;
-using EurovisionOnMars.Api.Features.RatingGameResults;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace EurovisionOnMars.Api.Test.Features.GameResults;
 
-public class GameResultServiceTest
+public class GameResultServiceTest // TODO
 {
-    private readonly Mock<IPlayerGameResultService> _playerGameResultServiceMock;
-    private readonly Mock<IRatingGameResultService> _ratingGameResultServiceMock;
+    private readonly Mock<IPlayerRanksCalculator> _playerRanksCalculatorMock;
+    private readonly Mock<IGameResultRepository> _gameResultRepositoryMock;
     private readonly Mock<ILogger<GameResultService>> _loggerMock;
     private readonly GameResultService _service;
 
     public GameResultServiceTest()
     {
-        _playerGameResultServiceMock = new Mock<IPlayerGameResultService>();
-        _ratingGameResultServiceMock = new Mock<IRatingGameResultService>();
+        _playerRanksCalculatorMock = new Mock<IPlayerRanksCalculator>();
+        _gameResultRepositoryMock = new Mock<IGameResultRepository>();
         _loggerMock = new Mock<ILogger<GameResultService>>();
 
         _service = new GameResultService(
-            _playerGameResultServiceMock.Object,
-            _ratingGameResultServiceMock.Object,
-            _loggerMock.Object 
-        );
+            _playerRanksCalculatorMock.Object,
+            _gameResultRepositoryMock.Object,
+            _loggerMock.Object);
     }
 
     [Fact]
-    public async Task CalculateResults()
+    public async Task CalculateGameResults_GetsPlayers()
     {
         // arrange
-        var sequence = new MockSequence();
+        IReadOnlyList<Player> players = [];
 
-        _ratingGameResultServiceMock
-            .InSequence(sequence)
-            .Setup(s => s.CalculateRatingGameResults())
-            .Returns(Task.CompletedTask);
-        _playerGameResultServiceMock
-            .InSequence(sequence)
-            .Setup(s => s.CalculatePlayerGameResults())
+        _gameResultRepositoryMock
+            .Setup(r => r.GetPlayers())
+            .ReturnsAsync(players);
+
+        _gameResultRepositoryMock
+            .Setup(r => r.SaveChanges())
             .Returns(Task.CompletedTask);
 
         // act
         await _service.CalculateGameResults();
 
         // assert
-        _ratingGameResultServiceMock.Verify(m => m.CalculateRatingGameResults(), Times.Once);
-        _playerGameResultServiceMock.Verify(m => m.CalculatePlayerGameResults(), Times.Once);
+        _gameResultRepositoryMock.Verify(
+            r => r.GetPlayers(),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task CalculateGameResults_CalculatesPlayerRanks()
+    {
+        // arrange
+        IReadOnlyList<Player> players = [];
+
+        _gameResultRepositoryMock
+            .Setup(r => r.GetPlayers())
+            .ReturnsAsync(players);
+
+        _gameResultRepositoryMock
+            .Setup(r => r.SaveChanges())
+            .Returns(Task.CompletedTask);
+
+        // act
+        await _service.CalculateGameResults();
+
+        // assert
+        _playerRanksCalculatorMock.Verify(
+            c => c.CalculatePlayerRanks(players),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task CalculateGameResults_SavesChanges()
+    {
+        // arrange
+        IReadOnlyList<Player> players = [];
+
+        _gameResultRepositoryMock
+            .Setup(r => r.GetPlayers())
+            .ReturnsAsync(players);
+
+        _gameResultRepositoryMock
+            .Setup(r => r.SaveChanges())
+            .Returns(Task.CompletedTask);
+
+        // act
+        await _service.CalculateGameResults();
+
+        // assert
+        _gameResultRepositoryMock.Verify(
+            r => r.SaveChanges(),
+            Times.Once);
     }
 }

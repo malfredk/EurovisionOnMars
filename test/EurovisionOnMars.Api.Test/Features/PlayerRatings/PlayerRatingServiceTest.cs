@@ -3,7 +3,8 @@ using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -173,13 +174,13 @@ public class PlayerRatingServiceTest
     private static PlayerRating CreatePlayerRating(int countryNumber, int predictionRank)
     {
         var rating = CreateInitialPlayerRating(countryNumber);
-        rating.Prediction.SetCalculatedRank((int)predictionRank);
+        rating.Prediction.SetCalculatedRank(new CountryPosition((int)predictionRank));
         return rating;
     }
 
     private static PlayerRating CreateInitialPlayerRating(int countryNumber)
     {
-        var country = Utils.CreateInitialCountry(countryNumber);
+        var country = Utils.CreateInitialCountry(new CountryPosition(countryNumber));
         var player = Utils.CreateInitialPlayer(country);
 
         return player.PlayerRatings.FirstOrDefault()!;

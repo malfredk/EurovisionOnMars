@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Predictions;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.Predictions;
 
@@ -63,7 +63,7 @@ public class PredictionService : IPredictionService
 
         var tiedPredictions = await _repository.GetTiedPredictions(
             firstPrediction.PlayerRating!.PlayerId,
-            (int)firstPrediction.CalculatedRank!);
+            firstPrediction.CalculatedRank!);
 
         return tiedPredictions;
     }
@@ -100,7 +100,8 @@ public class PredictionService : IPredictionService
         {
             var id = request.OrderedPredictionIds[i];
             var prediction = predictionsById[id];
-            prediction.SetTieBreakDemotion(i);
+            TieBreakDemotion tieBreakDemotion = new(i);
+            prediction.SetTieBreakDemotion(tieBreakDemotion);
         }
         await _repository.SaveChanges();
     }

@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -29,9 +29,9 @@ public class CountryServiceTest
     public async Task GetCountries()
     {
         // arrange
-        var countryNumber21 = Utils.CreateInitialCountry(21);
-        var countryNumber4 = Utils.CreateInitialCountry(4);
-        var countryNumber7 = Utils.CreateInitialCountry(7);
+        var countryNumber21 = Utils.CreateInitialCountry(new CountryPosition(21));
+        var countryNumber4 = Utils.CreateInitialCountry(new CountryPosition(4));
+        var countryNumber7 = Utils.CreateInitialCountry(new CountryPosition(7));
 
         var countries = new List<Country> 
         { 
@@ -89,16 +89,16 @@ public class CountryServiceTest
     public async Task UpdateCountry()
     {
         // arrange
-        var fetchedCountry = Utils.CreateInitialCountry(1);
+        var fetchedCountry = Utils.CreateInitialCountry(new CountryPosition(1));
         _countryRepositoryMock.Setup(m => m.GetCountry(Utils.COUNTRY_ID))
             .ReturnsAsync(fetchedCountry);
 
-        var expectedCountry = Utils.CreateInitialCountry(2);
+        var expectedCountry = Utils.CreateInitialCountry(new CountryPosition(2));
         _countryRepositoryMock.Setup(m => m.UpdateCountry(fetchedCountry))
             .ReturnsAsync(expectedCountry);
 
         // act
-        var actualCountry = await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK);
+        var actualCountry = await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK.Value);
 
         // assert
         Assert.Equal(expectedCountry, actualCountry);
@@ -118,7 +118,7 @@ public class CountryServiceTest
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK)
+            async () => await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK.Value)
         );
 
         _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
@@ -131,8 +131,8 @@ public class CountryServiceTest
     {
         return new NewCountryRequestDto
         {
-            Name = Utils.COUNTRY_NAME,
-            Number = Utils.COUNTRY_NUMBER
+            Name = Utils.COUNTRY_NAME.Value,
+            Number = Utils.COUNTRY_NUMBER.Value
         };
     }
 }

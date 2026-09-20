@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -68,7 +68,8 @@ public class PlayerRatingProcessorTest
         var request = Utils.CreateUpdatePlayerRatingRequest();
         var ratingToUpdate = Utils.CreatePlayerRating(
             category1Points: Utils.CATEGORY2_POINTS,
-            category2Points: Utils.CATEGORY1_POINTS
+            category2Points: Utils.CATEGORY1_POINTS,
+            category3Points: Utils.CATEGORY3_POINTS
         );
         var ratings = new List<PlayerRating> { ratingToUpdate };
 

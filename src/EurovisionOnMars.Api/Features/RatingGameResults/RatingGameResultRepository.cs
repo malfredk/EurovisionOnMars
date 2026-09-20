@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity;
-using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Entity.DataAccess;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -8,7 +8,6 @@ namespace EurovisionOnMars.Api.Features.RatingGameResults;
 public interface IRatingGameResultRepository
 {
     Task<ImmutableList<RatingGameResult>> GetRatingGameResults(int playerId);
-    Task SaveChanges();
 }
 
 public class RatingGameResultRepository : IRatingGameResultRepository
@@ -31,10 +30,5 @@ public class RatingGameResultRepository : IRatingGameResultRepository
             .Include(rgr => rgr.PlayerRating.Country)
             .ToListAsync();
         return ratingResults.ToImmutableList();
-    }
-
-    public async Task SaveChanges()
-    {
-        await _context.SaveChangesAsync();
     }
 }

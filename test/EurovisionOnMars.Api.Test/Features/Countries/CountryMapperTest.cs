@@ -17,8 +17,8 @@ public class CountryMapperTest
 
         // assert
         Assert.Equal(Utils.COUNTRY_ID, dto.Id);
-        Assert.Equal(Utils.COUNTRY_NUMBER, dto.Number);
-        Assert.Equal(Utils.COUNTRY_NAME, dto.Name);
-        Assert.Equal(Utils.COUNTRY_RANK, dto.ActualRank);
+        Assert.Equal(Utils.COUNTRY_NUMBER.Value, dto.Number);
+        Assert.Equal(Utils.COUNTRY_NAME.Value, dto.Name);
+        Assert.Equal(Utils.COUNTRY_RANK.Value, dto.ActualRank);
     }
 }

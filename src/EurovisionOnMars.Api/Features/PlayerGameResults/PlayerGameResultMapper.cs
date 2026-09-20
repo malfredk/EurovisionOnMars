@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.PlayerGameResults;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.PlayerGameResults;
 
@@ -17,9 +17,9 @@ public class PlayerGameResultMapper : IPlayerGameResultMapper
 
         return new PlayerGameResultDto
         {
-            Rank = entity.Rank,
+            Rank = entity.Rank?.Value,
             TotalPoints = entity.TotalPoints,
-            PlayerUsername = player.Username
+            PlayerUsername = player.Username.Value
         };
     }
 }

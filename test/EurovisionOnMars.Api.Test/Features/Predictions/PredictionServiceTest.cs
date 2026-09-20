@@ -1,7 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.Api.Features.Predictions;
 using EurovisionOnMars.Dto.Predictions;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -54,9 +55,9 @@ public class PredictionServiceTest
         await _service.UpdateTieBreakDemotions(request);
 
         // assert
-        Assert.Equal(0, firstPrediction.TieBreakDemotion);
-        Assert.Equal(1, secondPrediction.TieBreakDemotion);
-        Assert.Equal(2, thirdPrediction.TieBreakDemotion);
+        Assert.Equal(0, firstPrediction.TieBreakDemotion!.Value);
+        Assert.Equal(1, secondPrediction.TieBreakDemotion!.Value);
+        Assert.Equal(2, thirdPrediction.TieBreakDemotion!.Value);
 
         _ratingTimeValidatorMock.Verify(v => v.EnsureRatingIsOpen(), Times.Once);
 

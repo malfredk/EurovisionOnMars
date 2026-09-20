@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity;
+namespace EurovisionOnMars.Entity.Players;
 
 public class PlayerGameResult : IdBase
 {
-    public int? Rank { get; private set; }
+    public PlayerRank? Rank { get; private set; }
     public int? TotalPoints { get; private set; }
     public int PlayerId { get; internal set; }
     [JsonIgnore]
@@ -17,7 +17,7 @@ public class PlayerGameResult : IdBase
         Player = player;
     }
 
-    public void SetRank(int rank)
+    public void SetRank(PlayerRank rank)
     {
         Rank = rank;
     }

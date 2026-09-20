@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.PlayerRatings;
 
@@ -15,9 +16,9 @@ public class PlayerRatingMapper : IPlayerRatingMapper
         return new PlayerRatingDto
         {
             Id = entity.Id,
-            Category1Points = entity.Category1Points,
-            Category2Points = entity.Category2Points,
-            Category3Points = entity.Category3Points,
+            Category1Points = entity.Category1Points?.Value,
+            Category2Points = entity.Category2Points?.Value,
+            Category3Points = entity.Category3Points?.Value,
             Prediction = ToPredictionDto(entity.Prediction),
             Country = ToCountryDto(entity.Country)
         };
@@ -33,9 +34,9 @@ public class PlayerRatingMapper : IPlayerRatingMapper
         {
             Id = prediction.Id,
             TotalGivenPoints = prediction.TotalGivenPoints,
-            CalculatedRank = prediction.CalculatedRank,
-            TieBreakDemotion = prediction.TieBreakDemotion,
-            PredictedRank = prediction.GetPredictedRank()
+            CalculatedRank = prediction.CalculatedRank?.Value,
+            TieBreakDemotion = prediction.TieBreakDemotion?.Value,
+            PredictedRank = prediction.GetPredictedRank()?.Value,
         };
     }
 
@@ -49,8 +50,8 @@ public class PlayerRatingMapper : IPlayerRatingMapper
 
         return new PlayerRatingCountryDto
         {
-            Number = country.Number,
-            Name = country.Name
+            Number = country.Number.Value,
+            Name = country.Name.Value
         };
     }
 }

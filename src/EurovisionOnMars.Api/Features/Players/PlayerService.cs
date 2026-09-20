@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.Players;
 
@@ -29,12 +30,12 @@ public class PlayerService : IPlayerService
 
     public async Task<Player> GetPlayer(string username)
     {
-        Player.ValidateUsername(username);
+        new Username(username); // TODO
 
         var player = await _playerRepository.GetPlayer(username);
         if (player == null)
         {
-            throw new KeyNotFoundException($"No player with username={username} exists");
+            throw new KeyNotFoundException($"No player with username={username} exists.");
         }
         return player;
     }
@@ -49,18 +50,18 @@ public class PlayerService : IPlayerService
 
     private async Task EnsureNewUsername(string username)
     {
-        Player.ValidateUsername(username);
+        new Username(username); // TODO
 
         var existingPlayer = await _playerRepository.GetPlayer(username);
         if (existingPlayer != null)
         {
-            throw new DuplicateUsernameException($"Player with username={username} already exists");
+            throw new DuplicateUsernameException($"Player with username={username} already exists.");
         }
     }
 
     private async Task<Player> CreateEntity(string username)
     {
         var countries = await _countryService.GetCountries();
-        return new Player(username, countries);
+        return new Player(new Username(username), countries);
     }
 }
