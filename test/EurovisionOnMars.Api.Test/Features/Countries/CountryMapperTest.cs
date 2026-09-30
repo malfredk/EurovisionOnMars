@@ -8,7 +8,7 @@ public class CountryMapperTest
     private readonly CountryMapper _mapper = new CountryMapper();
 
     [Fact]
-    public void ToDto()
+    public void ToDto_WithRank()
     {
         // arrange
         var entity = CountryFactory.CreateRankedCountry();
@@ -21,5 +21,21 @@ public class CountryMapperTest
         Assert.Equal(CountryTestData.Number, dto.Number);
         Assert.Equal(CountryTestData.Name, dto.Name);
         Assert.Equal(CountryTestData.Rank, dto.ActualRank);
+    }
+
+    [Fact]
+    public void ToDto_WithoutRank()
+    {
+        // arrange
+        var entity = CountryFactory.CreateInitialCountry();
+
+        // act
+        var dto = _mapper.ToDto(entity);
+
+        // assert
+        Assert.Equal(CountryTestData.Id, dto.Id);
+        Assert.Equal(CountryTestData.Number, dto.Number);
+        Assert.Equal(CountryTestData.Name, dto.Name);
+        Assert.Null(dto.ActualRank);
     }
 }

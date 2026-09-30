@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
+using EurovisionOnMars.Api.Test.TestData.Game;
 using EurovisionOnMars.Entity.Game;
-using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -28,18 +28,12 @@ public class CalculateGameResultsServiceTest
     }
 
     [Fact]
-    public async Task CalculateGameResults_GetsPlayers()
+    public async Task CalculateGameResults_RepositoryIsCalled()
     {
         // arrange
-        IReadOnlyList<Player> players = [];
-
-        _repositoryMock
-            .Setup(r => r.GetPlayers())
-            .ReturnsAsync(players);
-
-        _repositoryMock
-            .Setup(r => r.SaveChanges())
-            .Returns(Task.CompletedTask);
+        var gameScenario = GameScenarioFactory.CreateGameWhereActualCountryRanksAreSet();
+        _repositoryMock.Setup(r => r.GetPlayers())
+            .ReturnsAsync(gameScenario.Players);
 
         // act
         await _service.CalculateGameResults();
@@ -48,51 +42,37 @@ public class CalculateGameResultsServiceTest
         _repositoryMock.Verify(
             r => r.GetPlayers(),
             Times.Once);
-    }
 
-    [Fact]
-    public async Task CalculateGameResults_CalculatesPlayerRanks()
-    {
-        // arrange
-        IReadOnlyList<Player> players = [];
-
-        _repositoryMock
-            .Setup(r => r.GetPlayers())
-            .ReturnsAsync(players);
-
-        _repositoryMock
-            .Setup(r => r.SaveChanges())
-            .Returns(Task.CompletedTask);
-
-        // act
-        await _service.CalculateGameResults();
-
-        // assert
-        _playerRanksCalculatorMock.Verify(
-            c => c.CalculatePlayerRanks(players),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task CalculateGameResults_SavesChanges()
-    {
-        // arrange
-        IReadOnlyList<Player> players = [];
-
-        _repositoryMock
-            .Setup(r => r.GetPlayers())
-            .ReturnsAsync(players);
-
-        _repositoryMock
-            .Setup(r => r.SaveChanges())
-            .Returns(Task.CompletedTask);
-
-        // act
-        await _service.CalculateGameResults();
-
-        // assert
         _repositoryMock.Verify(
             r => r.SaveChanges(),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task CalculateGameResults_GameResultsAreCalculated()
+    {
+        // arrange
+        var gameScenario = GameScenarioFactory.CreateGameWhereActualCountryRanksAreSet();
+        var players = gameScenario.Players;
+
+        _repositoryMock.Setup(r => r.GetPlayers())
+            .ReturnsAsync(players);
+
+        // act
+        await _service.CalculateGameResults();
+
+        // assert
+        foreach (var player in players)
+        {
+            foreach (var rating in player.PlayerRatings)
+            {
+                var ratingGameResult = rating.RatingGameResult;
+                Assert.NotNull(ratingGameResult.RankDifference);
+                Assert.NotNull(ratingGameResult.BonusPoints);
+            }
+            var playerGameResult = player.PlayerGameResult;
+            Assert.NotNull(playerGameResult.TotalPoints);
+            Assert.NotNull(playerGameResult.Rank);
+        }
     }
 }

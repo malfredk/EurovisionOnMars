@@ -8,16 +8,10 @@ namespace EurovisionOnMars.Api.Test.Features;
 public class Utils
 {
     public const int RATING_ID = 77;
-    public static readonly Points CATEGORY1_POINTS = new(4);
-    public static readonly Points CATEGORY2_POINTS = new(12);
-    public static readonly Points CATEGORY3_POINTS = new(8);
 
     public static readonly CountryPosition PREDICTION_CALCULATED_RANK = new(10);
     public static readonly CountryPosition PREDICTION_RANK = new(11);
     public static readonly TieBreakDemotion TIE_BREAK_DEMOTION = new(1);
-
-    public static readonly PlayerRank PLAYER_GAME_RESULT_RANK = new(10);
-    public const int PLAYER_GAME_RESULT_POINTS = 300;
 
     // player rating
 
