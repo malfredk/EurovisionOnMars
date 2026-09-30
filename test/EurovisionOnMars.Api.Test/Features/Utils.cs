@@ -7,14 +7,6 @@ namespace EurovisionOnMars.Api.Test.Features;
 
 public class Utils
 {
-    public const int COUNTRY_ID = 8;
-    public static readonly CountryPosition COUNTRY_NUMBER = new(5);
-    public static readonly CountryName COUNTRY_NAME = new("australia");
-    public static readonly CountryPosition COUNTRY_RANK = new(7);
-
-    public static readonly Username PLAYER_USERNAME = new("lars");
-    public const int PLAYER_ID = 1234;
-
     public const int RATING_ID = 77;
     public static readonly Points CATEGORY1_POINTS = new(4);
     public static readonly Points CATEGORY2_POINTS = new(12);
@@ -26,44 +18,6 @@ public class Utils
 
     public static readonly PlayerRank PLAYER_GAME_RESULT_RANK = new(10);
     public const int PLAYER_GAME_RESULT_POINTS = 300;
-    
-    // country
-
-    public static Country CreateInitialCountry()
-    {
-        return CreateInitialCountry(COUNTRY_NUMBER);
-    }
-
-    public static Country CreateInitialCountry(CountryPosition number)
-    {
-        return new Country(number, COUNTRY_NAME)
-        {
-            Id = COUNTRY_ID
-        };
-    }
-
-    public static Country CreateRankedCountry()
-    {
-        var country = CreateInitialCountry();
-        country.SetActualRank(COUNTRY_RANK);
-        return country;
-    }
-    
-    // player
-
-    public static Player CreateInitialPlayer(int playerId = PLAYER_ID)
-    {
-        var country = CreateInitialCountry();
-        return CreateInitialPlayer(country, playerId);
-    }
-
-    public static Player CreateInitialPlayer(Country country, int playerId = PLAYER_ID)
-    {
-        return new Player(PLAYER_USERNAME, [country])
-        {
-            Id = playerId
-        };
-    }
 
     // player rating
 

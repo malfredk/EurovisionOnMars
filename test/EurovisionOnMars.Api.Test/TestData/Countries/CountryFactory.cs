@@ -14,6 +14,14 @@ public static class CountryFactory
         };
     }
 
+    public static List<Country> CreateInitialCountries()
+    {
+        var countries = new List<Country>();
+        countries.Add(CreateInitialCountry());
+
+        return countries;
+    }
+
     public static Country CreateRankedCountry()
     {
         var country = CreateInitialCountry();
