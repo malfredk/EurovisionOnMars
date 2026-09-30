@@ -1,5 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.Common;
-using EurovisionOnMars.Dto.Countries;
+﻿using EurovisionOnMars.Dto.Countries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.Countries;
@@ -8,41 +7,36 @@ namespace EurovisionOnMars.Api.Features.Countries;
 [ApiController]
 public class CountriesController : ControllerBase
 {
-    private readonly ICountryService _service;
     private readonly ILogger<CountriesController> _logger;
-    private readonly ICountryMapper _mapper;
+    private readonly ICountryService _service;
 
     public CountriesController(
-        ICountryService service,
         ILogger<CountriesController> logger,
-        ICountryMapper mapper
+        ICountryService service
         )
     {
-        _service = service;
         _logger = logger;
-        _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CountryDto>>> GetCountries()
     {
         var countries = await _service.GetCountries();
-        var countryDtos = Utils.MapList(countries.ToList(), _mapper.ToDto);
-        return Ok(countryDtos);
+        return Ok(countries);
     }
 
     [HttpPost]
     public async Task<ActionResult<CountryDto>> CreateCountry([FromBody] NewCountryRequestDto requestDto)
     {
         var country = await _service.CreateCountry(requestDto);
-        var countryDto = _mapper.ToDto(country);
-        return Created(Request.Path.Value, countryDto);
+        return Created(Request.Path.Value, country);
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:int}/rank")]
     public async Task<ActionResult> UpdateCountryRank(int id, [FromBody] int rank)
     {
         await _service.SetCountryRank(id, rank);
-        return Ok();
+        return NoContent();
     }
 }
