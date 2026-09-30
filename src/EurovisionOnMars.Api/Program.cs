@@ -1,8 +1,8 @@
 using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.GameResults;
-using EurovisionOnMars.Api.Features.PlayerGameResults;
+using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
+using EurovisionOnMars.Api.Features.GameResults.GetResults;
 using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
 using EurovisionOnMars.Api.Features.Players;
@@ -116,14 +116,14 @@ static void AddCountriesFeature(WebApplicationBuilder builder)
 
 static void AddGameResultsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IGameResultService, GameResultService>();
+    builder.Services.AddScoped<IGameResultService, CalculateGameResultsService>();
 }
 
 static void AddPlayerGameResultsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();
-    builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
-    builder.Services.AddScoped<IPlayerRanksCalculator, PlayerGameResultService>();
+    builder.Services.AddScoped<IGetResultsRepository, GetPlayerResultsRepository>();
+    builder.Services.AddTransient<IPlayerGameResultMapper, GetPlayerResultsMapper>();
+    builder.Services.AddScoped<IPlayerRanksCalculator, GetPlayerResultsService>();
 }
 
 static void AddPlayerRatingsFeature(WebApplicationBuilder builder)

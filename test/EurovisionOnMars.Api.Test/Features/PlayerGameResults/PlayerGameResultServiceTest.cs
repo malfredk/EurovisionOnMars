@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.PlayerGameResults;
+﻿using EurovisionOnMars.Api.Features.GameResults.GetResults;
 using EurovisionOnMars.Api.Features.RatingGameResults;
 using EurovisionOnMars.Entity.Players;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
@@ -10,18 +10,18 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerGameResults;
 
 public class PlayerGameResultServiceTest
 {
-    private readonly Mock<IPlayerGameResultRepository> _playerResultRepositoryMock;
+    private readonly Mock<IGetResultsRepository> _playerResultRepositoryMock;
     private readonly Mock<IRatingGameResultService> _ratingGameResultServiceMock;
-    private readonly Mock<ILogger<PlayerGameResultService>> _loggerMock;
-    private readonly PlayerGameResultService _service;
+    private readonly Mock<ILogger<GetPlayerResultsService>> _loggerMock;
+    private readonly GetPlayerResultsService _service;
 
     public PlayerGameResultServiceTest()
     {
-        _playerResultRepositoryMock = new Mock<IPlayerGameResultRepository>();
+        _playerResultRepositoryMock = new Mock<IGetResultsRepository>();
         _ratingGameResultServiceMock = new Mock<IRatingGameResultService>();
-        _loggerMock = new Mock<ILogger<PlayerGameResultService>>();
+        _loggerMock = new Mock<ILogger<GetPlayerResultsService>>();
 
-        _service = new PlayerGameResultService(
+        _service = new GetPlayerResultsService(
             _playerResultRepositoryMock.Object,
             _loggerMock.Object,
             _ratingGameResultServiceMock.Object

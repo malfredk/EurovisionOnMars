@@ -26,7 +26,7 @@ public class Utils
 
     public static readonly PlayerRank PLAYER_GAME_RESULT_RANK = new(10);
     public const int PLAYER_GAME_RESULT_POINTS = 300;
-
+    
     // country
 
     public static Country CreateInitialCountry()

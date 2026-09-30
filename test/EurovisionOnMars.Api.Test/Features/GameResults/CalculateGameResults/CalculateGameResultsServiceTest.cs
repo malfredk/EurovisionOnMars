@@ -1,27 +1,30 @@
-﻿using EurovisionOnMars.Api.Features.GameResults;
+﻿using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
+using EurovisionOnMars.Entity.Game;
 using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.GameResults;
+namespace EurovisionOnMars.Api.Test.Features.GameResults.CalculateGameResults;
 
-public class GameResultServiceTest // TODO
+public class CalculateGameResultsServiceTest
 {
-    private readonly Mock<IPlayerRanksCalculator> _playerRanksCalculatorMock;
-    private readonly Mock<IGameResultRepository> _gameResultRepositoryMock;
-    private readonly Mock<ILogger<GameResultService>> _loggerMock;
-    private readonly GameResultService _service;
+    private readonly Mock<ILogger<CalculateGameResultsService>> _loggerMock;
+    private readonly Mock<ICalculateGameResultsRepository> _repositoryMock;
+    private readonly PlayerRanksCalculator _playerRanksCalculator;
+    
+    private readonly CalculateGameResultsService _service;
 
-    public GameResultServiceTest()
+    public CalculateGameResultsServiceTest()
     {
-        _playerRanksCalculatorMock = new Mock<IPlayerRanksCalculator>();
-        _gameResultRepositoryMock = new Mock<IGameResultRepository>();
-        _loggerMock = new Mock<ILogger<GameResultService>>();
+        _loggerMock = new Mock<ILogger<CalculateGameResultsService>>();
+        _repositoryMock = new Mock<ICalculateGameResultsRepository>();
+        _playerRanksCalculator = new PlayerRanksCalculator();
 
-        _service = new GameResultService(
-            _playerRanksCalculatorMock.Object,
-            _gameResultRepositoryMock.Object,
-            _loggerMock.Object);
+        _service = new CalculateGameResultsService(
+            _loggerMock.Object,
+            _repositoryMock.Object,
+            _playerRanksCalculator
+            );
     }
 
     [Fact]
@@ -30,11 +33,11 @@ public class GameResultServiceTest // TODO
         // arrange
         IReadOnlyList<Player> players = [];
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.GetPlayers())
             .ReturnsAsync(players);
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.SaveChanges())
             .Returns(Task.CompletedTask);
 
@@ -42,7 +45,7 @@ public class GameResultServiceTest // TODO
         await _service.CalculateGameResults();
 
         // assert
-        _gameResultRepositoryMock.Verify(
+        _repositoryMock.Verify(
             r => r.GetPlayers(),
             Times.Once);
     }
@@ -53,11 +56,11 @@ public class GameResultServiceTest // TODO
         // arrange
         IReadOnlyList<Player> players = [];
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.GetPlayers())
             .ReturnsAsync(players);
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.SaveChanges())
             .Returns(Task.CompletedTask);
 
@@ -76,11 +79,11 @@ public class GameResultServiceTest // TODO
         // arrange
         IReadOnlyList<Player> players = [];
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.GetPlayers())
             .ReturnsAsync(players);
 
-        _gameResultRepositoryMock
+        _repositoryMock
             .Setup(r => r.SaveChanges())
             .Returns(Task.CompletedTask);
 
@@ -88,7 +91,7 @@ public class GameResultServiceTest // TODO
         await _service.CalculateGameResults();
 
         // assert
-        _gameResultRepositoryMock.Verify(
+        _repositoryMock.Verify(
             r => r.SaveChanges(),
             Times.Once);
     }

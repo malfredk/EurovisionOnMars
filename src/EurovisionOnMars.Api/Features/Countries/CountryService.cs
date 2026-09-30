@@ -8,21 +8,21 @@ public interface ICountryService
 {
     Task<ImmutableList<Country>> GetCountries();
     Task<Country> CreateCountry(NewCountryRequestDto country);
-    Task<Country> UpdateCountry(int id, int rank);
+    Task<Country> SetCountryRank(int id, int rank);
 }
 
 public class CountryService : ICountryService
 {
-    private readonly ICountryRepository _countryRepository;
     private readonly ILogger<CountryService> _logger;
+    private readonly ICountryRepository _countryRepository;
 
     public CountryService(
-        ICountryRepository countryRepository,
-        ILogger<CountryService> logger
+        ILogger<CountryService> logger,
+        ICountryRepository countryRepository
         )
     {
-        _countryRepository = countryRepository;
         _logger = logger;
+        _countryRepository = countryRepository;
     }
 
     public async Task<ImmutableList<Country>> GetCountries()
@@ -37,7 +37,7 @@ public class CountryService : ICountryService
         return await _countryRepository.CreateCountry(country);
     }
 
-    public async Task<Country> UpdateCountry(int id, int rank)
+    public async Task<Country> SetCountryRank(int id, int rank)
     {
         var country = await GetCountry(id);
         country.SetActualRank(new CountryPosition(rank));

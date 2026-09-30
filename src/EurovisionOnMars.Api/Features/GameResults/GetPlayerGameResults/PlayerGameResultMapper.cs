@@ -1,7 +1,7 @@
-﻿using EurovisionOnMars.Dto.PlayerGameResults;
+﻿using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
 using EurovisionOnMars.Entity.Players;
 
-namespace EurovisionOnMars.Api.Features.PlayerGameResults;
+namespace EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
 
 public interface IPlayerGameResultMapper
 {

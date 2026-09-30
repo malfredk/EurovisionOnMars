@@ -2,23 +2,26 @@
 using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 
-namespace EurovisionOnMars.Api.Features.GameResults;
+namespace EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
 
-public interface IGameResultRepository
+public interface ICalculateGameResultsRepository
 {
     Task<IReadOnlyList<Player>> GetPlayers();
     Task SaveChanges();
 }
 
-public class GameResultRepository : IGameResultRepository
+public class CalculateGameResultsRepository : ICalculateGameResultsRepository
 {
+    private readonly ILogger<ICalculateGameResultsRepository> _logger;
     private readonly DataContext _context;
-    private readonly ILogger<IGameResultRepository> _logger;
 
-    public GameResultRepository(DataContext context, ILogger<IGameResultRepository> logger)
+    public CalculateGameResultsRepository(
+        ILogger<ICalculateGameResultsRepository> logger,
+        DataContext context
+        )
     {
-        _context = context;
         _logger = logger;
+        _context = context;
     }
 
     public async Task<IReadOnlyList<Player>> GetPlayers()

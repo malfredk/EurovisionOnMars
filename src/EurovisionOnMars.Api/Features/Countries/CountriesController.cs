@@ -42,7 +42,7 @@ public class CountriesController : ControllerBase
     [HttpPatch("{id:int}")]
     public async Task<ActionResult> UpdateCountryRank(int id, [FromBody] int rank)
     {
-        await _service.UpdateCountry(id, rank);
+        await _service.SetCountryRank(id, rank);
         return Ok();
     }
 }

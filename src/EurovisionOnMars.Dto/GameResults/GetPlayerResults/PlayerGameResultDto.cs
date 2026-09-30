@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.PlayerGameResults;
+﻿namespace EurovisionOnMars.Dto.GameResults.GetPlayerResults;
 
 public record PlayerGameResultDto
 {
