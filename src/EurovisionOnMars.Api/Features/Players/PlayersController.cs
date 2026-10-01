@@ -1,25 +1,26 @@
-﻿using EurovisionOnMars.Dto.Players;
+﻿using EurovisionOnMars.Api.Features.Players.CreatePlayer;
+using EurovisionOnMars.Dto.PlayerRatings;
+using EurovisionOnMars.Dto.Players;
+using EurovisionOnMars.Dto.Predictions;
+using EurovisionOnMars.Dto.RatingGameResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.Players;
 
-[Route("api/[controller]")]
+[Route("api/players")]
 [ApiController]
 public class PlayersController : ControllerBase
 {
-    private readonly IPlayerService _service;
     private readonly ILogger<PlayersController> _logger;
-    private readonly IPlayerMapper _mapper;
+    private readonly ICreatePlayerService _createPlayerService;
 
     public PlayersController(
-        IPlayerService service, 
         ILogger<PlayersController> logger,
-        IPlayerMapper mapper
+        ICreatePlayerService createPlayerService
         )
     {
-        _service = service;
         _logger = logger;
-        _mapper = mapper;
+        _createPlayerService = createPlayerService;
     }
 
     [HttpGet("{username}")]
@@ -31,10 +32,44 @@ public class PlayersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PlayerDto>> CreatePlayer([FromBody] string username)
+    public async Task<ActionResult> CreatePlayer([FromBody] string username)
     {
-        var player = await _service.CreatePlayer(username);
-        var playerDto = _mapper.ToDto(player);
-        return CreatedAtAction(nameof(GetPlayer), new { username = player.Username }, playerDto);
+        await _createPlayerService.CreatePlayer(username);
+
+        return CreatedAtAction(
+            nameof(GetPlayer),
+            new { username = username },
+            value: null);
+    }
+
+    [HttpGet("{playerId:int}/ratings")]
+    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetPlayerRatings(
+        int playerId)
+    {
+        ...
+    }
+
+    [HttpPatch("{playerId:int}/ratings/{ratingId:int}")]
+    public async Task<ActionResult> UpdatePlayerRating(
+        int playerId,
+        int ratingId,
+        [FromBody] UpdatePlayerRatingRequestDto request)
+    {
+        ...
+    }
+
+    [HttpGet("{playerId:int}/rating-results")]
+    public async Task<ActionResult<IEnumerable<RatingGameResultDto>>> GetRatingResults(
+        int playerId)
+    {
+        ...
+    }
+
+    [HttpPatch("{playerId:int}/tie-break-demotions")]
+    public async Task<ActionResult> ResolveTieBreak(
+        int playerId,
+        [FromBody] ResolveTieBreakRequestDto request)
+    {
+        ...
     }
 }

@@ -3,7 +3,7 @@ using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace EurovisionOnMars.Api.Features.Players;
+namespace EurovisionOnMars.Api.Features.Players.GetPlayer;
 
 public interface IPlayerRepository
 {

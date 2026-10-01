@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.Players;
+﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
 
 namespace EurovisionOnMars.Api.Test.Features.Players;
 

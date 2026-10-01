@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.Players.CreatePlayer;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
@@ -9,16 +9,16 @@ namespace EurovisionOnMars.Api.Test.Features.Players;
 
 public class PlayerServiceTest
 {
-    private readonly Mock<IPlayerRepository> _playerRepositoryMock;
+    private readonly Mock<ICreatePlayerRepository> _playerRepositoryMock;
     private readonly Mock<ICountryService> _countryServiceMock;
-    private readonly Mock<ILogger<PlayerService>> _loggerMock;
-    private readonly PlayerService _service;
+    private readonly Mock<ILogger<CreatePlayerService>> _loggerMock;
+    private readonly CreatePlayerService _service;
 
     public PlayerServiceTest()
     {
-        _playerRepositoryMock = new Mock<IPlayerRepository>();
+        _playerRepositoryMock = new Mock<ICreatePlayerRepository>();
         _countryServiceMock = new Mock<ICountryService>();
-        _loggerMock = new Mock<ILogger<PlayerService>>();
+        _loggerMock = new Mock<ILogger<CreatePlayerService>>();
 
         _service = new PlayerService(
             _playerRepositoryMock.Object, 

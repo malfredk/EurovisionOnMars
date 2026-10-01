@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Dto.Players;
 using EurovisionOnMars.Entity.Players;
 
-namespace EurovisionOnMars.Api.Features.Players;
+namespace EurovisionOnMars.Api.Features.Players.GetPlayer;
 
 public interface IPlayerMapper
 {

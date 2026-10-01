@@ -3,24 +3,24 @@ using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Entity;
 using EurovisionOnMars.Entity.Players;
 
-namespace EurovisionOnMars.Api.Features.Players;
+namespace EurovisionOnMars.Api.Features.Players.GetPlayer;
 
-public interface IPlayerService
+public interface ICreatePlayerService
 {
     Task<Player> GetPlayer(string username);
     Task<Player> CreatePlayer(string username);
 }
 
-public class PlayerService : IPlayerService
+public class CreatePlayerService : ICreatePlayerService
 {
-    private readonly IPlayerRepository _playerRepository;
+    private readonly ICreatePlayerRepository _playerRepository;
     private readonly ICountryService _countryService;
-    private readonly ILogger<PlayerService> _logger;
+    private readonly ILogger<CreatePlayerService> _logger;
 
-    public PlayerService(
-        IPlayerRepository playerRepository, 
+    public CreatePlayerService(
+        ICreatePlayerRepository playerRepository, 
         ICountryService countryService, 
-        ILogger<PlayerService> logger
+        ILogger<CreatePlayerService> logger
         )
     {
         _playerRepository = playerRepository;
