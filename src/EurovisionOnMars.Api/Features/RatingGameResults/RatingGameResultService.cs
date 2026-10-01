@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features.PlayerRatings;
+﻿using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 
@@ -12,13 +12,13 @@ public interface IRatingGameResultService
 public class RatingGameResultService : IRatingGameResultService
 {
     private readonly IRatingGameResultRepository _ratingGameResultRepository;
-    private readonly IPlayerRatingService _playerRatingService;
+    private readonly IGetRatingsService _playerRatingService;
     private readonly ILogger<RatingGameResultService> _logger;
 
     public RatingGameResultService
         (
         IRatingGameResultRepository ratingResultRepository,
-        IPlayerRatingService playerRatingService,
+        IGetRatingsService playerRatingService,
         ILogger<RatingGameResultService> logger
         )
     {

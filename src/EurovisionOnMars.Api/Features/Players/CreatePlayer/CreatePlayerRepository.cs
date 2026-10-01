@@ -34,6 +34,7 @@ public class CreatePlayerRepository : ICreatePlayerRepository
             username.Value);
 
         return await _context.Players
+            .AsNoTracking()
             .AnyAsync(p => p.Username == username);
     }
 

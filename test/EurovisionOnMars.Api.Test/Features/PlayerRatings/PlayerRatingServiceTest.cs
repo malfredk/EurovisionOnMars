@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features;
-using EurovisionOnMars.Api.Features.PlayerRatings;
 using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity.Countries;
@@ -13,21 +13,21 @@ namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
 
 public class PlayerRatingServiceTest
 {
-    private readonly Mock<IPlayerRatingRepository> _repositoryMock;
+    private readonly Mock<IGetRatingsRepository> _repositoryMock;
     private readonly Mock<IRatingTimeValidator> _ratingTimeValidatorMock;
-    private readonly Mock<ILogger<PlayerRatingService>> _loggerMock;
+    private readonly Mock<ILogger<GetRatingsService>> _loggerMock;
     private readonly Mock<IPlayerRatingProcessor> _playerRatingProcessorMock;
 
-    private readonly PlayerRatingService _service;
+    private readonly GetRatingsService _service;
 
     public PlayerRatingServiceTest()
     {
-        _repositoryMock = new Mock<IPlayerRatingRepository>();
+        _repositoryMock = new Mock<IGetRatingsRepository>();
         _ratingTimeValidatorMock = new Mock<IRatingTimeValidator>();
-        _loggerMock = new Mock<ILogger<PlayerRatingService>>();
+        _loggerMock = new Mock<ILogger<GetRatingsService>>();
         _playerRatingProcessorMock = new Mock<IPlayerRatingProcessor>();
 
-        _service = new PlayerRatingService(
+        _service = new GetRatingsService(
             _repositoryMock.Object, 
             _ratingTimeValidatorMock.Object,
             _loggerMock.Object, 

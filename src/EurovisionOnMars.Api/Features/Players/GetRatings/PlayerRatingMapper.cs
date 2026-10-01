@@ -2,7 +2,7 @@
 using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Features.Players.GetRatings;
 
 public interface IPlayerRatingMapper
 {

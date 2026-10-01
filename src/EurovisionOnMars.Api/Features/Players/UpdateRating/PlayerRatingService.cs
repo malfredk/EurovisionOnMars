@@ -3,7 +3,7 @@ using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Features.Players.UpdateRating;
 
 public interface IPlayerRatingService
 {

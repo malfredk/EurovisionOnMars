@@ -27,6 +27,7 @@ public class GetPlayerRepository : IGetPlayerRepository
     {
         _logger.LogDebug("Getting player with username={username}.", username);
         return await _context.Players
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Username == username);
     }
 }

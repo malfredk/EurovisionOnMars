@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.Common;
+using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Dto.PlayerRatings;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +9,13 @@ namespace EurovisionOnMars.Api.Features.PlayerRatings;
 [ApiController]
 public class PlayerRatingsController : ControllerBase
 {
-    private readonly IPlayerRatingService _service;
+    private readonly IGetRatingsService _service;
     private readonly ILogger<PlayerRatingsController> _logger;
     private readonly IPlayerRatingMapper _mapper;
 
     public PlayerRatingsController
         (
-        IPlayerRatingService service,
+        IGetRatingsService service,
         ILogger<PlayerRatingsController> logger,
         IPlayerRatingMapper mapper
         )

@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players.CreatePlayer;
 using EurovisionOnMars.Api.Features.Players.GetPlayer;
+using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Dto.Players;
 using EurovisionOnMars.Dto.Predictions;
@@ -15,16 +16,19 @@ public class PlayersController : ControllerBase
     private readonly ILogger<PlayersController> _logger;
     private readonly ICreatePlayerService _createPlayerService;
     private readonly IGetPlayerService _getPlayerService;
+    private readonly IGetRatingsService _getRatingsService;
 
     public PlayersController(
         ILogger<PlayersController> logger,
         ICreatePlayerService createPlayerService,
-        IGetPlayerService getPlayerService
+        IGetPlayerService getPlayerService,
+        IGetRatingsService getRatingsService
         )
     {
         _logger = logger;
         _createPlayerService = createPlayerService;
         _getPlayerService = getPlayerService;
+        _getRatingsService = getRatingsService;
     }
 
     [HttpGet("{username}")]
@@ -49,7 +53,8 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetPlayerRatings(
         int playerId)
     {
-        ...
+        var ratings = await _getRatingsService.GetRatingsByPlayerId(playerId);
+        return Ok(ratings);
     }
 
     [HttpPatch("{playerId:int}/ratings/{ratingId:int}")]

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Text.Json;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Features.Players.UpdateRating;
 
 public interface IPlayerRatingRepository
 {
