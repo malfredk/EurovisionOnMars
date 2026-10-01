@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.CustomException;
 
-namespace EurovisionOnMars.Api.Features;
+namespace EurovisionOnMars.Api.Features.Players;
 
 public interface IRatingTimeValidator
 {

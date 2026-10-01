@@ -1,7 +1,9 @@
 ﻿using EurovisionOnMars.Api.Features.Players.CreatePlayer;
 using EurovisionOnMars.Api.Features.Players.GetPlayer;
+using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Api.Features.Players.RateCountry;
+using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Dto.Players;
 using EurovisionOnMars.Dto.Predictions;
@@ -19,13 +21,17 @@ public class PlayersController : ControllerBase
     private readonly IGetPlayerService _getPlayerService;
     private readonly IGetRatingsService _getRatingsService;
     private readonly IRateCountryService _rateCountryService;
+    private readonly IGetRatingGameResultsService _getRatingGameResultsService;
+    private readonly IResolveTieBreakService _resolveTieBreakService;
 
     public PlayersController(
         ILogger<PlayersController> logger,
         ICreatePlayerService createPlayerService,
         IGetPlayerService getPlayerService,
         IGetRatingsService getRatingsService,
-        IRateCountryService rateCountryService
+        IRateCountryService rateCountryService,
+        IGetRatingGameResultsService getRatingGameResults,
+        IResolveTieBreakService resolveTieBreakService
         )
     {
         _logger = logger;
@@ -33,6 +39,8 @@ public class PlayersController : ControllerBase
         _getPlayerService = getPlayerService;
         _getRatingsService = getRatingsService;
         _rateCountryService = rateCountryService;
+        _getRatingGameResultsService = getRatingGameResults;
+        _resolveTieBreakService = resolveTieBreakService;
     }
 
     [HttpGet("{username}")]
@@ -75,7 +83,8 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<IEnumerable<RatingGameResultDto>>> GetRatingResults(
         int playerId)
     {
-        ...
+        var results = await _getRatingGameResultsService.GetRatingGameResults(playerId);
+        return Ok(results);
     }
 
     [HttpPatch("{playerId:int}/tie-break-demotions")]
@@ -83,6 +92,7 @@ public class PlayersController : ControllerBase
         int playerId,
         [FromBody] ResolveTieBreakRequestDto request)
     {
-        ...
+        await _resolveTieBreakService.UpdateTieBreakDemotions(request);
+        return Ok();
     }
 }

@@ -3,24 +3,27 @@ using EurovisionOnMars.Entity.DataAccess;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 using Microsoft.EntityFrameworkCore;
 
-namespace EurovisionOnMars.Api.Features.Predictions;
+namespace EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 
-public interface IPredictionRepository
+public interface IResolveTieBreakRepository
 {
     Task<Prediction?> GetPrediction(int id);
     Task<List<Prediction>> GetTiedPredictions(int playerId, CountryPosition calculatedRank);
     Task SaveChanges();
 }
 
-public class PredictionRepository : IPredictionRepository
+public class ResolveTieBreakRepository : IResolveTieBreakRepository
 {
+    private readonly ILogger<ResolveTieBreakRepository> _logger;
     private readonly DataContext _dataContext;
-    private readonly ILogger<PredictionRepository> _logger;
 
-    public PredictionRepository(DataContext dataContext, ILogger<PredictionRepository> logger)
+    public ResolveTieBreakRepository(
+        ILogger<ResolveTieBreakRepository> logger,
+        DataContext dataContext
+        )
     {
-        _dataContext = dataContext;
         _logger = logger;
+        _dataContext = dataContext;
     }
 
     public async Task<Prediction?> GetPrediction(int id)

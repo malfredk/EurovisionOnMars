@@ -1,14 +1,14 @@
 using EurovisionOnMars.Api.Configurations;
-using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
 using EurovisionOnMars.Api.Features.GameResults.GetResults;
+using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Players.CreatePlayer;
 using EurovisionOnMars.Api.Features.Players.GetPlayer;
 using EurovisionOnMars.Api.Features.Players.GetRatingResults;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
-using EurovisionOnMars.Api.Features.Predictions;
+using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -147,8 +147,8 @@ static void AddRatingTimeValidator(WebApplicationBuilder builder)
 
 static void AddPredictionsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
-    builder.Services.AddScoped<IPredictionService, PredictionService>();
+    builder.Services.AddScoped<IResolveTieBreakRepository, ResolveTieBreakRepository>();
+    builder.Services.AddScoped<IResolveTieBreakService, ResolveTieBreakService>();
 }
 
 static void AddPlayersFeature(WebApplicationBuilder builder)

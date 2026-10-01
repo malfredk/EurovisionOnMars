@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features;
+﻿using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;

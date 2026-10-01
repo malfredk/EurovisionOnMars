@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.Features;
+﻿using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
 using EurovisionOnMars.CustomException;

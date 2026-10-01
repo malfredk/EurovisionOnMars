@@ -1,23 +1,23 @@
 ﻿using EurovisionOnMars.Dto.Predictions;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
-namespace EurovisionOnMars.Api.Features.Predictions;
+namespace EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 
-public interface IPredictionService
+public interface IResolveTieBreakService
 {
     Task UpdateTieBreakDemotions(ResolveTieBreakRequestDto request);
 }
 
-public class PredictionService : IPredictionService
+public class ResolveTieBreakService : IResolveTieBreakService
 {
-    private readonly ILogger<PredictionService> _logger;
+    private readonly ILogger<ResolveTieBreakService> _logger;
     private readonly IRatingTimeValidator _ratingTimeValidator;
-    private readonly IPredictionRepository _repository;
+    private readonly IResolveTieBreakRepository _repository;
 
-    public PredictionService(
-        ILogger<PredictionService> logger,
+    public ResolveTieBreakService(
+        ILogger<ResolveTieBreakService> logger,
         IRatingTimeValidator ratingTimeValidator,
-        IPredictionRepository repository
+        IResolveTieBreakRepository repository
         )
     {
         _logger = logger;

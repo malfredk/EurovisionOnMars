@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Api.Features;
-using EurovisionOnMars.Api.Features.Predictions;
+﻿using EurovisionOnMars.Api.Features.Players;
+using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Dto.Predictions;
 using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
@@ -10,19 +10,19 @@ namespace EurovisionOnMars.Api.Test.Features.Predictions;
 
 public class PredictionServiceTest
 {
-    private readonly Mock<ILogger<PredictionService>> _loggerMock;
+    private readonly Mock<ILogger<ResolveTieBreakService>> _loggerMock;
     private readonly Mock<IRatingTimeValidator> _ratingTimeValidatorMock;
-    private readonly Mock<IPredictionRepository> _repositoryMock;
+    private readonly Mock<IResolveTieBreakRepository> _repositoryMock;
 
-    private readonly PredictionService _service;
+    private readonly ResolveTieBreakService _service;
 
     public PredictionServiceTest()
     {
-        _loggerMock = new Mock<ILogger<PredictionService>>();
+        _loggerMock = new Mock<ILogger<ResolveTieBreakService>>();
         _ratingTimeValidatorMock = new Mock<IRatingTimeValidator>();
-        _repositoryMock = new Mock<IPredictionRepository>();
+        _repositoryMock = new Mock<IResolveTieBreakRepository>();
 
-        _service = new PredictionService(
+        _service = new ResolveTieBreakService(
             _loggerMock.Object,
             _ratingTimeValidatorMock.Object,
             _repositoryMock.Object
