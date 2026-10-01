@@ -146,9 +146,9 @@ public class Utils
 
     // update player rating request
 
-    public static UpdatePlayerRatingRequestDto CreateUpdatePlayerRatingRequest()
+    public static RateCountryRequestDto CreateUpdatePlayerRatingRequest()
     {
-        return new UpdatePlayerRatingRequestDto()
+        return new RateCountryRequestDto()
         {
             Category1Points = CATEGORY1_POINTS.Value,
             Category2Points = CATEGORY2_POINTS.Value,

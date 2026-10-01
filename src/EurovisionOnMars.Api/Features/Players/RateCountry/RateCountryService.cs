@@ -1,13 +1,12 @@
-﻿using EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
-using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Dto.PlayerRatings;
+using EurovisionOnMars.Entity.Players;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.Players.RateCountry;
 
 public interface IRateCountryService
 {
-    Task UpdatePlayerRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto);
+    Task RateCountry(int playerId, int ratingId, RateCountryRequestDto ratingRequestDto);
 }
 
 public class RateCountryService : IRateCountryService
@@ -15,30 +14,45 @@ public class RateCountryService : IRateCountryService
     private readonly ILogger<RateCountryService> _logger;
     private readonly IRateCountryRepository _repository;
     private readonly IRatingTimeValidator _ratingTimeValidator;
-    private readonly IPlayerRatingProcessor _playerRatingProcessor;
 
     public RateCountryService(
         ILogger<RateCountryService> logger,
         IRateCountryRepository repository,
-        IRatingTimeValidator ratingTimeValidator,
-        IPlayerRatingProcessor playerRatingProcessor
+        IRatingTimeValidator ratingTimeValidator
         )
     {
         _logger = logger;
         _repository = repository;
         _ratingTimeValidator = ratingTimeValidator;
-        _playerRatingProcessor = playerRatingProcessor;
     }
 
-    public async Task UpdatePlayerRating(int id, UpdatePlayerRatingRequestDto ratingRequestDto)
+    public async Task RateCountry(int playerId, int ratingId, RateCountryRequestDto ratingRequestDto)
     {
         _ratingTimeValidator.EnsureRatingIsOpen();
 
-        var ratings = await _repository.GetPlayerRatingsForPlayer(id);
-        var ratingToUpdate = ratings.First(r => r.Id == id);
+        var player = await GetPlayer(playerId);
 
-        _playerRatingProcessor.UpdatePlayerRating(ratingRequestDto, ratingToUpdate, ratings);
+        RateCountry(player, ratingId, ratingRequestDto);
 
         await _repository.SaveChanges();
+    }
+
+    private async Task<Player> GetPlayer(int playerId)
+    {
+        var player = await _repository.GetPlayer(playerId);
+        if (player == null)
+        {
+            throw new ArgumentException($"There is no player with id {playerId}.");
+        }
+        return player;
+    }
+
+    private void RateCountry(Player player, int ratingId, RateCountryRequestDto ratingRequestDto)
+    {
+        var category1Points = new Points(ratingRequestDto.Category1Points);
+        var category2Points = new Points(ratingRequestDto.Category2Points);
+        var category3Points = new Points(ratingRequestDto.Category3Points);
+
+        player.RateCountry(ratingId, category1Points, category2Points, category3Points);
     }
 }

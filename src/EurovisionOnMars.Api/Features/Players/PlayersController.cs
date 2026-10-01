@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.CreatePlayer;
 using EurovisionOnMars.Api.Features.Players.GetPlayer;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
+using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Dto.PlayerRatings;
 using EurovisionOnMars.Dto.Players;
 using EurovisionOnMars.Dto.Predictions;
@@ -17,18 +18,21 @@ public class PlayersController : ControllerBase
     private readonly ICreatePlayerService _createPlayerService;
     private readonly IGetPlayerService _getPlayerService;
     private readonly IGetRatingsService _getRatingsService;
+    private readonly IRateCountryService _rateCountryService;
 
     public PlayersController(
         ILogger<PlayersController> logger,
         ICreatePlayerService createPlayerService,
         IGetPlayerService getPlayerService,
-        IGetRatingsService getRatingsService
+        IGetRatingsService getRatingsService,
+        IRateCountryService rateCountryService
         )
     {
         _logger = logger;
         _createPlayerService = createPlayerService;
         _getPlayerService = getPlayerService;
         _getRatingsService = getRatingsService;
+        _rateCountryService = rateCountryService;
     }
 
     [HttpGet("{username}")]
@@ -58,12 +62,13 @@ public class PlayersController : ControllerBase
     }
 
     [HttpPatch("{playerId:int}/ratings/{ratingId:int}")]
-    public async Task<ActionResult> UpdatePlayerRating(
+    public async Task<ActionResult> RateCountry(
         int playerId,
         int ratingId,
-        [FromBody] UpdatePlayerRatingRequestDto request)
+        [FromBody] RateCountryRequestDto request)
     {
-        ...
+        await _rateCountryService.RateCountry(playerId, ratingId, request);
+        return Ok();
     }
 
     [HttpGet("{playerId:int}/rating-results")]

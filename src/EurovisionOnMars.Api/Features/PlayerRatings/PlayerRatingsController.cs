@@ -35,7 +35,7 @@ public class PlayerRatingsController : ControllerBase
 
     [HttpPatch("{id:int}")]
     public async Task<ActionResult> UpdatePlayerRating(
-        int id, [FromBody] UpdatePlayerRatingRequestDto ratingRequestDto
+        int id, [FromBody] RateCountryRequestDto ratingRequestDto
         )
     {
         await _service.UpdatePlayerRating(id, ratingRequestDto);
