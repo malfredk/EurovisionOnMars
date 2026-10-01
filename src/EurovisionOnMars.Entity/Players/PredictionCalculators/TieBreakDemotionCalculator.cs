@@ -1,27 +1,18 @@
 ﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
-namespace EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
+namespace EurovisionOnMars.Entity.Players.PredictionCalculators;
 
-public interface ITieBreakDemotionHandler
+internal static class TieBreakDemotionCalculator
 {
-    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints);
-}
-
-public class TieBreakDemotionHandler : ITieBreakDemotionHandler
-{
-    private const int DEFAULT_SORT_VALUE = -1;
-
-    private readonly ILogger<TieBreakDemotionHandler> _logger;
-
-    public TieBreakDemotionHandler(ILogger<TieBreakDemotionHandler> logger)
+    internal static void Calculate(
+       PlayerRating updatedRating,
+       List<PlayerRating> ratings,
+       int? oldTotalPoints
+       )
     {
-        _logger = logger;
-    }
-
-    public void CalculateTieBreakDemotions(Prediction newPrediction, IReadOnlyList<PlayerRating> ratings, int? oldTotalPoints)
-    {
-        newPrediction.ResetTieBreakDemotion();
+        var prediction = updatedRating.Prediction;
+        prediction.ResetTieBreakDemotion();
 
         var predictionsGroupedByPoints = ratings
             .Select(r => r.Prediction)
@@ -29,31 +20,31 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
             .ToList();
 
         HandleOldPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
-        HandleNewPointsGroup(predictionsGroupedByPoints, newPrediction);
+        HandleNewPointsGroup(predictionsGroupedByPoints, prediction);
     }
 
-    private void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
+    private static void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
     {
         var oldGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
 
-        if (oldGroup == null)
+        if (oldGroup == null || oldTotalPoints == null)
         {
-            _logger.LogDebug("Old prediction was not tied; thus, there is no TieBreakDemotion to adjust.");
+            // old prediction was not tied or not set; thus, there is no TieBreakDemotion to adjust
             return;
         }
 
         HandleTieBreakDemotions(oldGroup);
     }
 
-    private void HandleNewPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, Prediction newPrediction)
+    private static void HandleNewPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, Prediction newPrediction)
     {
         var newGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, newPrediction.TotalGivenPoints);
 
         HandleTieBreakDemotions(newGroup!);
     }
 
-    private List<Prediction>? GetPredictionPointsGroup(
-        List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, 
+    private static List<Prediction>? GetPredictionPointsGroup(
+        List<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
         int? totalGivenPoints
         )
     {
@@ -73,7 +64,7 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
         return group.ToList();
     }
 
-    private void HandleTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    private static void HandleTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
     {
         if (predictionsWithSamePoints.Count() == 1)
         {
@@ -83,28 +74,27 @@ public class TieBreakDemotionHandler : ITieBreakDemotionHandler
 
         if (AreAllTieBreakDemotionsNull(predictionsWithSamePoints))
         {
-            _logger.LogDebug("TieBreakDemotions have not been applied to this group; therefore skipping TieBreakDemotion adjustment.");
             return;
         }
 
         CalculateTieBreakDemotions(predictionsWithSamePoints);
     }
 
-    private void HandleSingletonList(List<Prediction> singlePredictionList)
+    private static void HandleSingletonList(List<Prediction> singlePredictionList)
     {
         var singlePrediction = singlePredictionList.First();
         singlePrediction.ResetTieBreakDemotion();
     }
 
-    private bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
+    private static bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
     {
         return predictions.All(p => p.TieBreakDemotion == null);
     }
 
-    private void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    private static void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
     {
         var sortedPredictions = predictionsWithSamePoints
-            .OrderBy(p => p.TieBreakDemotion?.Value ?? DEFAULT_SORT_VALUE);
+            .OrderBy(p => p.TieBreakDemotion?.Value);
 
         int tieBreakDemotionValue = 0;
         foreach (var prediction in sortedPredictions)

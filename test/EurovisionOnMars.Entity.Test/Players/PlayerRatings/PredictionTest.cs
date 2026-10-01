@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
 namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings;
 

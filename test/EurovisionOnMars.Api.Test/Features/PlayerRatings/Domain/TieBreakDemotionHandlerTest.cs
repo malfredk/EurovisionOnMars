@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 using Microsoft.Extensions.Logging;
 using Moq;
 

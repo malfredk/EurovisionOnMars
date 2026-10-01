@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Entity.Players.PlayerRatings;
+﻿namespace EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
 public sealed record TieBreakDemotion
 {
