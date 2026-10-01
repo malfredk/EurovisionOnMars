@@ -1,5 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 using EurovisionOnMars.Entity.Players.PredictionCalculators;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Immutable;
@@ -133,5 +134,18 @@ public class Player : IdBase
             .SingleOrDefault(r => r.Id == ratingId)
             ?? throw new KeyNotFoundException(
                 $"No player rating with id={ratingId} exists for this player.");
+    }
+
+    public void ResolveTieBreak(List<int> orderedPredictionIds)
+    {
+        var predictions = GetPredictions();
+        TieBreakResolver.Resolve(predictions, orderedPredictionIds);
+    }
+
+    private List<Prediction> GetPredictions()
+    {
+        return PlayerRatings
+            .Select(r => r.Prediction)
+            .ToList();
     }
 }

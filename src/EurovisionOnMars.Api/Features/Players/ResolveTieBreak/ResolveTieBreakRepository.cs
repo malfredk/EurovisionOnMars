@@ -1,14 +1,12 @@
-﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.DataAccess;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+﻿using EurovisionOnMars.Entity.DataAccess;
+using EurovisionOnMars.Entity.Players;
 using Microsoft.EntityFrameworkCore;
 
 namespace EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 
 public interface IResolveTieBreakRepository
 {
-    Task<Prediction?> GetPrediction(int id);
-    Task<List<Prediction>> GetTiedPredictions(int playerId, CountryPosition calculatedRank);
+    Task<Player?> GetPlayer(int playerId);
     Task SaveChanges();
 }
 
@@ -26,21 +24,12 @@ public class ResolveTieBreakRepository : IResolveTieBreakRepository
         _dataContext = dataContext;
     }
 
-    public async Task<Prediction?> GetPrediction(int id)
+    public async Task<Player?> GetPlayer(int playerId)
     {
-        return await _dataContext.Predictions
-            .Include(p => p.PlayerRating)
-            .SingleOrDefaultAsync(p => p.Id == id);
-    }
-
-    public async Task<List<Prediction>> GetTiedPredictions(int playerId, CountryPosition calculatedRank)
-    {
-        return await _dataContext.Predictions
-            .Include(p => p.PlayerRating)
-            .Where(p =>
-                p.PlayerRating!.PlayerId == playerId &&
-                p.CalculatedRank == calculatedRank)
-            .ToListAsync();
+        return await _dataContext.Players
+            .Include(p => p.PlayerRatings)
+                .ThenInclude(r => r.Prediction)
+            .SingleOrDefaultAsync(p => p.Id == playerId);
     }
 
     public async Task SaveChanges()

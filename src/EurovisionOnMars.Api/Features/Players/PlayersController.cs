@@ -92,7 +92,7 @@ public class PlayersController : ControllerBase
         int playerId,
         [FromBody] ResolveTieBreakRequestDto request)
     {
-        await _resolveTieBreakService.UpdateTieBreakDemotions(request);
+        await _resolveTieBreakService.UpdateTieBreakDemotions(playerId, request);
         return Ok();
     }
 }
