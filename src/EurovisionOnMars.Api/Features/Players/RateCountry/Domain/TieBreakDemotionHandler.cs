@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+namespace EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
 
 public interface ITieBreakDemotionHandler
 {

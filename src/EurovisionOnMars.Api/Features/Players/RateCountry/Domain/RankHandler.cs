@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+namespace EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
 
 public interface IRankHandler
 {
@@ -37,7 +37,7 @@ public class RankHandler : IRankHandler
             }
             else if (previousPrediction != null && currentPoints == previousPrediction.TotalGivenPoints)
             {
-                currentPrediction.SetCalculatedRank(new CountryPosition((int)previousPrediction.CalculatedRank!.Value));
+                currentPrediction.SetCalculatedRank(new CountryPosition(previousPrediction.CalculatedRank!.Value));
             }
             else
             {

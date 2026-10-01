@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Text.Json;
 
-namespace EurovisionOnMars.Api.Features.Players.UpdateRating;
+namespace EurovisionOnMars.Api.Features.Players.RateCountry;
 
-public interface IPlayerRatingRepository
+public interface IRateCountryRepository
 {
     Task<IReadOnlyList<PlayerRating>> GetAllPlayerRatings();
     Task<ImmutableList<PlayerRating>> GetPlayerRatingsByPlayerId(int playerId);
@@ -14,12 +14,12 @@ public interface IPlayerRatingRepository
     Task SaveChanges();
 }
 
-public class PlayerRatingRepository : IPlayerRatingRepository
+public class RateCountryRepository : IRateCountryRepository
 {
     private readonly DataContext _context;
-    private readonly ILogger<PlayerRatingRepository> _logger;
+    private readonly ILogger<RateCountryRepository> _logger;
 
-    public PlayerRatingRepository(DataContext context, ILogger<PlayerRatingRepository> logger)
+    public RateCountryRepository(DataContext context, ILogger<RateCountryRepository> logger)
     {
         _context = context;
         _logger = logger;

@@ -3,7 +3,7 @@ using EurovisionOnMars.Entity;
 using EurovisionOnMars.Entity.Players;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+namespace EurovisionOnMars.Api.Features.Players.RateCountry.Domain;
 
 public interface IPlayerRatingProcessor
 {
