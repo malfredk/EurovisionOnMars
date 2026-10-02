@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 
-[Route("api/[controller]")]
+[Route("api/countries")]
 [ApiController]
 public class CountriesController : ControllerBase
 {

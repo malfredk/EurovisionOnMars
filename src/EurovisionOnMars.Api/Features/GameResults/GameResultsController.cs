@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.GameResults;
 
-[Route("api/[controller]")]
+[Route("api/game-results")]
 [ApiController]
 public class GameResultsController : ControllerBase
 {
@@ -24,7 +24,7 @@ public class GameResultsController : ControllerBase
         _getPlayerGameResultsService = getPlayerGameResultsService;
     }
 
-    [HttpPost]
+    [HttpPost("calculate")]
     public async Task<ActionResult> CalculateGameResults()
     {
         await _calculateGameResultsService.CalculateGameResults();

@@ -58,7 +58,7 @@ public class PlayersController : ControllerBase
 
         return CreatedAtAction(
             nameof(GetPlayer),
-            new { username = username },
+            new { username },
             value: null);
     }
 
@@ -88,7 +88,7 @@ public class PlayersController : ControllerBase
         return Ok(results);
     }
 
-    [HttpPatch("{playerId:int}/tie-break-demotions")]
+    [HttpPatch("{playerId:int}/predictions/tie-break")]
     public async Task<ActionResult> ResolveTieBreak(
         int playerId,
         [FromBody] ResolveTieBreakRequestDto request)

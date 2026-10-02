@@ -46,7 +46,7 @@
             return;
         }
 
-        var response = await Http.PostAsJsonAsync<string>("/api/Players/", newUsername);
+        var response = await Http.PostAsJsonAsync<string>("/api/players/", newUsername);
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
@@ -79,7 +79,7 @@
             return;
         }
 
-        var response = await Http.GetAsync($"/api/Players/{existingUsername}");
+        var response = await Http.GetAsync($"/api/players/{existingUsername}");
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();

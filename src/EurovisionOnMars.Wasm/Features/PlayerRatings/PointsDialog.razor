@@ -52,6 +52,7 @@
 @code {
     [CascadingParameter] MudDialogInstance Dialog { get; set; }
 
+    [Parameter] public int PlayerId { get; set; }
     [Parameter] public PlayerRatingDto Rating { get; set; }
 
     private int? category1;
@@ -79,7 +80,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync<RateCountryRequestDto>($"/api/PlayerRatings/{Rating.Id}/", ratingRequest);
+        var response = await Http.PatchAsJsonAsync<RateCountryRequestDto>($"/api/players/{PlayerId}/ratings/{Rating.Id}/", ratingRequest);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("avstemning lagret", Severity.Success);
