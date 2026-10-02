@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
-namespace EurovisionOnMars.Entity.Tests.Players.PlayerRatings;
+namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings.Predictions;
 
 public class TieBreakDemotionTest
 {
