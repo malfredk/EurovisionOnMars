@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetRatings;
 
 public class PlayerRatingMapperTest
 {

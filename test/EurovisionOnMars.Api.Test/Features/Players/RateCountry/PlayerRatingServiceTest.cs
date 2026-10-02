@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings;
+namespace EurovisionOnMars.Api.Test.Features.Players.RateCountry;
 
 public class PlayerRatingServiceTest
 {
@@ -174,7 +174,7 @@ public class PlayerRatingServiceTest
     private static PlayerRating CreatePlayerRating(int countryNumber, int predictionRank)
     {
         var rating = CreateInitialPlayerRating(countryNumber);
-        rating.Prediction.SetCalculatedRank(new CountryPosition((int)predictionRank));
+        rating.Prediction.SetCalculatedRank(new CountryPosition(predictionRank));
         return rating;
     }
 

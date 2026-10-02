@@ -3,7 +3,7 @@ using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
-namespace EurovisionOnMars.Api.Test.Features.RatingGameResults;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetRatingGameResults;
 
 public class RatingGameResultCalculatorTest
 {

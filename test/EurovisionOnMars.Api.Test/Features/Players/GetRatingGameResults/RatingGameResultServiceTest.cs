@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
 
-namespace EurovisionOnMars.Api.Test.Services;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetRatingGameResults;
 
 public class RatingGameResultServiceTest
 {

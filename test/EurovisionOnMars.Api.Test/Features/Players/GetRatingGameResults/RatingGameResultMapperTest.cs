@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatingResults;
 
-namespace EurovisionOnMars.Api.Test.Features.RatingGameResults;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetRatingGameResults;
 
 public class RatingGameResultMapperTest
 {

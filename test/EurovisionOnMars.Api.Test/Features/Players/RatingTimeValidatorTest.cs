@@ -3,7 +3,7 @@ using EurovisionOnMars.CustomException;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features;
+namespace EurovisionOnMars.Api.Test.Features.Players;
 
 public class RatingTimeValidatorTest
 {

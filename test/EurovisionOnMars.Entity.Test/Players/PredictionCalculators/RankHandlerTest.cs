@@ -3,7 +3,7 @@ using EurovisionOnMars.Entity.Players.PlayerRatings;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.PlayerRatings.Domain;
+namespace EurovisionOnMars.Entity.Test.Players.PredictionCalculators;
 
 public class RankHandlerTest
 {

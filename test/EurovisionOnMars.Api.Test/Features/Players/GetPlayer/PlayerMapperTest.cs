@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
 
-namespace EurovisionOnMars.Api.Test.Features.Players;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetPlayer;
 
 public class PlayerMapperTest
 {    

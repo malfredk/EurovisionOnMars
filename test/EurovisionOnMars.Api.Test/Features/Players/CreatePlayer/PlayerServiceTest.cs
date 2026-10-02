@@ -5,7 +5,7 @@ using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.Players;
+namespace EurovisionOnMars.Api.Test.Features.Players.CreatePlayer;
 
 public class PlayerServiceTest
 {
