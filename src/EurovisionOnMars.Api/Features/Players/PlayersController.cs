@@ -6,6 +6,7 @@ using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Dto.Players.GetPlayer;
 using EurovisionOnMars.Dto.Players.GetRatingGameResults;
+using EurovisionOnMars.Dto.Players.GetRatings;
 using EurovisionOnMars.Dto.Players.RateCountry;
 using EurovisionOnMars.Dto.Players.ResolveTieBreak;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Dto.Players.PlayerRatings;
+﻿using EurovisionOnMars.Dto.Players.GetRatings;
 using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
