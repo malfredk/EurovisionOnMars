@@ -24,12 +24,14 @@ public static class GameScenarioFactory
         var points2 = new Points(2);
 
         // first player has rated countries
-        gameScenario.Players[0].PlayerRatings[0].SetPoints(points1, points1, points1);
-        gameScenario.Players[0].PlayerRatings[1].SetPoints(points2, points2, points2);
+        var player1 = gameScenario.Players[0];
+        player1.RateCountry(player1.PlayerRatings[0].Id, points1, points1, points1);
+        player1.RateCountry(player1.PlayerRatings[1].Id, points2, points2, points2);
 
         // second player has rated countries
-        gameScenario.Players[1].PlayerRatings[0].SetPoints(points2, points2, points2);
-        gameScenario.Players[1].PlayerRatings[1].SetPoints(points1, points1, points1);
+        var player2 = gameScenario.Players[1];
+        player2.RateCountry(player2.PlayerRatings[0].Id, points2, points2, points2);
+        player2.RateCountry(player2.PlayerRatings[1].Id, points1, points1, points1);
 
         return gameScenario;
     }

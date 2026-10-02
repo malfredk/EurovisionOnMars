@@ -25,7 +25,7 @@ public static class PlayerFactory
         var category1Points = new Points(PlayerRatingTestData.Category1Points);
         var category2Points = new Points(PlayerRatingTestData.Category2Points);
         var category3Points = new Points(PlayerRatingTestData.Category3Points);
-        player.PlayerRatings[0].SetPoints(category1Points, category2Points, category3Points);
+        player.RateCountry(player.PlayerRatings[0].Id, category1Points, category2Points, category3Points);
 
         return player;
     }

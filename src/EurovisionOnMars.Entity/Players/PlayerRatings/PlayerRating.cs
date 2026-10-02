@@ -27,7 +27,7 @@ public class PlayerRating : IdBase
         RatingGameResult = new RatingGameResult(this);
     }
 
-    internal void SetPoints( // TODO: make private
+    internal void SetPoints(
         Points category1points, 
         Points category2points,
         Points category3points
