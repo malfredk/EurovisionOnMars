@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Dto.Predictions;
+﻿using EurovisionOnMars.Dto.Players.ResolveTieBreak;
 using EurovisionOnMars.Entity.Players;
 
 namespace EurovisionOnMars.Api.Features.Players.ResolveTieBreak;

@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Dto.PlayerRatings;
+﻿using EurovisionOnMars.Dto.Players.PlayerRatings;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Collections.Immutable;
 

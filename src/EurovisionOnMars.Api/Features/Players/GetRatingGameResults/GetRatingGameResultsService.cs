@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Dto.RatingGameResults;
+﻿using EurovisionOnMars.Dto.Players.GetRatingGameResults;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.Players.GetRatingGameResults;

@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.Players;
+﻿namespace EurovisionOnMars.Dto.Players.GetPlayer;
 
 public record PlayerDto : IdBaseDto
 {

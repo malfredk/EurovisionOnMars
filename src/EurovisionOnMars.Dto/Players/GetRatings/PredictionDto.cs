@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.PlayerRatings;
+﻿namespace EurovisionOnMars.Dto.Players.GetRatings;
 
 public record PredictionDto : IdBaseDto
 {

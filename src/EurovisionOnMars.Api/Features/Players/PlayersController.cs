@@ -4,10 +4,10 @@ using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
-using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Dto.Players;
-using EurovisionOnMars.Dto.Predictions;
-using EurovisionOnMars.Dto.RatingGameResults;
+using EurovisionOnMars.Dto.Players.GetPlayer;
+using EurovisionOnMars.Dto.Players.GetRatingGameResults;
+using EurovisionOnMars.Dto.Players.RateCountry;
+using EurovisionOnMars.Dto.Players.ResolveTieBreak;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.Players;
@@ -62,7 +62,7 @@ public class PlayersController : ControllerBase
     }
 
     [HttpGet("{playerId:int}/ratings")]
-    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetPlayerRatings(
+    public async Task<ActionResult<IEnumerable<PlayerRatingDto>>> GetRatings(
         int playerId)
     {
         var ratings = await _getRatingsService.GetRatingsByPlayerId(playerId);

@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
-using EurovisionOnMars.Dto.Predictions;
+using EurovisionOnMars.Dto.Players.ResolveTieBreak;
 using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 using Microsoft.Extensions.Logging;

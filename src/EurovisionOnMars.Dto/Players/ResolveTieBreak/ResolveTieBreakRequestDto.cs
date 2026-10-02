@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.Predictions;
+﻿namespace EurovisionOnMars.Dto.Players.ResolveTieBreak;
 
 public record ResolveTieBreakRequestDto
 {

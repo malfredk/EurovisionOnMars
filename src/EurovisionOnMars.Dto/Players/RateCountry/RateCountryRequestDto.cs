@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Dto.PlayerRatings;
+﻿namespace EurovisionOnMars.Dto.Players.RateCountry;
 
 public record RateCountryRequestDto
 {
