@@ -10,9 +10,9 @@ public static class PlayerFactory
 {
     public static Player CreateInitialPlayer()
     {
-        var country = CountryFactory.CreateInitialCountry();
+        var countries = CountryFactory.CreateInitialSingletonList();
         var username = new Username(PlayerTestData.Username);
-        return new Player(username, [country])
+        return new Player(username, countries)
         {
             Id = PlayerTestData.Id
         };

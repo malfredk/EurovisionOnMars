@@ -89,7 +89,7 @@ public class CreatePlayerServiceTest
     public async Task CreatePlayer_InvalidUsername_DoesNotAccessRepository()
     {
         // arrange
-        var invalidUsername = PlayerTestData.Username;
+        const string invalidUsername = "invalid username";
 
         // act
         var action = () => _service.CreatePlayer(invalidUsername);

@@ -1,30 +1,46 @@
-﻿using EurovisionOnMars.Api.Features.Players.GetRatingResults;
+﻿using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
+using EurovisionOnMars.Api.Test.TestData.Countries;
+using EurovisionOnMars.Api.Test.TestData.Players;
 
 namespace EurovisionOnMars.Api.Test.Features.Players.GetRatingGameResults;
 
 public class RatingGameResultMapperTest
 {
-    private const int RANK_DIFFERENCE = 30;
-    private const int BONUS_POINTS = -4;
-
     private readonly RatingGameResultMapper _mapper = new RatingGameResultMapper();
 
     [Fact]
-    public void ToDto()
+    public void ToDto_WithoutResults_ResturnsMostlyEmptyDto()
     {
         // arrange
-        var ratingGameResult = Utils.CreateRatingGameResult(RANK_DIFFERENCE, BONUS_POINTS);
-        ratingGameResult.PlayerRating!.Country!.SetActualRank(Utils.COUNTRY_RANK);
+        var playerRating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
 
         // act
-        var dto = _mapper.ToDto(ratingGameResult);
+        var dto = _mapper.ToDto(playerRating);
 
         // assert
-        Assert.Equal(RANK_DIFFERENCE, dto.RankDifference);
-        Assert.Equal(BONUS_POINTS, dto.BonusPoints);
+        Assert.Null(dto.RankDifference);
+        Assert.Null(dto.BonusPoints);
 
         var countryDto = dto.Country;
-        Assert.Equal(Utils.COUNTRY_NAME.Value, countryDto.Name);
-        Assert.Equal(Utils.COUNTRY_RANK.Value, countryDto.ActualRank);
+        Assert.Null(countryDto.ActualRank);
+        Assert.Equal(CountryTestData.Name, countryDto.Name);
+    }
+
+    [Fact]
+    public void ToDto_WithResults_ResturnsDto()
+    {
+        // arrange
+        var playerRating = 
+
+        // act
+        var dto = _mapper.ToDto(playerRating);
+
+        // assert
+        Assert.Equal(, dto.RankDifference);
+        Assert.Equal(, dto.BonusPoints);
+
+        var countryDto = dto.Country;
+        Assert.Equal(, countryDto.ActualRank);
+        Assert.Equal(CountryTestData.Name, countryDto.Name);
     }
 }
