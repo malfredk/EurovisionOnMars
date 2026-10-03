@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 
@@ -15,9 +15,9 @@ public class CountryMapper : ICountryMapper
         return new CountryDto
         {
             Id = entity.Id,
-            Number = entity.Number,
-            Name = entity.Name,
-            ActualRank = entity.ActualRank
+            Number = entity.Number.Value,
+            Name = entity.Name.Value,
+            ActualRank = entity.ActualRank?.Value
         };
     }
 }

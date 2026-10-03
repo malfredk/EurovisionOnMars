@@ -1,13 +1,14 @@
 using EurovisionOnMars.Api.Configurations;
-using EurovisionOnMars.Api.Features;
 using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.GameResults;
-using EurovisionOnMars.Api.Features.PlayerGameResults;
-using EurovisionOnMars.Api.Features.PlayerRatings;
-using EurovisionOnMars.Api.Features.PlayerRatings.Domain;
+using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
+using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
 using EurovisionOnMars.Api.Features.Players;
-using EurovisionOnMars.Api.Features.Predictions;
-using EurovisionOnMars.Api.Features.RatingGameResults;
+using EurovisionOnMars.Api.Features.Players.CreatePlayer;
+using EurovisionOnMars.Api.Features.Players.GetPlayer;
+using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
+using EurovisionOnMars.Api.Features.Players.GetRatings;
+using EurovisionOnMars.Api.Features.Players.RateCountry;
+using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Entity.DataAccess;
 using Microsoft.EntityFrameworkCore;
@@ -28,12 +29,7 @@ AddDbContext(builder);
 
 AddCountriesFeature(builder);
 AddGameResultsFeature(builder);
-AddPlayerGameResultsFeature(builder);
-AddRatingTimeValidator(builder);
-AddPlayerRatingsFeature(builder);
-AddPredictionsFeature(builder);
-AddPlayersFeature(builder);
-AddRatingGameResultsFeature(builder);
+AddPlayerFeature(builder);
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
@@ -116,26 +112,32 @@ static void AddCountriesFeature(WebApplicationBuilder builder)
 
 static void AddGameResultsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IGameResultService, GameResultService>();
+    AddCalculateGameResultsFeature(builder);
+    AddGetPlayerGameResultsFeature(builder);
 }
 
-static void AddPlayerGameResultsFeature(WebApplicationBuilder builder)
+static void AddCalculateGameResultsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPlayerGameResultRepository, PlayerGameResultRepository>();
+    builder.Services.AddScoped<ICalculateGameResultsRepository, CalculateGameResultsRepository>();
+    builder.Services.AddScoped<ICalculateGameResultsService, CalculateGameResultsService>();
+}
+
+static void AddGetPlayerGameResultsFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IGetPlayerGameResultsRepository, GetPlayerGameResultsRepository>();
     builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
-    builder.Services.AddScoped<IPlayerGameResultService, PlayerGameResultService>();
+    builder.Services.AddScoped<IGetPlayerGameResultsService, GetPlayerGameResultsService>();
 }
 
-static void AddPlayerRatingsFeature(WebApplicationBuilder builder)
+static void AddPlayerFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPlayerRatingRepository, PlayerRatingRepository>();
-    builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
-    builder.Services.AddScoped<IPlayerRatingService, PlayerRatingService>();
-
-    builder.Services.AddScoped<IPlayerRatingProcessor, PlayerRatingProcessor>();
-    builder.Services.AddScoped<IRankHandler, RankHandler>();
-    builder.Services.AddScoped<ISpecialPointsValidator, SpecialPointsValidator>();
-    builder.Services.AddScoped<ITieBreakDemotionHandler, TieBreakDemotionHandler>();
+    AddRatingTimeValidator(builder);
+    AddCreatePlayerFeature(builder);
+    AddGetPlayerFeature(builder);
+    AddGetRatingGameResultsFeature(builder);
+    AddGetRatingsFeature(builder);
+    AddRateCountryFeature(builder);
+    AddResolveTieBreakFeature(builder);
 }
 
 static void AddRatingTimeValidator(WebApplicationBuilder builder)
@@ -144,23 +146,41 @@ static void AddRatingTimeValidator(WebApplicationBuilder builder)
     builder.Services.AddScoped<IRatingTimeValidator, RatingTimeValidator>();
 }
 
-static void AddPredictionsFeature(WebApplicationBuilder builder)
+static void AddCreatePlayerFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
-    builder.Services.AddScoped<IPredictionService, PredictionService>();
+    builder.Services.AddScoped<ICreatePlayerRepository, CreatePlayerRepository>();
+    builder.Services.AddScoped<ICreatePlayerService, CreatePlayerService>();
 }
 
-static void AddPlayersFeature(WebApplicationBuilder builder)
+static void AddGetPlayerFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+    builder.Services.AddScoped<IGetPlayerRepository, GetPlayerRepository>();
     builder.Services.AddTransient<IPlayerMapper, PlayerMapper>();
-    builder.Services.AddScoped<IPlayerService, PlayerService>();
+    builder.Services.AddScoped<IGetPlayerService, GetPlayerService>();
 }
 
-static void AddRatingGameResultsFeature(WebApplicationBuilder builder)
+static void AddGetRatingGameResultsFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<IRatingGameResultRepository, RatingGameResultRepository>();
+    builder.Services.AddScoped<IGetRatingGameResultsRepository, GetRatingGameResultsRepository>();
     builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
-    builder.Services.AddScoped<IRatingGameResultCalculator, RatingGameResultCalculator>();
-    builder.Services.AddScoped<IRatingGameResultService, RatingGameResultService>();
+    builder.Services.AddScoped<IGetRatingGameResultsService, GetRatingGameResultsService>();
+}
+
+static void AddGetRatingsFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IGetRatingsRepository, GetRatingsRepository>();
+    builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
+    builder.Services.AddScoped<IGetRatingsService, GetRatingsService>();
+}
+
+static void AddRateCountryFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IRateCountryRepository, RateCountryRepository>();
+    builder.Services.AddScoped<IRateCountryService, RateCountryService>();
+}
+
+static void AddResolveTieBreakFeature(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IResolveTieBreakRepository, ResolveTieBreakRepository>();
+    builder.Services.AddScoped<IResolveTieBreakService, ResolveTieBreakService>();
 }

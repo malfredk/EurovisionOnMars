@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+using Microsoft.EntityFrameworkCore;
 
 namespace EurovisionOnMars.Entity.DataAccess;
 
@@ -17,11 +21,7 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Country>()
-            .HasIndex(e => e.Number)
-            .IsUnique();
-        modelBuilder.Entity<Player>()
-            .HasIndex(p => p.Username)
-            .IsUnique();
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(DataContext).Assembly);
     }
 }

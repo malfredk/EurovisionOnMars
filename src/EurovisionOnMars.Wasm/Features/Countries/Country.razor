@@ -68,7 +68,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync<int>($"/api/Countries/{country.Id}/", (int)updatedRank!);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/countries/{country.Id}/", (int)updatedRank!);
         if (response.IsSuccessStatusCode)
         {
             country.ActualRank = (int)updatedRank!;
@@ -83,7 +83,7 @@
 
     private async Task FetchCountries()
     {
-        var response = await Http.GetAsync("/api/Countries");
+        var response = await Http.GetAsync("/api/countries");
         if (response.IsSuccessStatusCode)
         {
             Countries = await response.Content.ReadFromJsonAsync<List<CountryDto>>();
@@ -118,7 +118,7 @@
 
     private async Task CalculateResult()
     {
-        var response = await Http.PostAsync("/api/GameResults", null);
+        var response = await Http.PostAsync("/api/game-results/calculate", null);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("kalkulering av resultat var vellykket", Severity.Success);

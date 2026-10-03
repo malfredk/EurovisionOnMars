@@ -1,6 +1,6 @@
 ﻿@page "/stemmeskjema/{playerId:int}"
 
-@using EurovisionOnMars.Dto.PlayerRatings
+@using EurovisionOnMars.Dto.Players.GetRatings
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -78,8 +78,11 @@
     private async Task HandleSelectRating(TableRowClickEventArgs<PlayerRatingDto> tableRowClickEventArgs)
     {
         var selectedRating = tableRowClickEventArgs.Item;
-        var parameters = new DialogParameters<PointsDialog>();
-        parameters.Add(x => x.Rating, selectedRating);
+        var parameters = new DialogParameters
+        {
+            [nameof(PointsDialog.PlayerId)] = PlayerId,
+            [nameof(PointsDialog.Rating)] = selectedRating
+        };
 
         var dialogResponse = await DialogService.ShowAsync<PointsDialog>($"{selectedRating.Country.Name}", parameters);
         var dialogResult = await dialogResponse.Result;
@@ -92,7 +95,7 @@
 
     private async Task FetchRatings()
     {
-        var response = await Http.GetAsync($"/api/PlayerRatings/{PlayerId}");
+        var response = await Http.GetAsync($"/api/players/{PlayerId}/ratings");
         if (response.IsSuccessStatusCode)
         {
             PlayerRatings = await response.Content.ReadFromJsonAsync<List<PlayerRatingDto>>();
@@ -141,8 +144,11 @@
             .Where(r => r.Prediction.CalculatedRank == tiedRating.Prediction.CalculatedRank)
             .ToList();
 
-        var parameters = new DialogParameters<TieBreakerDialog>();
-        parameters.Add(x => x.TiedRatings, tiedRatings);
+        var parameters = new DialogParameters
+        {
+            [nameof(TieBreakerDialog.PlayerId)] = PlayerId,
+            [nameof(TieBreakerDialog.TiedRatings)] = tiedRatings
+        };
 
         var options = new DialogOptions
         {

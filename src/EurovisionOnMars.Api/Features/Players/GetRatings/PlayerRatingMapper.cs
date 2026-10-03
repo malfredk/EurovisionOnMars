@@ -1,0 +1,58 @@
+﻿using EurovisionOnMars.Dto.Players.GetRatings;
+using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+
+namespace EurovisionOnMars.Api.Features.Players.GetRatings;
+
+public interface IPlayerRatingMapper
+{
+    public PlayerRatingDto ToDto(PlayerRating entity);
+}
+
+public class PlayerRatingMapper : IPlayerRatingMapper
+{
+    public PlayerRatingDto ToDto(PlayerRating entity)
+    {
+        return new PlayerRatingDto
+        {
+            Id = entity.Id,
+            Category1Points = entity.Category1Points?.Value,
+            Category2Points = entity.Category2Points?.Value,
+            Category3Points = entity.Category3Points?.Value,
+            Prediction = ToPredictionDto(entity.Prediction),
+            Country = ToCountryDto(entity.Country)
+        };
+    }
+
+    private PredictionDto ToPredictionDto(Prediction? prediction)
+    {
+        if (prediction == null) {
+            throw new Exception("PlayerRating is missing Prediction.");
+        }
+
+        return new PredictionDto
+        {
+            Id = prediction.Id,
+            TotalGivenPoints = prediction.TotalGivenPoints,
+            CalculatedRank = prediction.CalculatedRank?.Value,
+            TieBreakDemotion = prediction.TieBreakDemotion?.Value,
+            PredictedRank = prediction.GetPredictedRank()?.Value,
+        };
+    }
+
+    private PlayerRatingCountryDto ToCountryDto(Country? country)
+    {
+        if (country == null)
+        {
+            throw new Exception("PlayerRating is missing Country.");
+
+        }
+
+        return new PlayerRatingCountryDto
+        {
+            Number = country.Number.Value,
+            Name = country.Name.Value
+        };
+    }
+}

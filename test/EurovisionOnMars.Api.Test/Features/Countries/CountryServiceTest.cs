@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Countries;
+using EurovisionOnMars.Api.Test.TestData.Countries;
 using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Entity;
+using EurovisionOnMars.Entity.Countries;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -9,29 +10,34 @@ namespace EurovisionOnMars.Api.Test.Features.Countries;
 
 public class CountryServiceTest
 {
-    private readonly Mock<ICountryRepository> _countryRepositoryMock;
     private readonly Mock<ILogger<CountryService>> _loggerMock;
+    private readonly Mock<ICountryRepository> _repositoryMock;
+    private readonly Mock<ICountryMapper> _mapperMock;
+
     private readonly CountryService _service;
 
     public CountryServiceTest()
     {
-        _countryRepositoryMock = new Mock<ICountryRepository>();
         _loggerMock = new Mock<ILogger<CountryService>>();
+        _repositoryMock = new Mock<ICountryRepository>();
+        _mapperMock = new Mock<ICountryMapper>();
 
-        _service = new CountryService(           
-            _countryRepositoryMock.Object,
-            _loggerMock.Object);
+        _service = new CountryService(
+            _loggerMock.Object,
+            _repositoryMock.Object,
+            _mapperMock.Object
+            );
     }
 
     // tests for GetCountries
 
     [Fact]
-    public async Task GetCountries()
+    public async Task GetCountries_ReturnsCountriesOrderedByNumber()
     {
         // arrange
-        var countryNumber21 = Utils.CreateInitialCountry(21);
-        var countryNumber4 = Utils.CreateInitialCountry(4);
-        var countryNumber7 = Utils.CreateInitialCountry(7);
+        var countryNumber21 = CountryFactory.CreateInitialCountry(21);
+        var countryNumber4 = CountryFactory.CreateInitialCountry(4);
+        var countryNumber7 = CountryFactory.CreateInitialCountry(7);
 
         var countries = new List<Country> 
         { 
@@ -39,14 +45,25 @@ public class CountryServiceTest
             countryNumber4,
             countryNumber7
         }.ToImmutableList();
-        _countryRepositoryMock.Setup(m => m.GetCountries())
+        _repositoryMock.Setup(m => m.GetCountries())
             .ReturnsAsync(countries);
 
-        var expectedCountries = new List<Country>
+        var countryDtoNumber21 = CreateCountryDto(21);
+        var countryDtoNumber4 = CreateCountryDto(4);
+        var countryDtoNumber7 = CreateCountryDto(7);
+
+        _mapperMock.Setup(m => m.ToDto(countryNumber21))
+            .Returns(countryDtoNumber21);
+        _mapperMock.Setup(m => m.ToDto(countryNumber4))
+            .Returns(countryDtoNumber4);
+        _mapperMock.Setup(m => m.ToDto(countryNumber7))
+            .Returns(countryDtoNumber7);
+
+        var expectedCountries = new List<CountryDto>
         {
-            countryNumber4,
-            countryNumber7,
-            countryNumber21
+            countryDtoNumber4,
+            countryDtoNumber7,
+            countryDtoNumber21
         }.ToImmutableList();
 
         // act
@@ -55,84 +72,106 @@ public class CountryServiceTest
         // assert
         Assert.Equal(expectedCountries, actualCountries);
 
-        _countryRepositoryMock.Verify(m => m.GetCountries(), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountries(), Times.Once);
+
+        _mapperMock.Verify(m => m.ToDto(countryNumber21), Times.Once);
+        _mapperMock.Verify(m => m.ToDto(countryNumber4), Times.Once);
+        _mapperMock.Verify(m => m.ToDto(countryNumber7), Times.Once);
     }
 
     // tests for CreateCountry
 
     [Fact]
-    public async Task CreateCountry()
+    public async Task CreateCountry_ValidRequest_ReturnsNewCountry()
     {
         // arrange
         var countryRequest = CreateCountryRequest();
 
-        var expectedCountry = Utils.CreateInitialCountry();
-        _countryRepositoryMock.Setup(m => m.CreateCountry(It.IsAny<Country>()))
+        var expectedCountry = CountryFactory.CreateInitialCountry();
+        _repositoryMock.Setup(m => m.CreateCountry(It.IsAny<Country>()))
             .ReturnsAsync(expectedCountry);
+
+        var expectedCountryDto = CreateCountryDto();
+        _mapperMock.Setup(m => m.ToDto(expectedCountry))
+            .Returns(expectedCountryDto);
 
         // act
         var actualCountry = await _service.CreateCountry(countryRequest);
 
         // assert
-        Assert.Equal(expectedCountry, actualCountry);
+        Assert.Equal(expectedCountryDto, actualCountry);
 
-        _countryRepositoryMock.Verify(m =>
+        _repositoryMock.Verify(m =>
             m.CreateCountry(It.Is<Country>(c =>
-                c.Number == Utils.COUNTRY_NUMBER &&
-                c.Name == Utils.COUNTRY_NAME)),
+                c.Number.Value == CountryTestData.Number &&
+                c.Name.Value == CountryTestData.Name &&
+                c.ActualRank == null)),
             Times.Once);
+
+        _mapperMock.Verify(m => m.ToDto(expectedCountry), Times.Once);
     }
 
     // tests for UpdateCountry
 
     [Fact]
-    public async Task UpdateCountry()
+    public async Task UpdateCountry_ValidInput_UpdatesRank()
     {
         // arrange
-        var fetchedCountry = Utils.CreateInitialCountry(1);
-        _countryRepositoryMock.Setup(m => m.GetCountry(Utils.COUNTRY_ID))
-            .ReturnsAsync(fetchedCountry);
+        var rank = CountryTestData.Rank;
+        var id = CountryTestData.Id;
 
-        var expectedCountry = Utils.CreateInitialCountry(2);
-        _countryRepositoryMock.Setup(m => m.UpdateCountry(fetchedCountry))
-            .ReturnsAsync(expectedCountry);
+        var country = CountryFactory.CreateInitialCountry(1);
+        _repositoryMock.Setup(m => m.GetCountry(id))
+            .ReturnsAsync(country);
 
         // act
-        var actualCountry = await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK);
+        await _service.SetCountryRank(id, rank);
 
         // assert
-        Assert.Equal(expectedCountry, actualCountry);
+        Assert.Equal(rank, country.ActualRank!.Value);
 
-        Assert.Equal(Utils.COUNTRY_RANK, fetchedCountry.ActualRank);
-
-        _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
-        _countryRepositoryMock.Verify(m => m.UpdateCountry(fetchedCountry), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _repositoryMock.Verify(m => m.UpdateCountry(country), Times.Once);
+        _repositoryMock.Verify(m => m.UpdateCountry(It.Is<Country>(c => c.ActualRank!.Value == rank)), Times.Once);
     }
 
     [Fact]
-    public async Task UpdateCountry_InvalidId()
+    public async Task UpdateCountry_InvalidId_ThrowsException()
     {
         // arrange
-        _countryRepositoryMock.Setup(m => m.GetCountry(Utils.COUNTRY_ID))
+        var id = CountryTestData.Id;
+
+        _repositoryMock.Setup(m => m.GetCountry(id))
             .ReturnsAsync((Country)null);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.UpdateCountry(Utils.COUNTRY_ID, Utils.COUNTRY_RANK)
+            async () => await _service.SetCountryRank(id, CountryTestData.Rank)
         );
 
-        _countryRepositoryMock.Verify(m => m.GetCountry(Utils.COUNTRY_ID), Times.Once);
-        _countryRepositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
+        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _repositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
     }
 
-    // helper methods
+    // helpers
 
     private NewCountryRequestDto CreateCountryRequest()
     {
         return new NewCountryRequestDto
         {
-            Name = Utils.COUNTRY_NAME,
-            Number = Utils.COUNTRY_NUMBER
+            Name = CountryTestData.Name,
+            Number = CountryTestData.Number
+        };
+    }
+
+    private CountryDto CreateCountryDto(int number = CountryTestData.Number)
+    {
+        return new CountryDto
+        {
+            Id = CountryTestData.Id,
+            Name = CountryTestData.Name,
+            Number = number,
+            ActualRank = CountryTestData.Rank
         };
     }
 }

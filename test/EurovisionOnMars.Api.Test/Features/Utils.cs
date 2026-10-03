@@ -1,62 +1,18 @@
-﻿using EurovisionOnMars.Dto.PlayerRatings;
-using EurovisionOnMars.Entity;
+﻿using EurovisionOnMars.Dto.Players.RateCountry;
+using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
 namespace EurovisionOnMars.Api.Test.Features;
 
 public class Utils
 {
-    public const int COUNTRY_ID = 8;
-    public const int COUNTRY_NUMBER = 5;
-    public const string COUNTRY_NAME = "australia";
-    public const int COUNTRY_RANK = 7;
-
-    public const string PLAYER_USERNAME = "lars";
-    public const int PLAYER_ID = 1234;
-
     public const int RATING_ID = 77;
-    public const int CATEGORY1_POINTS = 4;
-    public const int CATEGORY2_POINTS = 12;
-    public const int CATEGORY3_POINTS = 8;
 
-    public const int PREDICTION_CALCULATED_RANK = 20;
-    public const int PREDICTION_RANK = 21;
-    public const int TIE_BREAK_DEMOTION = 1;
-
-    public const int PLAYER_GAME_RESULT_RANK = 10;
-    public const int PLAYER_GAME_RESULT_POINTS = 300;
-
-    // country
-
-    public static Country CreateInitialCountry(int number = COUNTRY_NUMBER)
-    {
-        return new Country(number, COUNTRY_NAME)
-        {
-            Id = COUNTRY_ID
-        };
-    }
-
-    public static Country CreateRankedCountry()
-    {
-        var country = CreateInitialCountry();
-        country.SetActualRank(COUNTRY_RANK);
-        return country;
-    }
-    
-    // player
-
-    public static Player CreateInitialPlayer(int playerId = PLAYER_ID)
-    {
-        var country = CreateInitialCountry();
-        return CreateInitialPlayer(country, playerId);
-    }
-
-    public static Player CreateInitialPlayer(Country country, int playerId = PLAYER_ID)
-    {
-        return new Player(PLAYER_USERNAME, [country])
-        {
-            Id = playerId
-        };
-    }
+    public static readonly CountryPosition PREDICTION_CALCULATED_RANK = new(10);
+    public static readonly CountryPosition PREDICTION_RANK = new(11);
+    public static readonly TieBreakDemotion TIE_BREAK_DEMOTION = new(1);
 
     // player rating
 
@@ -73,15 +29,56 @@ public class Utils
         return rating;
     }
 
+    public static PlayerRating CreatePlayerRating()
+    {
+        return CreatePlayerRating(
+            CATEGORY1_POINTS,
+            CATEGORY2_POINTS,
+            CATEGORY3_POINTS,
+            PREDICTION_CALCULATED_RANK
+        );
+    }
+
     public static PlayerRating CreatePlayerRating(
-        int category1Points = CATEGORY1_POINTS, 
-        int category2Points = CATEGORY2_POINTS, 
-        int category3Points = CATEGORY3_POINTS, 
-        int rank = PREDICTION_CALCULATED_RANK
+        int category1Points,
+        int category2Points,
+        int category3Points
+    )
+    {
+        return CreatePlayerRating(
+            new Points(category1Points),
+            new Points(category2Points),
+            new Points(category3Points)
+        );
+    }
+
+    public static PlayerRating CreatePlayerRating(
+        Points category1Points,
+        Points category2Points,
+        Points category3Points
+    )
+    {
+        return CreatePlayerRating(
+            category1Points, 
+            category2Points, 
+            category3Points, 
+            PREDICTION_CALCULATED_RANK
+        );
+    }
+
+    public static PlayerRating CreatePlayerRating(
+        Points category1Points, 
+        Points category2Points, 
+        Points category3Points, 
+        CountryPosition rank
     )
     {
         var rating = CreateInitialPlayerRating();
-        rating.SetPoints(category1Points, category2Points, category3Points);
+        rating.SetPoints(
+            category1Points,
+            category2Points, 
+            category3Points
+            );
 
         rating.Prediction.SetCalculatedRank(rank);
         rating.Prediction.SetTieBreakDemotion(TIE_BREAK_DEMOTION);
@@ -91,12 +88,21 @@ public class Utils
 
     // rating game result
 
-    public static RatingGameResult CreateRatingGameResult(int? difference, int? bonusPoints)
+    public static RatingGameResult CreateRatingGameResult(int? difference, int bonusPoints)
+    {
+        var ratingGameResult = CreateRatingGameResult(difference);
+
+        ratingGameResult.RankDifference = difference;
+        ratingGameResult.BonusPoints = new BonusPoints(bonusPoints);
+
+        return ratingGameResult;
+    }
+
+    public static RatingGameResult CreateRatingGameResult(int? difference)
     {
         var ratingGameResult = CreateInitialRatingGameResult();
 
         ratingGameResult.RankDifference = difference;
-        ratingGameResult.BonusPoints = bonusPoints;
 
         return ratingGameResult;
     }
@@ -118,7 +124,7 @@ public class Utils
     }
 
     public static PlayerGameResult CreatePlayerGameResult(
-        int totalPoints = PLAYER_GAME_RESULT_RANK
+        int totalPoints
     )
     {
         var playerGameResult = CreateInitialPlayerGameResult();
@@ -128,8 +134,8 @@ public class Utils
     }
 
     public static PlayerGameResult CreatePlayerGameResult(
-        int rank = PLAYER_GAME_RESULT_RANK, 
-        int totalPoints = PLAYER_GAME_RESULT_RANK
+        PlayerRank rank, 
+        int totalPoints = PLAYER_GAME_RESULT_POINTS
     )
     {
         var playerGameResult = CreatePlayerGameResult(totalPoints);
@@ -140,13 +146,13 @@ public class Utils
 
     // update player rating request
 
-    public static UpdatePlayerRatingRequestDto CreateUpdatePlayerRatingRequest()
+    public static RateCountryRequestDto CreateUpdatePlayerRatingRequest()
     {
-        return new UpdatePlayerRatingRequestDto()
+        return new RateCountryRequestDto()
         {
-            Category1Points = CATEGORY1_POINTS,
-            Category2Points = CATEGORY2_POINTS,
-            Category3Points = CATEGORY3_POINTS,
+            Category1Points = CATEGORY1_POINTS.Value,
+            Category2Points = CATEGORY2_POINTS.Value,
+            Category3Points = CATEGORY3_POINTS.Value,
         };
     }
 }
