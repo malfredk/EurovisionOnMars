@@ -104,7 +104,8 @@ public class CountryServiceTest
         _repositoryMock.Verify(m =>
             m.CreateCountry(It.Is<Country>(c =>
                 c.Number.Value == CountryTestData.Number &&
-                c.Name.Value == CountryTestData.Name)),
+                c.Name.Value == CountryTestData.Name &&
+                c.ActualRank == null)),
             Times.Once);
 
         _mapperMock.Verify(m => m.ToDto(expectedCountry), Times.Once);
@@ -113,22 +114,23 @@ public class CountryServiceTest
     // tests for UpdateCountry
 
     [Fact]
-    public async Task UpdateCountry_ValidInputs_UpdatesRank()
+    public async Task UpdateCountry_ValidInput_UpdatesRank()
     {
         // arrange
         var rank = CountryTestData.Rank;
+        var id = CountryTestData.Id;
 
         var country = CountryFactory.CreateInitialCountry(1);
-        _repositoryMock.Setup(m => m.GetCountry(CountryTestData.Id))
+        _repositoryMock.Setup(m => m.GetCountry(id))
             .ReturnsAsync(country);
 
         // act
-        await _service.SetCountryRank(CountryTestData.Id, rank);
+        await _service.SetCountryRank(id, rank);
 
         // assert
         Assert.Equal(rank, country.ActualRank!.Value);
 
-        _repositoryMock.Verify(m => m.GetCountry(CountryTestData.Id), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(country), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(It.Is<Country>(c => c.ActualRank!.Value == rank)), Times.Once);
     }
@@ -137,15 +139,17 @@ public class CountryServiceTest
     public async Task UpdateCountry_InvalidId_ThrowsException()
     {
         // arrange
-        _repositoryMock.Setup(m => m.GetCountry(CountryTestData.Id))
+        var id = CountryTestData.Id;
+
+        _repositoryMock.Setup(m => m.GetCountry(id))
             .ReturnsAsync((Country)null);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.SetCountryRank(CountryTestData.Id, CountryTestData.Rank)
+            async () => await _service.SetCountryRank(id, CountryTestData.Rank)
         );
 
-        _repositoryMock.Verify(m => m.GetCountry(CountryTestData.Id), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
     }
 

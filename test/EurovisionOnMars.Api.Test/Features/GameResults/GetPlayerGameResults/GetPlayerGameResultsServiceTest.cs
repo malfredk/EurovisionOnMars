@@ -54,7 +54,41 @@ public class GetPlayerGameResultsServiceTest
     }
 
     [Fact]
-    public async Task GetPlayerGameResults_WithRanks_SortsByRank()
+    public async Task GetPlayerGameResults_WithoutRanks_ReturnsDtos()
+    {
+        // arrange
+        var gameScenario = GameScenarioFactory.CreateInitialGame();
+        var playersGameResults = gameScenario.Players
+            .Select(p => p.PlayerGameResult)
+            .ToImmutableList();
+
+        _repositoryMock.Setup(m => m.GetPlayerGameResults())
+            .ReturnsAsync(playersGameResults);
+
+        var playerGameResultDto1 = CreatePlayerGameResultDto(null);
+        var playerGameResultDto2 = CreatePlayerGameResultDto(null);
+        var expectedPlayerResults = new List<PlayerGameResultDto>
+        {
+            playerGameResultDto1,
+            playerGameResultDto2
+        };
+
+        _mapperMock.Setup(m => m.ToDto(playersGameResults[0]))
+            .Returns(playerGameResultDto2);
+        _mapperMock.Setup(m => m.ToDto(playersGameResults[1]))
+            .Returns(playerGameResultDto1);
+
+        // act
+        var actualResults = await _service.GetPlayerGameResults();
+
+        // assert
+        Assert.All(
+            expectedPlayerResults,
+            expected => Assert.Contains(expected, actualResults));
+    }
+
+    [Fact]
+    public async Task GetPlayerGameResults_WithRanks_ReturnsSortedDtos()
     {
         // arrange
         var gameScenario = GameScenarioFactory.CreateCalculatedGame();

@@ -5,16 +5,16 @@ using EurovisionOnMars.Entity.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.Players.CreatePlayer;
+namespace EurovisionOnMars.Api.Test.Features.Players.GetPlayer;
 
-public class PlayerServiceTest
+public class GetPlayerServiceTest
 {
     private readonly Mock<ICreatePlayerRepository> _playerRepositoryMock;
     private readonly Mock<ICountryService> _countryServiceMock;
     private readonly Mock<ILogger<CreatePlayerService>> _loggerMock;
     private readonly CreatePlayerService _service;
 
-    public PlayerServiceTest()
+    public GetPlayerServiceTest()
     {
         _playerRepositoryMock = new Mock<ICreatePlayerRepository>();
         _countryServiceMock = new Mock<ICountryService>();

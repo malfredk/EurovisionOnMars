@@ -6,7 +6,7 @@ using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace EurovisionOnMars.Api.Test.Features.Predictions;
+namespace EurovisionOnMars.Api.Test.Features.Players.ResolveTieBreak;
 
 public class PredictionServiceTest
 {

@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Entity.Countries;
+using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.TestData.Countries;
 
@@ -22,5 +23,12 @@ public static class CountryFactory
         country.SetActualRank(rank);
 
         return country;
+    }
+
+    public static ImmutableList<Country> CreateInitialSingletonList()
+    {
+        var countries = new List<Country>();
+        countries.Add(CreateInitialCountry());
+        return countries.ToImmutableList();
     }
 }

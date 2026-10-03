@@ -8,7 +8,7 @@ public class PlayerGameResultMapperTest
     private readonly PlayerGameResultMapper _mapper = new PlayerGameResultMapper();
 
     [Fact]
-    public void ToDto_WithoutResults()
+    public void ToDto_WithoutResults_ReturnsDtoWithOnlyUsername()
     {
         // arrange
         var entity = PlayerFactory.CreateInitialPlayer().PlayerGameResult;
@@ -23,7 +23,7 @@ public class PlayerGameResultMapperTest
     }
 
     [Fact]
-    public void ToDto_WithResults()
+    public void ToDto_WithResults_ReturnsCompleteDto()
     {
         // arrange
         var entity = PlayerFactory.CreatePlayerAtEndOfGame().PlayerGameResult;
