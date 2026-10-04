@@ -17,12 +17,12 @@ public class PlayerGameResult : IdBase
         Player = player;
     }
 
-    public void SetRank(PlayerRank rank)
+    internal void SetRank(PlayerRank rank)
     {
         Rank = rank;
     }
 
-    public void SetTotalPoints(int totalPoints)
+    internal void SetTotalPoints(int totalPoints)
     {
         TotalPoints = totalPoints;
     }

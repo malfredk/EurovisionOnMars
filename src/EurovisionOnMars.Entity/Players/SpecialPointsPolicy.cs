@@ -5,24 +5,24 @@ namespace EurovisionOnMars.Entity.Players;
 internal static class SpecialPointsPolicy
 {
     internal static void Validate(
-        int ratingIdToUpdate,
+        PlayerRating ratingToUpdate,
         List<PlayerRating> ratings,
         Points category1Points,
         Points category2Points,
         Points category3Points)
     {
         Func<PlayerRating, Points?> category1PointsGetter = r => r.Category1Points;
-        ValidateSpecialCategoryPoints(ratingIdToUpdate, ratings, category1Points, category1PointsGetter);
+        ValidateSpecialCategoryPoints(ratingToUpdate, ratings, category1Points, category1PointsGetter);
 
         Func<PlayerRating, Points?> category2PointsGetter = r => r.Category2Points;
-        ValidateSpecialCategoryPoints(ratingIdToUpdate, ratings, category2Points, category2PointsGetter);
+        ValidateSpecialCategoryPoints(ratingToUpdate, ratings, category2Points, category2PointsGetter);
 
         Func<PlayerRating, Points?> category3PointsGetter = r => r.Category3Points;
-        ValidateSpecialCategoryPoints(ratingIdToUpdate, ratings, category3Points, category3PointsGetter);
+        ValidateSpecialCategoryPoints(ratingToUpdate, ratings, category3Points, category3PointsGetter);
     }
 
     private static void ValidateSpecialCategoryPoints(
-        int ratingIdToUpdate,
+        PlayerRating ratingToUpdate,
         List<PlayerRating> ratings,
         Points newPoints,
         Func<PlayerRating, Points?> pointsSelector
@@ -33,11 +33,11 @@ internal static class SpecialPointsPolicy
             return;
         }
 
-        EnsureUniqueSpecialPoints(ratingIdToUpdate, ratings, newPoints, pointsSelector);
+        EnsureUniqueSpecialPoints(ratingToUpdate, ratings, newPoints, pointsSelector);
     }
 
     private static void EnsureUniqueSpecialPoints(
-        int ratingIdToUpdate,
+        PlayerRating ratingToUpdate,
         List<PlayerRating> ratings,
         Points newPoints,
         Func<PlayerRating, Points?> pointsSelector
@@ -45,7 +45,7 @@ internal static class SpecialPointsPolicy
     {
         var hasGivenPointsToOtherCountry = ratings
             .AsReadOnly()
-            .Where(r => r.Id != ratingIdToUpdate)
+            .Where(r => !ReferenceEquals(ratingToUpdate, r))
             .Any(r => pointsSelector(r) == newPoints);
 
         if (hasGivenPointsToOtherCountry)

@@ -9,7 +9,7 @@ public class CountryPositionTests
     [InlineData(2)]
     [InlineData(25)]
     [InlineData(26)]
-    public void CountryPosition_WithValidPosition_ReturnsCountryPosition(int value)
+    public void CountryPosition_Valid_ReturnsCountryPosition(int value)
     {
         // act
         var position = new CountryPosition(value);
@@ -22,7 +22,7 @@ public class CountryPositionTests
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(27)]
-    public void CountryPosition_WithInvalidPosition_ThrowsArgumentException(int value)
+    public void CountryPosition_Invalid_ThrowsArgumentException(int value)
     {
         // act & assert
         Assert.Throws<ArgumentException>(() =>

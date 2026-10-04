@@ -32,7 +32,7 @@ public sealed record BonusPoints
         Value = value;
     }
 
-    public static BonusPoints FromRank(CountryPosition rank)
+    internal static BonusPoints FromRank(CountryPosition rank)
     {
         var value = BonusByRank.GetValueOrDefault(rank.Value, 0);
 

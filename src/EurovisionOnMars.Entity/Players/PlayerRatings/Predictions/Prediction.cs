@@ -30,17 +30,17 @@ public class Prediction : IdBase
             (PlayerRating.Category3Points?.Value ?? 0);
     }
 
-    public void SetCalculatedRank(CountryPosition rank)
+    internal void SetCalculatedRank(CountryPosition rank)
     {
         CalculatedRank = rank;
     }
 
-    public void ResetTieBreakDemotion()
+    internal void ResetTieBreakDemotion()
     {
         TieBreakDemotion = null;
     }
 
-    public void SetTieBreakDemotion(TieBreakDemotion tieBreakDemotion)
+    internal void SetTieBreakDemotion(TieBreakDemotion tieBreakDemotion)
     {
         ValidateTieBreakDemotion(tieBreakDemotion);
         TieBreakDemotion = tieBreakDemotion;

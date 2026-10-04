@@ -22,7 +22,7 @@ public class UsernameTest
     [InlineData("j*n")]
     [InlineData("=ndwnfks")]
     [InlineData("tretten123456")]
-    public void Username_Invalid(string value)
+    public void Username_Invalid_Throws(string value)
     {
         // act & assert
         Assert.Throws<ArgumentException>(() => new Username(value));

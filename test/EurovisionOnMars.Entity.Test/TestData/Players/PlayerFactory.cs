@@ -15,6 +15,13 @@ public static class PlayerFactory
         return new Player(username, countries);
     }
 
+    public static Player CreatePlayerWithTotalPoints(int totalPoints)
+    {
+        var player = CreateInitialPlayer();
+        player.PlayerGameResult.SetTotalPoints(totalPoints);
+        return player;
+    }
+
     public static Player CreateInitialPlayerWith2Ratings()
     {
         var countries = CountryFactory.CreateInitialListWith2Countries();

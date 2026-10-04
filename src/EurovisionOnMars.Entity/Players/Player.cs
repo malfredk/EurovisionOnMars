@@ -112,7 +112,7 @@ public class Player : IdBase
         var rating = GetRating(ratingId);
 
         SpecialPointsPolicy.Validate(
-            ratingId,
+            rating,
             PlayerRatings,
             category1Points,
             category2Points,

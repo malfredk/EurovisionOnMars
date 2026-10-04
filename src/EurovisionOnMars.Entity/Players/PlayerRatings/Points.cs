@@ -19,5 +19,5 @@ public sealed record Points
         Value = value;
     }
 
-    public bool IsSpecial => SpecialPoints.Contains(Value);
+    internal bool IsSpecial => SpecialPoints.Contains(Value);
 }
