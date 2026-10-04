@@ -17,7 +17,7 @@ public class CountryMapperTest
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(CountryTestData.Id, dto.Id);
+        Assert.Equal(entity.Id, dto.Id);
         Assert.Equal(CountryTestData.Number, dto.Number);
         Assert.Equal(CountryTestData.Name, dto.Name);
         Assert.Equal(CountryTestData.Rank, dto.ActualRank);
@@ -33,7 +33,7 @@ public class CountryMapperTest
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(CountryTestData.Id, dto.Id);
+        Assert.Equal(entity.Id, dto.Id);
         Assert.Equal(CountryTestData.Number, dto.Number);
         Assert.Equal(CountryTestData.Name, dto.Name);
         Assert.Null(dto.ActualRank);

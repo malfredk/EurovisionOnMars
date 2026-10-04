@@ -32,6 +32,8 @@ public class ResolveTieBreakService : IResolveTieBreakService
         var player = await GetPlayer(playerId);
 
         player.ResolveTieBreak(request.OrderedPredictionIds);
+
+        await _repository.SaveChanges();
     }
 
     private async Task<Player> GetPlayer(int playerId)

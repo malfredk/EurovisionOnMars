@@ -15,13 +15,13 @@ public class RatingGameResultMapperTest
         var playerRating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
 
         // act
-        var dto = _mapper.ToDto(playerRating);
+        var actual = _mapper.ToDto(playerRating);
 
         // assert
-        Assert.Null(dto.RankDifference);
-        Assert.Null(dto.BonusPoints);
+        Assert.Null(actual.RankDifference);
+        Assert.Null(actual.BonusPoints);
 
-        var countryDto = dto.Country;
+        var countryDto = actual.Country;
         Assert.Null(countryDto.ActualRank);
         Assert.Equal(CountryTestData.Name, countryDto.Name);
     }
@@ -30,17 +30,21 @@ public class RatingGameResultMapperTest
     public void ToDto_WithResults_ResturnsDto()
     {
         // arrange
-        var playerRating = 
+        var playerRating = PlayerFactory.CreatePlayerAtEndOfGame().PlayerRatings[0];
+        
+        var ratingGameResult = playerRating.RatingGameResult;
+        int expectedRankDifference = ratingGameResult.RankDifference!.Value;
+        int expectedBonusPoints = ratingGameResult.BonusPoints!.Value;
 
         // act
-        var dto = _mapper.ToDto(playerRating);
+        var actual = _mapper.ToDto(playerRating);
 
         // assert
-        Assert.Equal(, dto.RankDifference);
-        Assert.Equal(, dto.BonusPoints);
+        Assert.Equal(expectedRankDifference, actual.RankDifference);
+        Assert.Equal(expectedBonusPoints, actual.BonusPoints);
 
-        var countryDto = dto.Country;
-        Assert.Equal(, countryDto.ActualRank);
+        var countryDto = actual.Country;
+        Assert.Equal(CountryTestData.Rank, countryDto.ActualRank);
         Assert.Equal(CountryTestData.Name, countryDto.Name);
     }
 }

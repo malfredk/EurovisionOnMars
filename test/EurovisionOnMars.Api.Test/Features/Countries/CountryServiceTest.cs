@@ -10,6 +10,8 @@ namespace EurovisionOnMars.Api.Test.Features.Countries;
 
 public class CountryServiceTest
 {
+    const int Id = 1234;
+
     private readonly Mock<ILogger<CountryService>> _loggerMock;
     private readonly Mock<ICountryRepository> _repositoryMock;
     private readonly Mock<ICountryMapper> _mapperMock;
@@ -118,19 +120,18 @@ public class CountryServiceTest
     {
         // arrange
         var rank = CountryTestData.Rank;
-        var id = CountryTestData.Id;
 
         var country = CountryFactory.CreateInitialCountry(1);
-        _repositoryMock.Setup(m => m.GetCountry(id))
+        _repositoryMock.Setup(m => m.GetCountry(Id))
             .ReturnsAsync(country);
 
         // act
-        await _service.SetCountryRank(id, rank);
+        await _service.SetCountryRank(Id, rank);
 
         // assert
         Assert.Equal(rank, country.ActualRank!.Value);
 
-        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountry(Id), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(country), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(It.Is<Country>(c => c.ActualRank!.Value == rank)), Times.Once);
     }
@@ -139,17 +140,15 @@ public class CountryServiceTest
     public async Task UpdateCountry_InvalidId_ThrowsException()
     {
         // arrange
-        var id = CountryTestData.Id;
-
-        _repositoryMock.Setup(m => m.GetCountry(id))
+        _repositoryMock.Setup(m => m.GetCountry(Id))
             .ReturnsAsync((Country)null);
 
         // act and assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            async () => await _service.SetCountryRank(id, CountryTestData.Rank)
+            async () => await _service.SetCountryRank(Id, CountryTestData.Rank)
         );
 
-        _repositoryMock.Verify(m => m.GetCountry(id), Times.Once);
+        _repositoryMock.Verify(m => m.GetCountry(Id), Times.Once);
         _repositoryMock.Verify(m => m.UpdateCountry(It.IsAny<Country>()), Times.Never);
     }
 
@@ -168,7 +167,7 @@ public class CountryServiceTest
     {
         return new CountryDto
         {
-            Id = CountryTestData.Id,
+            Id = Id,
             Name = CountryTestData.Name,
             Number = number,
             ActualRank = CountryTestData.Rank
