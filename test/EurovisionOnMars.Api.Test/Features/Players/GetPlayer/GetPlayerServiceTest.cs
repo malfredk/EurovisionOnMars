@@ -106,7 +106,7 @@ public class GetPlayerServiceTest
     {
         return new PlayerDto
         {
-            Id = PlayerTestData.Id,
+            Id = 1234,
             Username = PlayerTestData.Username,
         };
     }

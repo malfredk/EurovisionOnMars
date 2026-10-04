@@ -11,13 +11,13 @@ public class PlayerMapperTest
     public void ToDto()
     {
         // arrange
-        var playerEntity = PlayerFactory.CreateInitialPlayer();
+        var entity = PlayerFactory.CreateInitialPlayer();
 
         // act
-        var playerDto = _mapper.ToDto(playerEntity);
+        var actual = _mapper.ToDto(entity);
 
         // assert
-        Assert.Equal(PlayerTestData.Username, playerDto.Username);
-        Assert.Equal(PlayerTestData.Id, playerDto.Id);
+        Assert.Equal(PlayerTestData.Username, actual.Username);
+        Assert.Equal(entity.Id, actual.Id);
     }
 }
