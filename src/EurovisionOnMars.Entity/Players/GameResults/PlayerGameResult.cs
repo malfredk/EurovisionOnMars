@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity.Players;
+namespace EurovisionOnMars.Entity.Players.GameResults;
 
 public class PlayerGameResult : IdBase
 {

@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+using EurovisionOnMars.Entity.Players.Predictions;
 
-namespace EurovisionOnMars.Entity.Test.Players.PlayerRatings.Predictions;
+namespace EurovisionOnMars.Entity.Test.Players.Predictions;
 
 public class PredictionTest
 {

@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
 
-namespace EurovisionOnMars.Entity.Players.PredictionCalculators;
+namespace EurovisionOnMars.Entity.Players.Predictions;
 
 internal static class PredictionsCalculator
 {

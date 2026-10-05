@@ -1,7 +1,6 @@
 ﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
 
-namespace EurovisionOnMars.Entity.Players.PredictionCalculators;
+namespace EurovisionOnMars.Entity.Players.Predictions;
 
 internal static class TieBreakResolver
 {

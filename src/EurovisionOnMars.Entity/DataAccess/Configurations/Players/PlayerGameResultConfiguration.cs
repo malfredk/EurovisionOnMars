@@ -1,4 +1,5 @@
 ﻿using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.GameResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

@@ -1,7 +1,8 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.GameResults;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+using EurovisionOnMars.Entity.Players.Predictions;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Entity.Test;

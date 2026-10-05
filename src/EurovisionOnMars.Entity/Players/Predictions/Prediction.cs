@@ -1,7 +1,8 @@
 ﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using System.Text.Json.Serialization;
 
-namespace EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+namespace EurovisionOnMars.Entity.Players.Predictions;
 
 public class Prediction : IdBase
 {

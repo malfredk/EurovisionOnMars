@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Entity.Players.GameResults;
 
 namespace EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
 

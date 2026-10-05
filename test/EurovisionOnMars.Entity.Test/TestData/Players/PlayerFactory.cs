@@ -8,6 +8,11 @@ namespace EurovisionOnMars.Entity.Test.TestData.Players;
 
 public static class PlayerFactory
 {
+
+    private static readonly Points Category1Points = new(PlayerRatingTestData.Category1Points);
+    private static readonly Points Category2Points = new(PlayerRatingTestData.Category2Points);
+    private static readonly Points Category3Points = new(PlayerRatingTestData.Category3Points);
+
     public static Player CreateInitialPlayer()
     {
         var countries = CountryFactory.CreateInitialSingletonList();
@@ -40,10 +45,7 @@ public static class PlayerFactory
     {
         var player = CreateInitialPlayer();
 
-        var category1Points = new Points(PlayerRatingTestData.Category1Points);
-        var category2Points = new Points(PlayerRatingTestData.Category2Points);
-        var category3Points = new Points(PlayerRatingTestData.Category3Points);
-        player.RateCountry(player.PlayerRatings[0].Id, category1Points, category2Points, category3Points);
+        player.PlayerRatings[0].SetPoints(Category1Points, Category2Points, Category3Points);
 
         return player;
     }
@@ -52,15 +54,11 @@ public static class PlayerFactory
     {
         var player = CreateInitialPlayerWith2Ratings();
 
-        var category1Points = new Points(PlayerRatingTestData.Category1Points);
-        var category2Points = new Points(PlayerRatingTestData.Category2Points);
-        var category3Points = new Points(PlayerRatingTestData.Category3Points);
+        var rating1 = player.PlayerRatings[0];
+        var rating2 = player.PlayerRatings[1];
 
-        var rating1Id = player.PlayerRatings[0].Id;
-        var rating2Id = player.PlayerRatings[1].Id;
-
-        player.RateCountry(rating1Id, category1Points, category2Points, category3Points);
-        player.RateCountry(rating2Id, category1Points, category2Points, category3Points);
+        rating1.SetPoints(Category1Points, Category2Points, Category3Points);
+        rating1.SetPoints(Category1Points, Category2Points, Category3Points);
 
         return player;
     }
@@ -68,10 +66,6 @@ public static class PlayerFactory
     public static Player CreatePlayerWith2RatedAndDemotedAnd2InitialRatings()
     {
         var player = CreateInitialPlayerWith4Ratings();
-
-        var category1Points = new Points(PlayerRatingTestData.Category1Points);
-        var category2Points = new Points(PlayerRatingTestData.Category2Points);
-        var category3Points = new Points(PlayerRatingTestData.Category3Points);
 
         var rating1 = player.PlayerRatings[0];
         var rating2 = player.PlayerRatings[1];

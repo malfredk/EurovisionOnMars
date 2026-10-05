@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Entity.Players;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+using EurovisionOnMars.Entity.Players.Predictions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

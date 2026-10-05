@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players.PlayerRatings.Predictions;
+using EurovisionOnMars.Entity.Players.Predictions;
 using System.Text.Json.Serialization;
 
 namespace EurovisionOnMars.Entity.Players.PlayerRatings;
