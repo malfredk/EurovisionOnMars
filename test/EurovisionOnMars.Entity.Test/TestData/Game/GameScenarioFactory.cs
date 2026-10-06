@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Entity.Countries;
 using EurovisionOnMars.Entity.Game;
 using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Entity.Test.TestData.Countries;
 using EurovisionOnMars.Entity.Test.TestData.Players;
 using EurovisionOnMars.Entity.Test.TestData.Players.PlayerRatings;
 
@@ -69,6 +70,23 @@ public static class GameScenarioFactory
         countries[0].SetActualRank(new CountryPosition(1));
         countries[1].SetActualRank(new CountryPosition(2));
         countries[2].SetActualRank(new CountryPosition(3));
+
+        return game;
+    }
+
+    public static GameScenario CreateInitalGameWithOnePlayer(int countriesCount)
+    {
+        var usernames = new List<string> { PlayerTestData.Username };
+        return CreateInitialGame(usernames, countriesCount);
+    }
+
+    public static GameScenario CreateGameWithOnePlayerWhoHasRatedAndRankedCountry()
+    {
+        var usernames = new List<string> { PlayerTestData.Username };
+        var game = CreateInitialGame(usernames, 1);
+
+        var countries = game.Countries;
+        countries[0].SetActualRank(new CountryPosition(CountryTestData.Rank));
 
         return game;
     }

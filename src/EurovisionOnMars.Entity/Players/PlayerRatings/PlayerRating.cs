@@ -6,6 +6,8 @@ namespace EurovisionOnMars.Entity.Players.PlayerRatings;
 
 public class PlayerRating : IdBase
 {
+    private const int SkippedRatingOfCountryPenalty = 30;
+
     public Points? Category1Points { get; private set; }
     public Points? Category2Points { get; private set; }
     public Points? Category3Points { get; private set; }
@@ -56,12 +58,11 @@ public class PlayerRating : IdBase
 
         if (actualRank == null)
         {
-            throw new Exception("Country is missing rank.");
+            throw new InvalidOperationException("Country is missing rank.");
         }
         else if (predictedRank == null)
         {
-            // player is penalized for not rating a country
-            rankDifference = 26; // TODO: make this a constant
+            rankDifference = SkippedRatingOfCountryPenalty;
         }
         else
         {
@@ -76,7 +77,7 @@ public class PlayerRating : IdBase
         BonusPoints bonusPoints;
         CountryPosition? predictedRank = Prediction.GetPredictedRank();
     
-        if (predictedRank !=null && RatingGameResult.RankDifference == 0 && hasUniquePredictedRank)
+        if (predictedRank != null && RatingGameResult.RankDifference == 0 && hasUniquePredictedRank)
         {
             bonusPoints = BonusPoints.FromRank(predictedRank);
         }
