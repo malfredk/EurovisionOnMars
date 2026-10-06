@@ -39,7 +39,7 @@ public class PointsTests
     [Theory]
     [InlineData(10)]
     [InlineData(12)]
-    public void IsSpecial_WithSpecialPoints_ReturnsTrue(int value)
+    public void IsSpecial_SpecialPoints_ReturnsTrue(int value)
     {
         // act
         var points = new Points(value);
@@ -57,7 +57,7 @@ public class PointsTests
     [InlineData(6)]
     [InlineData(7)]
     [InlineData(8)]
-    public void IsSpecial_WithNonSpecialPoints_ReturnsFalse(int value)
+    public void IsSpecial_NonSpecialPoints_ReturnsFalse(int value)
     {
         // act
         var points = new Points(value);

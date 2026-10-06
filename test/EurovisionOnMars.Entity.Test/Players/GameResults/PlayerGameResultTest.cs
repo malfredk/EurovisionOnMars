@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Entity.Players;
 using EurovisionOnMars.Entity.Test.TestData.Players;
 
-namespace EurovisionOnMars.Entity.Test.Players;
+namespace EurovisionOnMars.Entity.Test.Players.GameResults;
 
 public class PlayerGameResultTest
 {
