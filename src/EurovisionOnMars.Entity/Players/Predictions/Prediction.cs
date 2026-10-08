@@ -20,15 +20,9 @@ public class Prediction : IdBase
         PlayerRating = playerRating;
     }
 
-    internal void CalculateTotalGivenPoints()
+    internal void SetTotalGivenPoints(int totalGivenPoints)
     {
-        if (PlayerRating == null)
-            throw new InvalidOperationException("Prediction must be linked to a PlayerRating before calculation.");
-
-        TotalGivenPoints =
-            (PlayerRating.Category1Points?.Value ?? 0) +
-            (PlayerRating.Category2Points?.Value ?? 0) +
-            (PlayerRating.Category3Points?.Value ?? 0);
+        TotalGivenPoints = totalGivenPoints;
     }
 
     internal void SetCalculatedRank(CountryPosition rank)

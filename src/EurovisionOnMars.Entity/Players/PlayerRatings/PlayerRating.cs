@@ -30,24 +30,33 @@ public class PlayerRating : IdBase
     }
 
     internal void SetPoints(
-        Points category1points, 
-        Points category2points,
-        Points category3points
+        Points category1Points, 
+        Points category2Points,
+        Points category3Points
         )
     {
-        SetCategoryPoints(category1points, category2points, category3points);
-        Prediction.CalculateTotalGivenPoints();
+        SetCategoryPoints(category1Points, category2Points, category3Points);
+        SetTotalGivenPoints();
     }
 
     private void SetCategoryPoints(
-        Points category1points,
-        Points category2points,
-        Points category3points
+        Points category1Points,
+        Points category2Points,
+        Points category3Points
         )
     {
-        Category1Points = category1points;
-        Category2Points = category2points;
-        Category3Points = category3points;
+        Category1Points = category1Points;
+        Category2Points = category2Points;
+        Category3Points = category3Points;
+    }
+
+    private void SetTotalGivenPoints() // TODO: test
+    {
+        var totalGivenPoints =
+            Category1Points!.Value +
+            Category2Points!.Value +
+            Category3Points!.Value;
+        Prediction.SetTotalGivenPoints(totalGivenPoints);
     }
 
     internal void CalculateRankDifference()
