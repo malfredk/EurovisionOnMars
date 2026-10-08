@@ -74,10 +74,24 @@ public static class GameScenarioFactory
         return game;
     }
 
-    public static GameScenario CreateInitalGameWithOnePlayer(int countriesCount)
+    public static GameScenario CreateInitialGameWithOnePlayer(int countriesCount)
     {
         var usernames = new List<string> { PlayerTestData.Username };
-        return CreateInitialGame(usernames, countriesCount);
+        var game = CreateInitialGame(usernames, countriesCount);
+        return game;
+    }
+
+    public static GameScenario CreateGameWithOnePlayerWithCalculatedAndActualRank(int countriesCount)
+    {
+        var game = CreateInitialGameWithOnePlayer(countriesCount);
+        var ratings = game.Players.First().PlayerRatings;
+
+        foreach (var rating in ratings)
+        {
+            rating.Prediction.SetCalculatedRank(new CountryPosition(3));
+            rating.Country!.SetActualRank(new CountryPosition(CountryTestData.Rank));
+        }
+        return game;
     }
 
     public static GameScenario CreateGameWithOnePlayerWhoHasRatedAndRankedCountry()
@@ -85,11 +99,34 @@ public static class GameScenarioFactory
         var usernames = new List<string> { PlayerTestData.Username };
         var game = CreateInitialGame(usernames, 1);
 
+        game.Players[0].PlayerRatings[0].SetPoints(
+            new Points(PlayerRatingTestData.Category1Points),
+            new Points(PlayerRatingTestData.Category2Points),
+            new Points(PlayerRatingTestData.Category3Points)
+            );
+
         var countries = game.Countries;
         countries[0].SetActualRank(new CountryPosition(CountryTestData.Rank));
 
         return game;
     }
+
+    public static GameScenario CreateGameWithOnePlayerWhoHasRatedAndRankedCountry(int countriesCount)
+    {
+        var usernames = new List<string> { PlayerTestData.Username };
+        var game = CreateInitialGame(usernames, countriesCount);
+
+        game.Players[0].PlayerRatings[0].SetPoints(
+            new Points(PlayerRatingTestData.Category1Points),
+            new Points(PlayerRatingTestData.Category2Points),
+            new Points(PlayerRatingTestData.Category3Points)
+            );
+
+        var countries = game.Countries;
+        countries[0].SetActualRank(new CountryPosition(CountryTestData.Rank));
+
+    }
+
 
     public static GameScenario CreateCalculatedGame()
     {

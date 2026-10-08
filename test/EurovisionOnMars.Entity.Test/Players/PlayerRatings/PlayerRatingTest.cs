@@ -79,7 +79,7 @@ public class PlayerRatingTest
     public void CalculateRankDifference_WithPredictedRank_CalculatesDifference(int predictedRank, int expectedRankDifference)
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitalGameWithOnePlayer(1);
+        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(1);
         var rating = game.Players[0].PlayerRatings[0];
 
         rating.Prediction.SetCalculatedRank(new CountryPosition(predictedRank));
@@ -99,7 +99,7 @@ public class PlayerRatingTest
     public void CalculateRankDifference_WithoutPredictedRank_SetsPenalty()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitalGameWithOnePlayer(1);
+        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(1);
         var rating = game.Players[0].PlayerRatings[0];
 
         game.Countries[0].SetActualRank(CountryPosition10);
