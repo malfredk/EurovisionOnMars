@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using EurovisionOnMars.Dto.Players
+@using EurovisionOnMars.Dto.Players.GetPlayer
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -45,7 +46,7 @@
             return;
         }
 
-        var response = await Http.PostAsJsonAsync<string>("/api/Players/", newUsername);
+        var response = await Http.PostAsJsonAsync<string>("/api/players/", newUsername);
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
@@ -78,11 +79,11 @@
             return;
         }
 
-        var response = await Http.GetAsync($"/api/Players/{existingUsername}");
+        var response = await Http.GetAsync($"/api/players/{existingUsername}");
         if (response.IsSuccessStatusCode)
         {
             player = await response.Content.ReadFromJsonAsync<PlayerDto>();
-            Console.WriteLine($"Got existing player with username: {player!.Username}");
+            Console.WriteLine($"Got existing player with username: {existingUsername}");
             NavigationManager.NavigateTo($"/stemmeskjema/{player!.Id}");
         }
         else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

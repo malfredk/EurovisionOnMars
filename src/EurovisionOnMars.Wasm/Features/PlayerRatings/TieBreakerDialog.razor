@@ -1,5 +1,5 @@
-﻿@using EurovisionOnMars.Dto.PlayerRatings
-@using EurovisionOnMars.Dto.Predictions
+﻿@using EurovisionOnMars.Dto.Players.GetRatings
+@using EurovisionOnMars.Dto.Players.ResolveTieBreak
 @using MudBlazor.Utilities
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -63,6 +63,8 @@
 
 @code {
     [CascadingParameter] public MudDialogInstance Dialog { get; set; } = default!;
+    
+    [Parameter] public int PlayerId { get; set; }
     [Parameter] public List<PlayerRatingDto> TiedRatings { get; set; } = new();
 
     private const string ZONE_ID = "TieBreakerZone";
@@ -127,7 +129,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync("/api/Predictions/TieBreakDemotions", request);
+        var response = await Http.PatchAsJsonAsync($"/api/players/{PlayerId}/predictions/tie-break", request);
         
         if (response.IsSuccessStatusCode)
         {

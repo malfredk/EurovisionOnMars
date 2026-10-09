@@ -1,4 +1,5 @@
-﻿@using EurovisionOnMars.Dto.PlayerRatings
+﻿@using EurovisionOnMars.Dto.Players.GetRatings
+@using EurovisionOnMars.Dto.Players.RateCountry
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
@@ -51,6 +52,7 @@
 @code {
     [CascadingParameter] MudDialogInstance Dialog { get; set; }
 
+    [Parameter] public int PlayerId { get; set; }
     [Parameter] public PlayerRatingDto Rating { get; set; }
 
     private int? category1;
@@ -78,7 +80,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync<UpdatePlayerRatingRequestDto>($"/api/PlayerRatings/{Rating.Id}/", ratingRequest);
+        var response = await Http.PatchAsJsonAsync<RateCountryRequestDto>($"/api/players/{PlayerId}/ratings/{Rating.Id}/", ratingRequest);
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("avstemning lagret", Severity.Success);
@@ -102,14 +104,14 @@
         }
     }
 
-    private UpdatePlayerRatingRequestDto? CreateRequest()
+    private RateCountryRequestDto? CreateRequest()
     {
         if (category1 is null || category2 is null || category3 is null)
         {
             Snackbar.Add("man må gi poeng i alle kategoriene", Severity.Error);
             return null;
         }
-        return new UpdatePlayerRatingRequestDto
+        return new RateCountryRequestDto
         {
             Category1Points = (int)category1,
             Category2Points = (int)category2,

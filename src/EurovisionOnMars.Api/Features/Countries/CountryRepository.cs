@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity;
-using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -11,7 +11,7 @@ public interface ICountryRepository
     Task<ImmutableList<Country>> GetCountries();
     Task<Country?> GetCountry(int id);
     Task<Country> CreateCountry(Country country);
-    Task<Country> UpdateCountry(Country country);
+    Task UpdateCountry(Country country);
 }
 
 public class CountryRepository : ICountryRepository
@@ -46,11 +46,10 @@ public class CountryRepository : ICountryRepository
         return country;
     }
 
-    public async Task<Country> UpdateCountry(Country country)
+    public async Task UpdateCountry(Country country)
     {
         _logger.LogDebug("Updating country: {country}.", JsonSerializer.Serialize(country));
         var updatedCountry = _context.Countries.Update(country);
         await _context.SaveChangesAsync();
-        return updatedCountry.Entity;
     }
 }

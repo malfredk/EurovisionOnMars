@@ -54,7 +54,7 @@
             return;
         }
 
-        var response = await Http.PostAsJsonAsync<NewCountryRequestDto>("/api/Countries/", countryRequest);
+        var response = await Http.PostAsJsonAsync<NewCountryRequestDto>("/api/countries/", countryRequest);
         if (response.IsSuccessStatusCode)
         {
             var country = await response.Content.ReadFromJsonAsync<CountryDto>();
