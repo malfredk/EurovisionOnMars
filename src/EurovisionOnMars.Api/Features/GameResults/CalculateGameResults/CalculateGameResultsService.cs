@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity.Game;
+﻿using EurovisionOnMars.Domain.Game;
 
 namespace EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
 

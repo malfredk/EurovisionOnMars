@@ -1,8 +1,8 @@
 ﻿using EurovisionOnMars.Api.Test.TestData.Countries;
 using EurovisionOnMars.Api.Test.TestData.Players.PlayerRatings;
-using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
-using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Test.TestData.Players;
 

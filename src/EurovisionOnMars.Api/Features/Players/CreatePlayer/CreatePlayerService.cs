@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.CustomException;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Domain.Players;
 
 namespace EurovisionOnMars.Api.Features.Players.CreatePlayer;
 

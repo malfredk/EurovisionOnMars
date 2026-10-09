@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Test.TestData.Countries;
-using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Players;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.TestData.Game;

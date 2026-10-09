@@ -3,7 +3,7 @@ using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Api.Test.TestData.Players;
 using EurovisionOnMars.Api.Test.TestData.Players.PlayerRatings;
 using EurovisionOnMars.Dto.Players.RateCountry;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Domain.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 

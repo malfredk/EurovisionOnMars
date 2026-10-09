@@ -2,7 +2,7 @@
 using EurovisionOnMars.Api.Test.TestData.Game;
 using EurovisionOnMars.Api.Test.TestData.Players;
 using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
-using EurovisionOnMars.Entity.Players.GameResults;
+using EurovisionOnMars.Domain.Players.GameResults;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -34,7 +34,7 @@ public class GetPlayerGameResultsServiceTest
     public async Task GetPlayerGameResults_WithoutRanks_CallsRepository()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateInitialGame();
+        var gameScenario = GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
             .ToImmutableList();
@@ -57,7 +57,7 @@ public class GetPlayerGameResultsServiceTest
     public async Task GetPlayerGameResults_WithoutRanks_ReturnsDtos()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateInitialGame();
+        var gameScenario = GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
             .ToImmutableList();

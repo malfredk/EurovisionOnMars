@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
 using EurovisionOnMars.Api.Test.TestData.Game;
-using EurovisionOnMars.Entity.Game;
+using EurovisionOnMars.Domain.Game;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -31,7 +31,7 @@ public class CalculateGameResultsServiceTest
     public async Task CalculateGameResults_RepositoryIsCalled()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateGameWhereActualCountryRanksAreSet();
+        var gameScenario = GameScenarioFactory.CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet();
         _repositoryMock.Setup(r => r.GetPlayers())
             .ReturnsAsync(gameScenario.Players);
 
@@ -52,7 +52,7 @@ public class CalculateGameResultsServiceTest
     public async Task CalculateGameResults_GameResultsAreCalculated()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateGameWhereActualCountryRanksAreSet();
+        var gameScenario = GameScenarioFactory.CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet();
         var players = gameScenario.Players;
 
         _repositoryMock.Setup(r => r.GetPlayers())

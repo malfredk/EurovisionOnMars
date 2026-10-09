@@ -1,12 +1,12 @@
-﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Game;
-using EurovisionOnMars.Entity.Players.PlayerRatings;
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Game;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Test.TestData.Game;
 
 public static class GameScenarioFactory
 {
-    public static GameScenario CreateInitialGame()
+    public static GameScenario CreateInitialGameWith2PlayersAnd2Countries()
     {
         return new GameScenarioBuilder()
             .AddCountry(1)
@@ -18,7 +18,7 @@ public static class GameScenarioFactory
 
     public static GameScenario CreateGameWherePlayersHaveRated()
     {
-        var gameScenario = CreateInitialGame();
+        var gameScenario = CreateInitialGameWith2PlayersAnd2Countries();
 
         var points1 = new Points(1);
         var points2 = new Points(2);
@@ -36,7 +36,7 @@ public static class GameScenarioFactory
         return gameScenario;
     }
 
-    public static GameScenario CreateGameWhereActualCountryRanksAreSet()
+    public static GameScenario CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet()
     {
         var gameScenario = CreateGameWherePlayersHaveRated();
         
@@ -49,7 +49,7 @@ public static class GameScenarioFactory
 
     public static GameScenario CreateCalculatedGame()
     {
-        var gameScenario = CreateGameWhereActualCountryRanksAreSet();
+        var gameScenario = CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet();
         var players = gameScenario.Players;
 
         foreach (var player in players)

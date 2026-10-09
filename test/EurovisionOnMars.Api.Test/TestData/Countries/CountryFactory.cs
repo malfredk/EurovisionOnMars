@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Entity.Countries;
+﻿using EurovisionOnMars.Domain.Countries;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.TestData.Countries;

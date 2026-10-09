@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34511.84
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9F7FEAE-60DC-4BC4-80DC-1C3CDE4F1B24}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,13 +14,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Dto", "src\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj", "{DD93864D-C308-444B-BC8C-9862A1FC655D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Entity", "src\EurovisionOnMars.Entity\EurovisionOnMars.Entity.csproj", "{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.Api.Test", "test\EurovisionOnMars.Api.Test\EurovisionOnMars.Api.Test.csproj", "{11329C45-DAD2-4AAF-A443-8266D37271F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EurovisionOnMars.CustomException", "src\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj", "{82E38281-3C15-411D-8090-60D2721F4DB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Entity.Test", "test\EurovisionOnMars.Entity.Test\EurovisionOnMars.Entity.Test.csproj", "{8F9566B4-E615-462E-A801-85BA37D06D56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Domain", "src\EurovisionOnMars.Domain\EurovisionOnMars.Domain.csproj", "{76241FEA-7029-57DA-E3CE-6FCFFBE29905}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Domain.Test", "test\EurovisionOnMars.Domain.Test\EurovisionOnMars.Domain.Test.csproj", "{E75AF256-A403-7042-2659-1284F9E50A39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +40,6 @@ Global
 		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD93864D-C308-444B-BC8C-9862A1FC655D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{870B82B7-B223-44E9-B7C0-42DA2C0ACF27}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11329C45-DAD2-4AAF-A443-8266D37271F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11329C45-DAD2-4AAF-A443-8266D37271F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11329C45-DAD2-4AAF-A443-8266D37271F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,10 +48,14 @@ Global
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82E38281-3C15-411D-8090-60D2721F4DB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F9566B4-E615-462E-A801-85BA37D06D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F9566B4-E615-462E-A801-85BA37D06D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F9566B4-E615-462E-A801-85BA37D06D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F9566B4-E615-462E-A801-85BA37D06D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76241FEA-7029-57DA-E3CE-6FCFFBE29905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76241FEA-7029-57DA-E3CE-6FCFFBE29905}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76241FEA-7029-57DA-E3CE-6FCFFBE29905}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76241FEA-7029-57DA-E3CE-6FCFFBE29905}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E75AF256-A403-7042-2659-1284F9E50A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75AF256-A403-7042-2659-1284F9E50A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75AF256-A403-7042-2659-1284F9E50A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75AF256-A403-7042-2659-1284F9E50A39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

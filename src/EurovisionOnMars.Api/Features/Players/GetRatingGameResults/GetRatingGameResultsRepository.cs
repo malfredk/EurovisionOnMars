@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity.DataAccess;
-using EurovisionOnMars.Entity.Players.PlayerRatings;
+﻿using EurovisionOnMars.Domain.DataAccess;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 

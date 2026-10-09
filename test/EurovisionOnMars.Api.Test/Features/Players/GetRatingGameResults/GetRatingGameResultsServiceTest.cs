@@ -35,7 +35,7 @@ public class GetRatingGameResultsServiceTest
         const int playerId = 1234;
 
         var gameScenario =
-            GameScenarioFactory.CreateInitialGame();
+            GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
         var ratings = gameScenario.Players[0].PlayerRatings.ToImmutableList();
 
         _repositoryMock

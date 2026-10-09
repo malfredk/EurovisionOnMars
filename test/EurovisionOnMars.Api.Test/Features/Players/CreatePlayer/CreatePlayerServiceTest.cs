@@ -2,7 +2,7 @@
 using EurovisionOnMars.Api.Test.TestData.Countries;
 using EurovisionOnMars.Api.Test.TestData.Players;
 using EurovisionOnMars.CustomException;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Domain.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 

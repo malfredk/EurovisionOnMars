@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Dto.Players.RateCountry;
-using EurovisionOnMars.Entity.Players;
-using EurovisionOnMars.Entity.Players.PlayerRatings;
+using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Api.Features.Players.RateCountry;
 
@@ -47,7 +47,7 @@ public class RateCountryService : IRateCountryService
         return player;
     }
 
-    private void RateCountry(Player player, int ratingId, RateCountryRequestDto ratingRequestDto)
+    private static void RateCountry(Player player, int ratingId, RateCountryRequestDto ratingRequestDto)
     {
         var category1Points = new Points(ratingRequestDto.Category1Points);
         var category2Points = new Points(ratingRequestDto.Category2Points);

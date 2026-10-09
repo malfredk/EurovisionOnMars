@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.Players;
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Players;
 
 namespace EurovisionOnMars.Api.Test.TestData.Game;
 

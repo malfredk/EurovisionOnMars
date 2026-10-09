@@ -1,5 +1,5 @@
-﻿using EurovisionOnMars.Entity.Countries;
-using EurovisionOnMars.Entity.DataAccess;
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Text.Json;

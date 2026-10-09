@@ -2,7 +2,7 @@
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Api.Test.TestData.Players;
 using EurovisionOnMars.Dto.Players.ResolveTieBreak;
-using EurovisionOnMars.Entity.Players;
+using EurovisionOnMars.Domain.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
