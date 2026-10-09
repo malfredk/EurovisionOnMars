@@ -2,9 +2,9 @@
 
 namespace EurovisionOnMars.Entity.Players.Predictions;
 
-internal static class TieBreakDemotionCalculator
+internal static class TieBreakDemotionAdjuster
 {
-    internal static void Calculate(
+    internal static void Adjust(
        PlayerRating updatedRating,
        List<PlayerRating> ratings,
        int? oldTotalPoints

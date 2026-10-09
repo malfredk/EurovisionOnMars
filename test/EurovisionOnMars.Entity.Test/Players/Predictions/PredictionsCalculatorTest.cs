@@ -35,7 +35,7 @@ public class PredictionsCalculatorTest
     }
 
     [Fact]
-    public void Calculate_TotalGivenPointsUnchanged_DoesNotRecalculateTiebreakDemotions()
+    public void Calculate_TotalGivenPointsUnchanged_DoesNotAdjustTiebreakDemotions()
     {
         // arrange
         var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
@@ -83,7 +83,7 @@ public class PredictionsCalculatorTest
     }
 
     [Fact]
-    public void Calculate_TotalGivenPointsChanged_RecalculatesTieBreakDemotions()
+    public void Calculate_TotalGivenPointsChanged_ResetsTieBreakDemotions()
     {
         // arrange
         var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
@@ -107,8 +107,9 @@ public class PredictionsCalculatorTest
             OldTotalGivenPoints);
 
         // assert
-        Assert.Null(updatedRating.Prediction.TieBreakDemotion);
-        Assert.Null(ratings[1].Prediction.TieBreakDemotion);
-        Assert.Null(ratings[2].Prediction.TieBreakDemotion);
+        Assert.All(
+            ratings,
+            rating => Assert.Null(
+                rating.Prediction.TieBreakDemotion));
     }
 }

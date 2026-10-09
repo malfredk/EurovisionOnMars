@@ -17,7 +17,7 @@ internal static class PredictionsCalculator
         else
         {
             PredictionRanksCalculator.Calculate(ratings);
-            TieBreakDemotionCalculator.Calculate(ratingWithUpdatedPoints, ratings, oldTotalGivenPoints);
+            TieBreakDemotionAdjuster.Adjust(ratingWithUpdatedPoints, ratings, oldTotalGivenPoints);
         }
     }
 }
