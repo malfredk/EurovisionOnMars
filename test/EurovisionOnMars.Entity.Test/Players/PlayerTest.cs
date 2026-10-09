@@ -63,9 +63,14 @@ public class PlayerTest
     public void CalculateGamePoints_CalculatesAllGamePoints()
     {
         // arrange
-        var player =
-            GameScenarioFactory.CreateInitialGameWithOneInactivePlayerAndRankedCountries()
-            .Players[0];
+        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
+
+        var countries = game.Countries;
+        countries[0].SetActualRank(new CountryPosition(1));
+        countries[1].SetActualRank(new CountryPosition(2));
+        countries[2].SetActualRank(new CountryPosition(3));
+
+        var player = game.Players[0];
 
         // act
         player.CalculateGamePoints();

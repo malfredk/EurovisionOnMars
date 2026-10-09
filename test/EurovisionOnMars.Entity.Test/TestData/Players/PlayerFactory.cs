@@ -70,8 +70,8 @@ public static class PlayerFactory
         var rating1 = player.PlayerRatings[0];
         var rating2 = player.PlayerRatings[1];
 
-        player.RateCountry(rating1.Id, category1Points, category2Points, category3Points);
-        player.RateCountry(rating2.Id, category1Points, category2Points, category3Points);
+        player.RateCountry(rating1.Id, Category1Points, Category2Points, Category3Points);
+        player.RateCountry(rating2.Id, Category1Points, Category2Points, Category3Points);
 
         player.ResolveTieBreak([rating2.Prediction.Id, rating1.Prediction.Id]);
 
