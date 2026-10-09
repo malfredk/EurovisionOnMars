@@ -7,7 +7,7 @@ namespace EurovisionOnMars.Entity.Test.Players.Predictions;
 public class PredictionsCalculatorTest
 {
     private const int OldTotalGivenPoints = 30;
-    private static readonly TieBreakDemotion oldTieBreakDemotion = new(7);
+    private static readonly TieBreakDemotion OldTieBreakDemotion = new(7);
 
     [Fact]
     public void Calculate_TotalGivenPointsUnchanged_DoesNotRecalculateRanks()
@@ -43,7 +43,8 @@ public class PredictionsCalculatorTest
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalGivenPoints);
-        updatedRating.Prediction.SetTieBreakDemotion(oldTieBreakDemotion);
+        updatedRating.Prediction.SetCalculatedRank(new CountryPosition(1));
+        updatedRating.Prediction.SetTieBreakDemotion(OldTieBreakDemotion);
 
         // act
         PredictionsCalculator.Calculate(
@@ -52,7 +53,7 @@ public class PredictionsCalculatorTest
             OldTotalGivenPoints);
 
         // assert
-        Assert.Equal(oldTieBreakDemotion, updatedRating.Prediction.TieBreakDemotion);
+        Assert.Equal(OldTieBreakDemotion, updatedRating.Prediction.TieBreakDemotion);
         Assert.Null(ratings[1].Prediction.TieBreakDemotion);
         Assert.Null(ratings[2].Prediction.TieBreakDemotion);
     }
@@ -95,10 +96,8 @@ public class PredictionsCalculatorTest
         ratings[1].Prediction.SetTotalGivenPoints(30);
         ratings[2].Prediction.SetTotalGivenPoints(20);
 
-        foreach (var rating in ratings)
-        {
-            rating.Prediction.SetTieBreakDemotion(oldTieBreakDemotion);
-        }
+        updatedRating.Prediction.SetCalculatedRank(new CountryPosition(1));
+        updatedRating.Prediction.SetTieBreakDemotion(OldTieBreakDemotion);
 
         // act
         PredictionsCalculator.Calculate(

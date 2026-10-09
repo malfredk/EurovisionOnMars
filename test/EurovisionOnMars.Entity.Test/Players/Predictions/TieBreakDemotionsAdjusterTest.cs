@@ -1,4 +1,5 @@
-﻿using EurovisionOnMars.Entity.Players.PlayerRatings;
+﻿using EurovisionOnMars.Entity.Countries;
+using EurovisionOnMars.Entity.Players.PlayerRatings;
 using EurovisionOnMars.Entity.Players.Predictions;
 using EurovisionOnMars.Entity.Test.TestData.Game;
 
@@ -8,6 +9,7 @@ public class TieBreakDemotionAdjusterTest
 {
     const int OldTotalPoints = 10;
     const int NewTotalPoints = 2;
+    private static readonly CountryPosition CalculatedRank = new(1);
 
     [Fact]
     public void Adjust_UpdatedRatingLeavesThreeWayTie_ReindexesRemainingDemotions()
@@ -128,10 +130,13 @@ public class TieBreakDemotionAdjusterTest
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalPoints);
+        updatedRating.Prediction.SetCalculatedRank(CalculatedRank);
+
         SetPrediction(
             ratings[1].Prediction,
             totalGivenPoints: NewTotalPoints,
             tieBreakDemotion: 1);
+
         SetPrediction(
             ratings[2].Prediction,
             totalGivenPoints: NewTotalPoints,
@@ -200,6 +205,7 @@ public class TieBreakDemotionAdjusterTest
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalPoints);
+        updatedRating.Prediction.SetCalculatedRank(CalculatedRank);
 
         var otherTotalPoints = 800;
         SetPrediction(
@@ -222,7 +228,7 @@ public class TieBreakDemotionAdjusterTest
             OldTotalPoints);
 
         // assert
-        Assert.Null(updatedRating.Prediction);
+        Assert.Null(updatedRating.Prediction.TieBreakDemotion);
 
         AssertTieBreakDemotion(
             ratings[1],
@@ -304,6 +310,7 @@ public class TieBreakDemotionAdjusterTest
         int tieBreakDemotion)
     {
         prediction.SetTotalGivenPoints(totalGivenPoints);
+        prediction.SetCalculatedRank(CalculatedRank);
         prediction.SetTieBreakDemotion(new TieBreakDemotion(tieBreakDemotion));
     }
 

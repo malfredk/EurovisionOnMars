@@ -154,7 +154,7 @@ public class PlayerTest
     public void RateCountry_SameSpecialPoints_ThrowsAndDoesNotRateCountry()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWith2TiedRatings();
+        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
 
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
@@ -186,21 +186,25 @@ public class PlayerTest
         // arrange
         var player = PlayerFactory.CreatePlayerWith2TiedRatings();
 
-        var rating1 = player.PlayerRatings[0];
-        var rating1Id = 1;
-        rating1.Id = rating1Id;
+        var tiedRank = new CountryPosition(1);
 
-        var rating2 = player.PlayerRatings[1];
-        var rating2Id = 2;
-        rating2.Id = rating2Id;
+        var prediction1 = player.PlayerRatings[0].Prediction;
+        var predictionId = 101;
+        prediction1.Id = predictionId;
+        prediction1.SetCalculatedRank(tiedRank);
 
-        List<int> orderedPredictionIds = [rating1Id, rating2Id];
+        var prediction2 = player.PlayerRatings[1].Prediction;
+        var prediction2Id = 202;
+        prediction2.Id = prediction2Id;
+        prediction2.SetCalculatedRank(tiedRank);
+
+        List<int> orderedPredictionIds = [predictionId, prediction2Id];
 
         // act
         player.ResolveTieBreak(orderedPredictionIds);
 
         // assert
-        Assert.NotNull(rating1.Prediction.TieBreakDemotion);
-        Assert.NotNull(rating2.Prediction.TieBreakDemotion);
+        Assert.NotNull(prediction1.TieBreakDemotion);
+        Assert.NotNull(prediction2.TieBreakDemotion);
     }
 }
