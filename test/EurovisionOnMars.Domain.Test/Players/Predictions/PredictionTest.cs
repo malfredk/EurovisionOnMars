@@ -18,7 +18,7 @@ public class PredictionTest
     public void Prediction_CreatesEmptyPredictionWithRatingConnection()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitial().PlayerRatings[0];
 
         // act
         var actualPrediction = new Prediction(rating);
@@ -172,7 +172,7 @@ public class PredictionTest
 
     private Prediction GetPrediction()
     {
-        return PlayerFactory.CreateInitialWithOneRating()
+        return PlayerFactory.CreateInitial()
             .PlayerRatings[0]
             .Prediction;
     }

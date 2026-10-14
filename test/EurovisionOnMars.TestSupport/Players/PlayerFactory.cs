@@ -8,7 +8,7 @@ namespace EurovisionOnMars.TestSupport.Players;
 
 public static class PlayerFactory
 {
-    public static Player CreateInitialWithOneRating()
+    public static Player CreateInitial()
     {
         var countries = CountryFactory.CreateInitialSingletonList();
         var username = new Username(PlayerTestData.Username);
@@ -24,15 +24,26 @@ public static class PlayerFactory
 
     public static Player CreateWithTotalGamePoints(int totalPoints)
     {
-        var player = CreateInitialWithOneRating();
+        var player = CreateInitial();
         player.PlayerGameResult.SetTotalPoints(totalPoints);
         return player;
     }
 
-    public static Player CreateWithCompleteGameResults(int totalPoints, int playerGameRank)
+    public static Player CreateWithCompletePlayerGameResult(int totalPoints, int playerGameRank)
     {
         var player = CreateWithTotalGamePoints(totalPoints);
         player.PlayerGameResult.SetRank(new PlayerRank(playerGameRank));
+        return player;
+    }
+
+    public static Player CreateWithCompleteRatingGameResult(int bonusPoints, int rankDifference)
+    {
+        var player = CreateInitial();
+
+        var ratingGameResult = player.PlayerRatings[0].RatingGameResult;
+        ratingGameResult.SetBonusPoints(new BonusPoints(bonusPoints));
+        ratingGameResult.SetRankDifference(rankDifference);
+        
         return player;
     }
 

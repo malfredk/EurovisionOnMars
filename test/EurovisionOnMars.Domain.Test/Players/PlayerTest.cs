@@ -86,7 +86,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_SetsPoints()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialWithOneRating();
+        var player = PlayerFactory.CreateInitial();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -107,7 +107,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_CalculatesPrediction()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialWithOneRating();
+        var player = PlayerFactory.CreateInitial();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -127,7 +127,7 @@ public class PlayerTest
     public void RateCountry_UnknownRating_ThrowsKeyNotFoundException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialWithOneRating();
+        var player = PlayerFactory.CreateInitial();
         player.PlayerRatings[0].Id = RatingId;
 
         const int unknownRatingId = 999;

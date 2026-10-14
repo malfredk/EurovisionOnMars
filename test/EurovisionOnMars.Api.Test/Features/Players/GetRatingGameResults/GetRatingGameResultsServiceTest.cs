@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
-using EurovisionOnMars.Api.Test.TestData.Countries;
-using EurovisionOnMars.Api.Test.TestData.Game;
 using EurovisionOnMars.Dto.Players.GetRatingGameResults;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -33,10 +33,8 @@ public class GetRatingGameResultsServiceTest
     {
         // arrange
         const int playerId = 1234;
-
-        var gameScenario =
-            GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
-        var ratings = gameScenario.Players[0].PlayerRatings.ToImmutableList();
+        var ratings = PlayerFactory.CreateInitial(2)
+            .PlayerRatings.ToImmutableList();
 
         _repositoryMock
             .Setup(r => r.GetRatings(playerId))

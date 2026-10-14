@@ -29,7 +29,7 @@ public class PlayerGameResultMapperTest
         // arrange
         var rank = 1;
         var totalPoints = 9;
-        var entity = PlayerFactory.CreateWithCompleteGameResults(totalPoints, rank)
+        var entity = PlayerFactory.CreateWithCompletePlayerGameResult(totalPoints, rank)
             .PlayerGameResult;
 
         // act

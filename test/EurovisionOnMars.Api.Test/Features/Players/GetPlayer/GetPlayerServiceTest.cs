@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
 using EurovisionOnMars.Domain.Players;
 using EurovisionOnMars.Dto.Players.GetPlayer;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -31,16 +32,16 @@ public class GetPlayerServiceTest
     {
         // arrange
         var username = PlayerTestData.Username;
-        var player = PlayerFactory.CreateInitialPlayer();
+        var entity = PlayerFactory.CreateInitial();
         var expectedDto = CreatePlayerDto();
 
         _repositoryMock
             .Setup(r => r.GetPlayer(
                 It.Is<Username>(u => u.Value == username)))
-            .ReturnsAsync(player);
+            .ReturnsAsync(entity);
 
         _mapperMock
-            .Setup(m => m.ToDto(player))
+            .Setup(m => m.ToDto(entity))
             .Returns(expectedDto);
 
         // act
@@ -55,7 +56,7 @@ public class GetPlayerServiceTest
             Times.Once);
 
         _mapperMock.Verify(
-            m => m.ToDto(player),
+            m => m.ToDto(entity),
             Times.Once);
     }
 

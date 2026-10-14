@@ -13,7 +13,7 @@ public class SpecialPointsPolicyTest
     public void Validate_NoOtherRatingAndSpecialPoints_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialWithOneRating();
+        var player = PlayerFactory.CreateInitial();
         var ratingToUpdate = player.PlayerRatings[0];
 
         // act

@@ -9,7 +9,7 @@ public class RatingGameResultTest
     public void Constructor_CreatesResultForPlayerRating()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitial().PlayerRatings[0];
 
         // act
         var actualRatingGameResult = new RatingGameResult(rating);
@@ -24,7 +24,7 @@ public class RatingGameResultTest
     public void SetRankDifference_SetsRankDifference()
     {
         // arrange
-        var ratingGameResult = PlayerFactory.CreateInitialWithOneRating()
+        var ratingGameResult = PlayerFactory.CreateInitial()
             .PlayerRatings[0].RatingGameResult;
 
         const int rankDifference = -3;
@@ -40,7 +40,7 @@ public class RatingGameResultTest
     public void SetBonusPoints_SetsBonusPoints()
     {
         // arrange
-        var ratingGameResult = PlayerFactory.CreateInitialWithOneRating()
+        var ratingGameResult = PlayerFactory.CreateInitial()
             .PlayerRatings[0].RatingGameResult;
 
         var bonusPoints = new BonusPoints(-10);

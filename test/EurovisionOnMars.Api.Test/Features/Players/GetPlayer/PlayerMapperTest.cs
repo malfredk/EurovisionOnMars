@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
-using EurovisionOnMars.Api.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Api.Test.Features.Players.GetPlayer;
 
@@ -11,7 +11,7 @@ public class PlayerMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = PlayerFactory.CreateInitialPlayer();
+        var entity = PlayerFactory.CreateInitial();
 
         // act
         var actual = _mapper.ToDto(entity);

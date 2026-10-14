@@ -1,8 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatings;
-using EurovisionOnMars.Api.Test.TestData.Countries;
-using EurovisionOnMars.Api.Test.TestData.Players;
-using EurovisionOnMars.Dto.Players.GetRatings;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
+using EurovisionOnMars.Dto.Players.GetRatings;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -35,7 +34,7 @@ public class GetRatingsServiceTest
     public async Task GetRatingsByPlayerId_ReturnsRatingsInPredictedRankOrder()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWith2RatedAndDemotedAnd2InitialRatings();
+        var player = PlayerFactory.CreateInitial(4);
         var ratings = player.PlayerRatings.ToImmutableList();
 
         _repositoryMock

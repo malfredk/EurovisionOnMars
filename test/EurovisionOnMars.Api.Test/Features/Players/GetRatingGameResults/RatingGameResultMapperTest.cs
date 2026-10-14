@@ -1,6 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
-using EurovisionOnMars.Api.Test.TestData.Countries;
-using EurovisionOnMars.Api.Test.TestData.Players;
+using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Players;
+using static MudBlazor.CategoryTypes;
 
 namespace EurovisionOnMars.Api.Test.Features.Players.GetRatingGameResults;
 
@@ -12,10 +14,10 @@ public class RatingGameResultMapperTest
     public void ToDto_WithoutResults_ResturnsMostlyEmptyDto()
     {
         // arrange
-        var playerRating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
+        var entity = PlayerFactory.CreateInitial().PlayerRatings[0];
 
         // act
-        var actual = _mapper.ToDto(playerRating);
+        var actual = _mapper.ToDto(entity);
 
         // assert
         Assert.Null(actual.RankDifference);
@@ -27,21 +29,24 @@ public class RatingGameResultMapperTest
     }
 
     [Fact]
-    public void ToDto_WithResults_ResturnsDto()
+    public void ToDto_WithResults_ResturnsCompleteDto()
     {
         // arrange
-        var playerRating = PlayerFactory.CreatePlayerAtEndOfGame().PlayerRatings[0];
-        
-        var ratingGameResult = playerRating.RatingGameResult;
-        int expectedRankDifference = ratingGameResult.RankDifference!.Value;
-        int expectedBonusPoints = ratingGameResult.BonusPoints!.Value;
+        var bonusPoints = -2;
+        var rankDifference = 5;
+
+        var ratingEntity = PlayerFactory
+            .CreateWithCompleteRatingGameResult(bonusPoints, rankDifference)
+            .PlayerRatings[0];
+
+        ratingEntity.Country!.SetActualRank(new CountryPosition(CountryTestData.Rank));
 
         // act
-        var actual = _mapper.ToDto(playerRating);
+        var actual = _mapper.ToDto(ratingEntity);
 
         // assert
-        Assert.Equal(expectedRankDifference, actual.RankDifference);
-        Assert.Equal(expectedBonusPoints, actual.BonusPoints);
+        Assert.Equal(rankDifference, actual.RankDifference);
+        Assert.Equal(bonusPoints, actual.BonusPoints);
 
         var countryDto = actual.Country;
         Assert.Equal(CountryTestData.Rank, countryDto.ActualRank);
