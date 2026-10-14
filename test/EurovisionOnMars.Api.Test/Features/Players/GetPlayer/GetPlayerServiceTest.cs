@@ -1,7 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
-using EurovisionOnMars.Api.Test.TestData.Players;
-using EurovisionOnMars.Dto.Players.GetPlayer;
 using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Dto.Players.GetPlayer;
 using Microsoft.Extensions.Logging;
 using Moq;
 

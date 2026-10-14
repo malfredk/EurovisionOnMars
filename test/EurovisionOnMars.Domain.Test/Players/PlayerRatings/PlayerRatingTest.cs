@@ -1,9 +1,9 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
-using EurovisionOnMars.Domain.Test.TestData.Countries;
-using EurovisionOnMars.Domain.Test.TestData.Game;
-using EurovisionOnMars.Domain.Test.TestData.Players;
-using EurovisionOnMars.Domain.Test.TestData.Players.PlayerRatings;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
+using EurovisionOnMars.TestSupport.Players.PlayerRatings;
 
 namespace EurovisionOnMars.Domain.Test.Players.PlayerRatings;
 
@@ -20,8 +20,8 @@ public class PlayerRatingTest
     public void Constructor_CreatesRatingForPlayerAndCountry()
     {
         // arrange
-        var country = CountryFactory.CreateInitialCountry();
-        var player = PlayerFactory.CreateInitialPlayer();
+        var country = CountryFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
 
         // act
         var rating = new PlayerRating(player, country);
@@ -42,7 +42,7 @@ public class PlayerRatingTest
     public void SetPoints_SetsCategoryPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         rating.SetPoints(
@@ -60,7 +60,7 @@ public class PlayerRatingTest
     public void SetPoints_SetsTotalGivenPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         rating.SetPoints(
@@ -117,7 +117,7 @@ public class PlayerRatingTest
     public void CalculateRankDifference_MissingActualRank_ThrowsException()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         var action = () => rating.CalculateRankDifference();
@@ -130,7 +130,7 @@ public class PlayerRatingTest
     public void CalculateBonusPoints_ExactAndUniquePrediction_SetsBonusPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings.First();
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
         rating.Prediction.SetCalculatedRank(CountryPosition10);
         rating.RatingGameResult.SetRankDifference(0);
 
@@ -148,7 +148,7 @@ public class PlayerRatingTest
     public void CalculateBonusPoints_ExactButNotUniquePrediction_SetsZeroBonusPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings.First();
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
         rating.Prediction.SetCalculatedRank(CountryPosition10);
         rating.RatingGameResult.SetRankDifference(0);
 
@@ -166,7 +166,7 @@ public class PlayerRatingTest
     public void CalculateBonusPoints_UniqueButIncorrectPrediction_SetsZeroBonusPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings.First();
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
         rating.Prediction.SetCalculatedRank(CountryPosition10);
         rating.RatingGameResult.SetRankDifference(1);
 
@@ -184,7 +184,7 @@ public class PlayerRatingTest
     public void CalculateBonusPoints_MissingPredictedRank_SetsZeroBonusPoints()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings.First();
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         rating.CalculateBonusPoints(

@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players;
 
-namespace EurovisionOnMars.Domain.Test.TestData.Game;
+namespace EurovisionOnMars.TestSupport.Game;
 
 public sealed class GameScenario
 {
@@ -14,5 +14,13 @@ public sealed class GameScenario
     {
         Countries = countries;
         Players = players;
+    }
+
+    public void SetActualRanksForCountries()
+    {
+        for (int i = 0; i < Countries.Count; i++)
+        {
+            Countries[i].SetActualRank(new CountryPosition(i + 1));
+        }
     }
 }

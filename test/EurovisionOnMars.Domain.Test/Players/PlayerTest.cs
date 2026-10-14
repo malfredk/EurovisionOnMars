@@ -1,10 +1,10 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
-using EurovisionOnMars.Domain.Test.TestData.Countries;
-using EurovisionOnMars.Domain.Test.TestData.Game;
-using EurovisionOnMars.Domain.Test.TestData.Players;
-using EurovisionOnMars.Domain.Test.TestData.Players.PlayerRatings;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
+using EurovisionOnMars.TestSupport.Players.PlayerRatings;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Domain.Test.Players;
@@ -23,9 +23,9 @@ public class PlayerTest
     // tests for constructor, Player
 
     [Fact]
-    public void Player_ValidInput_CreatesPlayer() {         
+    public void Constructor_ValidInput_CreatesPlayerWithRatingsAndResult() {         
         // arrange
-        var countries = CountryFactory.CreateInitialListWith2Countries();
+        var countries = CountryFactory.CreateInitialList(2);
 
         // act
         var player = new Player(Username, countries);
@@ -44,7 +44,7 @@ public class PlayerTest
 
     [Theory]
     [MemberData(nameof(NoCountriesTestData))]
-    public void Player_NoCountries_ThrowException(ImmutableList<Country> countries)
+    public void Constructor_NoCountries_ThrowsInvalidOperationException(ImmutableList<Country> countries)
     {
         // act and assert
         Assert.Throws<InvalidOperationException>(() => new Player(Username, countries));
@@ -63,14 +63,7 @@ public class PlayerTest
     public void CalculateGamePoints_CalculatesAllGamePoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-
-        var countries = game.Countries;
-        countries[0].SetActualRank(new CountryPosition(1));
-        countries[1].SetActualRank(new CountryPosition(2));
-        countries[2].SetActualRank(new CountryPosition(3));
-
-        var player = game.Players[0];
+        var player = PlayerFactory.CreateWithRankedCountries(3);
 
         // act
         player.CalculateGamePoints();
@@ -93,7 +86,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_SetsPoints()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -114,7 +107,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_CalculatesPrediction()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -134,7 +127,7 @@ public class PlayerTest
     public void RateCountry_UnknownRating_ThrowsKeyNotFoundException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         player.PlayerRatings[0].Id = RatingId;
 
         const int unknownRatingId = 999;
@@ -154,7 +147,7 @@ public class PlayerTest
     public void RateCountry_SameSpecialPoints_ThrowsAndDoesNotRateCountry()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
 
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
@@ -184,21 +177,18 @@ public class PlayerTest
     public void ResolveTieBreak_ValidInput_SetsTieBreakDemotions()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWith2TiedRatings();
-
-        var tiedRank = new CountryPosition(1);
+        var player = CreatePlayerWith2RatingsWithSameRank();
 
         var prediction1 = player.PlayerRatings[0].Prediction;
-        var predictionId = 101;
-        prediction1.Id = predictionId;
-        prediction1.SetCalculatedRank(tiedRank);
-
         var prediction2 = player.PlayerRatings[1].Prediction;
+
+        var prediction1Id = 101;
+        prediction1.Id = prediction1Id;
+
         var prediction2Id = 202;
         prediction2.Id = prediction2Id;
-        prediction2.SetCalculatedRank(tiedRank);
 
-        List<int> orderedPredictionIds = [predictionId, prediction2Id];
+        List<int> orderedPredictionIds = [prediction1Id, prediction2Id];
 
         // act
         player.ResolveTieBreak(orderedPredictionIds);
@@ -206,5 +196,17 @@ public class PlayerTest
         // assert
         Assert.NotNull(prediction1.TieBreakDemotion);
         Assert.NotNull(prediction2.TieBreakDemotion);
+    }
+
+    private static Player CreatePlayerWith2RatingsWithSameRank()
+    {
+        var player = PlayerFactory.CreateInitial(2);
+
+        var tiedRank = new CountryPosition(1);
+
+        player.PlayerRatings[0].Prediction.SetCalculatedRank(tiedRank);
+        player.PlayerRatings[1].Prediction.SetCalculatedRank(tiedRank);
+
+        return player;
     }
 }

@@ -1,8 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
-using EurovisionOnMars.Api.Test.TestData.Game;
-using EurovisionOnMars.Api.Test.TestData.Players;
-using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
 using EurovisionOnMars.Domain.Players.GameResults;
+using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
+using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Collections.Immutable;
@@ -31,10 +31,10 @@ public class GetPlayerGameResultsServiceTest
     }
 
     [Fact]
-    public async Task GetPlayerGameResults_WithoutRanks_CallsRepository()
+    public async Task GetPlayerGameResults_WithoutGameRanks_CallsRepository()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
+        var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
             .ToImmutableList();
@@ -43,7 +43,7 @@ public class GetPlayerGameResultsServiceTest
             .ReturnsAsync(playersGameResults);
 
         _mapperMock.Setup(m => m.ToDto(It.IsAny<PlayerGameResult>()))
-            .Returns<PlayerGameResult>(pgr => CreatePlayerGameResultDto(null));
+            .Returns<PlayerGameResult>(pgr => CreatePlayerGameResultDto());
 
         // act
         await _service.GetPlayerGameResults();
@@ -54,10 +54,10 @@ public class GetPlayerGameResultsServiceTest
     }
 
     [Fact]
-    public async Task GetPlayerGameResults_WithoutRanks_ReturnsDtos()
+    public async Task GetPlayerGameResults_WithoutGameRanks_ReturnsDtos()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateInitialGameWith2PlayersAnd2Countries();
+        var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
             .ToImmutableList();
@@ -65,8 +65,8 @@ public class GetPlayerGameResultsServiceTest
         _repositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(playersGameResults);
 
-        var playerGameResultDto1 = CreatePlayerGameResultDto(null);
-        var playerGameResultDto2 = CreatePlayerGameResultDto(null);
+        var playerGameResultDto1 = CreatePlayerGameResultDto();
+        var playerGameResultDto2 = CreatePlayerGameResultDto();
         var expectedPlayerResults = new List<PlayerGameResultDto>
         {
             playerGameResultDto1,
@@ -74,9 +74,9 @@ public class GetPlayerGameResultsServiceTest
         };
 
         _mapperMock.Setup(m => m.ToDto(playersGameResults[0]))
-            .Returns(playerGameResultDto2);
-        _mapperMock.Setup(m => m.ToDto(playersGameResults[1]))
             .Returns(playerGameResultDto1);
+        _mapperMock.Setup(m => m.ToDto(playersGameResults[1]))
+            .Returns(playerGameResultDto2);
 
         // act
         var actualResults = await _service.GetPlayerGameResults();
@@ -91,7 +91,7 @@ public class GetPlayerGameResultsServiceTest
     public async Task GetPlayerGameResults_WithRanks_ReturnsSortedDtos()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateCalculatedGame();
+        var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 3, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
             .ToImmutableList();
@@ -101,15 +101,19 @@ public class GetPlayerGameResultsServiceTest
 
         var playerGameResultDto1 = CreatePlayerGameResultDto(1);
         var playerGameResultDto2 = CreatePlayerGameResultDto(2);
+        var playerGameResultDto3 = CreatePlayerGameResultDto(3);
         var expectedSortedPlayerResults = new List<PlayerGameResultDto>
         {
             playerGameResultDto1,
-            playerGameResultDto2
+            playerGameResultDto2,
+            playerGameResultDto3
         };
 
         _mapperMock.Setup(m => m.ToDto(playersGameResults[0]))
             .Returns(playerGameResultDto2);
         _mapperMock.Setup(m => m.ToDto(playersGameResults[1]))
+            .Returns(playerGameResultDto3);
+        _mapperMock.Setup(m => m.ToDto(playersGameResults[2]))
             .Returns(playerGameResultDto1);
 
         // act
@@ -119,7 +123,7 @@ public class GetPlayerGameResultsServiceTest
         Assert.Equal(expectedSortedPlayerResults, actualPlayerResults);
     }
 
-    private static PlayerGameResultDto CreatePlayerGameResultDto(int? rank)
+    private static PlayerGameResultDto CreatePlayerGameResultDto(int? rank = null)
     {
         return new PlayerGameResultDto
         {

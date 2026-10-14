@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Domain.Test.TestData.Countries;
+﻿namespace EurovisionOnMars.TestSupport.Countries;
 
 public static class CountryTestData
 {

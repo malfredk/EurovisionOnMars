@@ -1,4 +1,4 @@
-﻿namespace EurovisionOnMars.Api.Test.TestData.Players;
+﻿namespace EurovisionOnMars.TestSupport.Players;
 
 public static class PlayerTestData
 {

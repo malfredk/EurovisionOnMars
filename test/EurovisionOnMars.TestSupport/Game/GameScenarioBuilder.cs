@@ -1,9 +1,9 @@
-﻿using EurovisionOnMars.Domain.Test.TestData.Countries;
-using EurovisionOnMars.Domain.Countries;
+﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players;
 using System.Collections.Immutable;
+using EurovisionOnMars.TestSupport.Countries;
 
-namespace EurovisionOnMars.Domain.Test.TestData.Game;
+namespace EurovisionOnMars.TestSupport.Game;
 
 public sealed class GameScenarioBuilder
 {
@@ -19,7 +19,7 @@ public sealed class GameScenarioBuilder
         }
 
         _countries.Add(
-            CountryFactory.CreateInitialCountry(number));
+            CountryFactory.CreateInitial(number));
 
         return this;
     }

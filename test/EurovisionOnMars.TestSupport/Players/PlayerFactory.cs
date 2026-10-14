@@ -1,0 +1,65 @@
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Players.PlayerRatings;
+
+namespace EurovisionOnMars.TestSupport.Players;
+
+public static class PlayerFactory
+{
+    public static Player CreateInitialWithOneRating()
+    {
+        var countries = CountryFactory.CreateInitialSingletonList();
+        var username = new Username(PlayerTestData.Username);
+        return new Player(username, countries);
+    }
+
+    public static Player CreateInitial(int ratingCount)
+    {
+        var countries = CountryFactory.CreateInitialList(ratingCount);
+        var username = new Username(PlayerTestData.Username);
+        return new Player(username, countries);
+    }
+
+    public static Player CreateWithTotalGamePoints(int totalPoints)
+    {
+        var player = CreateInitialWithOneRating();
+        player.PlayerGameResult.SetTotalPoints(totalPoints);
+        return player;
+    }
+
+    public static Player CreateWithCompleteGameResults(int totalPoints, int playerGameRank)
+    {
+        var player = CreateWithTotalGamePoints(totalPoints);
+        player.PlayerGameResult.SetRank(new PlayerRank(playerGameRank));
+        return player;
+    }
+
+    public static Player CreateWithRatingsWithSamePoints(int ratingCount)
+    {
+        var player = CreateInitial(ratingCount);
+
+        for (int i = 0; i < ratingCount; i++)
+        {
+            player.PlayerRatings[i].SetPoints(
+                new Points(PlayerRatingTestData.Category1Points),
+                new Points(PlayerRatingTestData.Category2Points),
+                new Points(PlayerRatingTestData.Category3Points));
+        }
+
+        return player;
+    }
+
+    public static Player CreateWithRankedCountries(int ratingCount)
+    {
+        var player = CreateInitial(ratingCount);
+
+        for (int i = 0; i < ratingCount; i++)
+        {
+            player.PlayerRatings[i].Country!.SetActualRank(new CountryPosition(i + 1));
+        }
+
+        return player;
+    }
+}

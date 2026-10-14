@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
-using EurovisionOnMars.Api.Test.TestData.Game;
 using EurovisionOnMars.Domain.Game;
+using EurovisionOnMars.TestSupport.Game;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -28,12 +28,16 @@ public class CalculateGameResultsServiceTest
     }
 
     [Fact]
-    public async Task CalculateGameResults_RepositoryIsCalled()
+    public async Task CalculateGameResults_GetsAndSavesPlayers()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet();
+        var game = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 2);
+        game.SetActualRanksForCountries();
+
+        var players = game.Players;
+
         _repositoryMock.Setup(r => r.GetPlayers())
-            .ReturnsAsync(gameScenario.Players);
+            .ReturnsAsync(players);
 
         // act
         await _service.CalculateGameResults();
@@ -52,8 +56,10 @@ public class CalculateGameResultsServiceTest
     public async Task CalculateGameResults_GameResultsAreCalculated()
     {
         // arrange
-        var gameScenario = GameScenarioFactory.CreateGameWherePlayersHaveRatedAndActualCountryRanksAreSet();
-        var players = gameScenario.Players;
+        var game = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 2);
+        game.SetActualRanksForCountries();
+
+        var players = game.Players;
 
         _repositoryMock.Setup(r => r.GetPlayers())
             .ReturnsAsync(players);
@@ -74,5 +80,23 @@ public class CalculateGameResultsServiceTest
             Assert.NotNull(playerGameResult.TotalPoints);
             Assert.NotNull(playerGameResult.Rank);
         }
+    }
+
+    [Fact]
+    public async Task CalculateGameResults_CalculationFails_ThrowsAndDoesNotSave()
+    {
+        // arrange
+        var game = GameScenarioFactory.CreateInitialGame(playersCount: 1, countriesCount: 1);
+        var players = game.Players;
+
+        _repositoryMock.Setup(r => r.GetPlayers())
+            .ReturnsAsync(players);
+
+        // act & assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CalculateGameResults());
+
+        _repositoryMock.Verify(
+            r => r.SaveChanges(),
+            Times.Never);
     }
 }

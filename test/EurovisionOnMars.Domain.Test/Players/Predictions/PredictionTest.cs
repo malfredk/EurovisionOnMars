@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
-using EurovisionOnMars.Domain.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.Predictions;
 
@@ -18,7 +18,7 @@ public class PredictionTest
     public void Prediction_CreatesEmptyPredictionWithRatingConnection()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings.First();
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         var actualPrediction = new Prediction(rating);
@@ -172,8 +172,8 @@ public class PredictionTest
 
     private Prediction GetPrediction()
     {
-        return PlayerFactory.CreateInitialPlayer()
-            .PlayerRatings.First()
+        return PlayerFactory.CreateInitialWithOneRating()
+            .PlayerRatings[0]
             .Prediction;
     }
 }

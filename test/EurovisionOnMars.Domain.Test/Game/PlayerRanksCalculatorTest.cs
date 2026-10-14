@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Game;
 using EurovisionOnMars.Domain.Players;
-using EurovisionOnMars.Domain.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 public class PlayerRanksCalculatorTest
 {
@@ -10,9 +10,9 @@ public class PlayerRanksCalculatorTest
     public void CalculatePlayerRanks_DifferentPoints_RanksPlayersByAscendingPoints()
     {
         // arrange
-        var player30 = PlayerFactory.CreatePlayerWithTotalPoints(30);
-        var player10 = PlayerFactory.CreatePlayerWithTotalPoints(10);
-        var player20 = PlayerFactory.CreatePlayerWithTotalPoints(20);
+        var player30 = PlayerFactory.CreateWithTotalGamePoints(30);
+        var player10 = PlayerFactory.CreateWithTotalGamePoints(10);
+        var player20 = PlayerFactory.CreateWithTotalGamePoints(20);
 
         var players = new[]
         {
@@ -34,11 +34,10 @@ public class PlayerRanksCalculatorTest
     public void CalculatePlayerRanks_EqualPoints_GivesSameRank()
     {
         // arrange
-        var player1 = PlayerFactory.CreatePlayerWithTotalPoints(10);
-        var player2 = PlayerFactory.CreatePlayerWithTotalPoints(10);
-        var player3 = PlayerFactory.CreatePlayerWithTotalPoints(20);
+        var player1 = PlayerFactory.CreateWithTotalGamePoints(10);
+        var player2 = PlayerFactory.CreateWithTotalGamePoints(10);
 
-        Player[] players = [player1, player2, player3];
+        Player[] players = [player1, player2];
 
         // act
         _calculator.CalculatePlayerRanks(players);
@@ -46,18 +45,34 @@ public class PlayerRanksCalculatorTest
         // assert
         Assert.Equal(1, player1.PlayerGameResult.Rank!.Value);
         Assert.Equal(1, player2.PlayerGameResult.Rank!.Value);
-        Assert.Equal(3, player3.PlayerGameResult.Rank!.Value);
+    }
+
+    [Fact]
+    public void CalculatePlayerRanks_WorseThanTie_SkipsRank()
+    {
+        // arrange
+        var player1 = PlayerFactory.CreateWithTotalGamePoints(20);
+        var player2 = PlayerFactory.CreateWithTotalGamePoints(10);
+        var player3 = PlayerFactory.CreateWithTotalGamePoints(10);
+
+        Player[] players = [player1, player2, player3];
+
+        // act
+        _calculator.CalculatePlayerRanks(players);
+
+        // assert
+        Assert.Equal(3, player1.PlayerGameResult.Rank!.Value);
     }
 
     [Fact]
     public void CalculatePlayerRanks_MultipleTies_AssignsCompetitionRanks()
     {
         // arrange
-        var player1 = PlayerFactory.CreatePlayerWithTotalPoints(10);
-        var player2 = PlayerFactory.CreatePlayerWithTotalPoints(10);
-        var player3 = PlayerFactory.CreatePlayerWithTotalPoints(20);
-        var player4 = PlayerFactory.CreatePlayerWithTotalPoints(20);
-        var player5 = PlayerFactory.CreatePlayerWithTotalPoints(30);
+        var player1 = PlayerFactory.CreateWithTotalGamePoints(10);
+        var player2 = PlayerFactory.CreateWithTotalGamePoints(10);
+        var player3 = PlayerFactory.CreateWithTotalGamePoints(20);
+        var player4 = PlayerFactory.CreateWithTotalGamePoints(20);
+        var player5 = PlayerFactory.CreateWithTotalGamePoints(30);
 
         Player[] players =
         [
@@ -85,7 +100,7 @@ public class PlayerRanksCalculatorTest
     public void CalculatePlayerRanks_OnePlayer_AssignsRankOne()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWithTotalPoints(10);
+        var player = PlayerFactory.CreateWithTotalGamePoints(10);
 
         // act
         _calculator.CalculatePlayerRanks([player]);

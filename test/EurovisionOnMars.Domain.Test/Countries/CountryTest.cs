@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Domain.Countries;
-using EurovisionOnMars.Domain.Test.TestData.Countries;
+using EurovisionOnMars.TestSupport.Countries;
 
 namespace EurovisionOnMars.Domain.Test.Countries;
 
@@ -22,10 +22,10 @@ public class CountryTest
     }
 
     [Fact]
-    public void SetActualRank_Valid()
+    public void SetActualRank_ValidValue_SetsActualRank()
     {
         // arrange
-        var country = CountryFactory.CreateInitialCountry();
+        var country = CountryFactory.CreateInitial();
         var rank = new CountryPosition(CountryTestData.Rank);
 
         // act

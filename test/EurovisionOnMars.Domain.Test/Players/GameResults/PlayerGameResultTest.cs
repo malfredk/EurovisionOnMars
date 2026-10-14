@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Players;
 using EurovisionOnMars.Domain.Players.GameResults;
-using EurovisionOnMars.Domain.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.GameResults;
 
@@ -10,7 +10,7 @@ public class PlayerGameResultTest
     public void Constructor_CreatesResultForPlayer()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitialWithOneRating();
 
         // act
         var result = new PlayerGameResult(player);
@@ -25,7 +25,7 @@ public class PlayerGameResultTest
     public void SetRank_SetsRank()
     {
         // arrange
-        var result = PlayerFactory.CreateInitialPlayer().PlayerGameResult;
+        var result = PlayerFactory.CreateInitialWithOneRating().PlayerGameResult;
         var rank = new PlayerRank(3);
 
         // act
@@ -39,7 +39,7 @@ public class PlayerGameResultTest
     public void SetTotalPoints_SetsTotalPoints()
     {
         // arrange
-        var result = PlayerFactory.CreateInitialPlayer().PlayerGameResult;
+        var result = PlayerFactory.CreateInitialWithOneRating().PlayerGameResult;
         const int totalPoints = 42;
 
         // act

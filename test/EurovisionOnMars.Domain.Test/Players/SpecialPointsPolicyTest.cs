@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Players;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
-using EurovisionOnMars.Domain.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players;
 
@@ -13,7 +13,7 @@ public class SpecialPointsPolicyTest
     public void Validate_NoOtherRatingAndSpecialPoints_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var ratingToUpdate = player.PlayerRatings[0];
 
         // act
@@ -34,7 +34,7 @@ public class SpecialPointsPolicyTest
     public void Validate_InitialRatingAndSpecialPoints_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
 
@@ -56,7 +56,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SameNonSpecialPoints_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
         otherRating.SetPoints(RegularPoints, RegularPoints, RegularPoints);
@@ -79,7 +79,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SameSpecialPointsInOtherCategory_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
         otherRating.SetPoints(SpecialPoints, SpecialPoints, RegularPoints);
@@ -102,7 +102,7 @@ public class SpecialPointsPolicyTest
     public void Validate_DifferentSpecialPointsInSameCategory_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
         otherRating.SetPoints(SpecialPoints, SpecialPoints, SpecialPoints);
@@ -127,7 +127,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SpecialPointsAlreadyUsedInCategory1_ThrowsArgumentException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
 
@@ -152,7 +152,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SpecialPointsAlreadyUsedInCategory2_ThrowsArgumentException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
 
@@ -177,7 +177,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SpecialPointsAlreadyUsedInCategory3_ThrowsArgumentException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
 
@@ -202,7 +202,7 @@ public class SpecialPointsPolicyTest
     public void Validate_SpecialPointsUsedByRatingBeingUpdated_DoesNotThrow()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayerWith2Ratings();
+        var player = PlayerFactory.CreateInitial(2);
         var ratingToUpdate = player.PlayerRatings[0];
         var otherRating = player.PlayerRatings[1];
         otherRating.SetPoints(RegularPoints, RegularPoints, RegularPoints);

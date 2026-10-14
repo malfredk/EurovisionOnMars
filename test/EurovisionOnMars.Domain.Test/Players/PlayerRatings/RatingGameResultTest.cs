@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Domain.Players.PlayerRatings;
-using EurovisionOnMars.Domain.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.PlayerRatings;
 
@@ -9,7 +9,7 @@ public class RatingGameResultTest
     public void Constructor_CreatesResultForPlayerRating()
     {
         // arrange
-        var rating = PlayerFactory.CreateInitialPlayer().PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         var actualRatingGameResult = new RatingGameResult(rating);
@@ -24,7 +24,7 @@ public class RatingGameResultTest
     public void SetRankDifference_SetsRankDifference()
     {
         // arrange
-        var ratingGameResult = PlayerFactory.CreateInitialPlayer()
+        var ratingGameResult = PlayerFactory.CreateInitialWithOneRating()
             .PlayerRatings[0].RatingGameResult;
 
         const int rankDifference = -3;
@@ -40,7 +40,7 @@ public class RatingGameResultTest
     public void SetBonusPoints_SetsBonusPoints()
     {
         // arrange
-        var ratingGameResult = PlayerFactory.CreateInitialPlayer()
+        var ratingGameResult = PlayerFactory.CreateInitialWithOneRating()
             .PlayerRatings[0].RatingGameResult;
 
         var bonusPoints = new BonusPoints(-10);

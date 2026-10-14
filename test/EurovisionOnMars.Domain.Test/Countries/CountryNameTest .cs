@@ -8,7 +8,7 @@ public class CountryNameTest
     [InlineData("østerrike")]
     [InlineData("san marino")]
     [InlineData("bosnia-hercegovina")]
-    public void CountryName_Valid(string name)
+    public void Constructor_ValidValue_CreatesCountryName(string name)
     {
         // acts
         var countryName = new CountryName(name);
@@ -22,7 +22,7 @@ public class CountryNameTest
     [InlineData("danmark2")]
     [InlineData("danmark_")]
     [InlineData("")]
-    public void CountryName_Invalid(string name)
+    public void Constructor_InvalidValue_ThrowsArgumentException(string name)
     {
         // act & assert
         Assert.Throws<ArgumentException>(() => new CountryName(name));

@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
-using EurovisionOnMars.Api.Test.TestData.Players;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Api.Test.Features.GameResults.GetPlayerGameResults;
 
@@ -11,7 +11,8 @@ public class PlayerGameResultMapperTest
     public void ToDto_WithoutResults_ReturnsDtoWithOnlyUsername()
     {
         // arrange
-        var entity = PlayerFactory.CreateInitialPlayer().PlayerGameResult;
+        var entity = PlayerFactory.CreateInitial(ratingCount: 1)
+            .PlayerGameResult;
 
         // act
         var dto = _mapper.ToDto(entity);
@@ -26,18 +27,17 @@ public class PlayerGameResultMapperTest
     public void ToDto_WithResults_ReturnsCompleteDto()
     {
         // arrange
-        var entity = PlayerFactory.CreatePlayerAtEndOfGame().PlayerGameResult;
+        var rank = 1;
+        var totalPoints = 9;
+        var entity = PlayerFactory.CreateWithCompleteGameResults(totalPoints, rank)
+            .PlayerGameResult;
 
         // act
         var dto = _mapper.ToDto(entity);
 
         // assert
-        Assert.NotNull(dto.Rank);
-        Assert.Equal(entity.Rank!.Value, dto.Rank);
-
-        Assert.NotNull(dto.TotalPoints);
-        Assert.Equal(entity.TotalPoints, dto.TotalPoints);
-
+        Assert.Equal(rank, dto.Rank);
+        Assert.Equal(totalPoints, dto.TotalPoints);
         Assert.Equal(PlayerTestData.Username, dto.PlayerUsername);
     }
 }

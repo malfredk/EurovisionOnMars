@@ -1,8 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features.Players.CreatePlayer;
-using EurovisionOnMars.Api.Test.TestData.Countries;
-using EurovisionOnMars.Api.Test.TestData.Players;
 using EurovisionOnMars.CustomException;
 using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -61,7 +61,7 @@ public class CreatePlayerServiceTest
     }
 
     [Fact]
-    public async Task CreatePlayer_UsernameAlreadyExists_ThrowsDuplicateUsernameException()
+    public async Task CreatePlayer_UsernameAlreadyExists_ThrowsAndDoesNotCreatePlayer()
     {
         // arrange
         var username = PlayerTestData.Username;
@@ -86,7 +86,7 @@ public class CreatePlayerServiceTest
     }
 
     [Fact]
-    public async Task CreatePlayer_InvalidUsername_DoesNotAccessRepository()
+    public async Task CreatePlayer_InvalidUsername_ThrowsAndDoesNotAccessRepository()
     {
         // arrange
         const string invalidUsername = "invalid username";
