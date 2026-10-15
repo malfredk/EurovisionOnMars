@@ -80,21 +80,6 @@ public static class PlayerFactory
         return player;
     }
 
-    public static Player CreateWithRatingsWithSamePoints(int ratingCount)
-    {
-        var player = CreateInitial(ratingCount);
-
-        for (int i = 0; i < ratingCount; i++)
-        {
-            player.PlayerRatings[i].SetPoints(
-                new Points(PlayerRatingTestData.Category1Points),
-                new Points(PlayerRatingTestData.Category2Points),
-                new Points(PlayerRatingTestData.Category3Points));
-        }
-
-        return player;
-    }
-
     public static Player CreateWithRankedCountries(int ratingCount)
     {
         var player = CreateInitial(ratingCount);

@@ -1,5 +1,5 @@
 ﻿using EurovisionOnMars.Domain.Players.Predictions;
-using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.Predictions;
 
@@ -9,8 +9,7 @@ public class PredictionRanksCalculatorTest
     public void Calculate_DifferentPoints_AssignsRanksByDescendingPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         ratings[0].Prediction.SetTotalGivenPoints(10);
         ratings[1].Prediction.SetTotalGivenPoints(30);
@@ -29,8 +28,7 @@ public class PredictionRanksCalculatorTest
     public void Calculate_SamePoints_AssignsSameRank()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         ratings[0].Prediction.SetTotalGivenPoints(30);
         ratings[1].Prediction.SetTotalGivenPoints(30);
@@ -48,8 +46,7 @@ public class PredictionRanksCalculatorTest
     public void Calculate_RankAfterTie_SkipsOccupiedRank()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         ratings[0].Prediction.SetTotalGivenPoints(30);
         ratings[1].Prediction.SetTotalGivenPoints(30);
@@ -68,8 +65,7 @@ public class PredictionRanksCalculatorTest
     public void Calculate_NullTotalGivenPoints_DoesNotAssignRank()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         ratings[0].Prediction.SetTotalGivenPoints(30);
         ratings[1].Prediction.SetTotalGivenPoints(20);
@@ -89,8 +85,7 @@ public class PredictionRanksCalculatorTest
     public void Calculate_MultipleTies_AssignsCompetitionRanks()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(5);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 5).PlayerRatings;
 
         ratings[0].Prediction.SetTotalGivenPoints(30);
         ratings[1].Prediction.SetTotalGivenPoints(30);

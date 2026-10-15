@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
-using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.Predictions;
 
@@ -15,8 +15,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingLeavesThreeWayTie_ReindexesRemainingDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
@@ -60,8 +59,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingLeavesTwoWayTie_ResetsBothPredictionDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
@@ -93,8 +91,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingJoinsUnresolvedTie_AllDemotionsAreNull()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
@@ -125,8 +122,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingJoinsResolvedTie_ReindexesDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalPoints);
@@ -169,8 +165,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingCreatesNewTie_AllDemotionsAreNull()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
@@ -200,8 +195,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingKeepsUniqueTotalPoints_NoChangeInDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalPoints);
@@ -243,8 +237,7 @@ public class TieBreakDemotionAdjusterTest
     public void Adjust_UpdatedRatingLeavesAndJoinsTie_ReindexesDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(5);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 5).PlayerRatings;
 
         var updatedRating = ratings[0];
 

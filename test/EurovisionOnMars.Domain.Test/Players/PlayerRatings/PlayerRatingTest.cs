@@ -1,7 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.TestSupport.Countries;
-using EurovisionOnMars.TestSupport.Game;
 using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.PlayerRatings;
@@ -13,7 +12,8 @@ public class PlayerRatingTest
     private static readonly Points Category2Points = new(PlayerRatingTestData.Category2Points);
     private static readonly Points Category3Points = new(PlayerRatingTestData.Category3Points);
 
-    private static readonly CountryPosition CountryPosition10 = new(10);
+    private static readonly CountryPosition TenthPosition = new(10);
+    private static readonly CountryPosition EleventhPosition = new(11);
 
     [Fact]
     public void Constructor_CreatesRatingForPlayerAndCountry()
@@ -78,12 +78,10 @@ public class PlayerRatingTest
     public void CalculateRankDifference_WithPredictedRank_CalculatesDifference(int predictedRank, int expectedRankDifference)
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(1);
-        var rating = game.Players[0].PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         rating.Prediction.SetCalculatedRank(new CountryPosition(predictedRank));
-
-        game.Countries[0].SetActualRank(CountryPosition10);
+        rating.Country!.SetActualRank(TenthPosition);
 
         // act
         rating.CalculateRankDifference();
@@ -98,10 +96,9 @@ public class PlayerRatingTest
     public void CalculateRankDifference_WithoutPredictedRank_SetsPenalty()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(1);
-        var rating = game.Players[0].PlayerRatings[0];
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
-        game.Countries[0].SetActualRank(CountryPosition10);
+        rating.Country!.SetActualRank(TenthPosition);
 
         // act
         rating.CalculateRankDifference();
@@ -130,7 +127,8 @@ public class PlayerRatingTest
     {
         // arrange
         var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
-        rating.Prediction.SetCalculatedRank(CountryPosition10);
+
+        rating.Prediction.SetCalculatedRank(TenthPosition);
         rating.RatingGameResult.SetRankDifference(0);
 
         // act
@@ -148,7 +146,8 @@ public class PlayerRatingTest
     {
         // arrange
         var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
-        rating.Prediction.SetCalculatedRank(CountryPosition10);
+
+        rating.Prediction.SetCalculatedRank(TenthPosition);
         rating.RatingGameResult.SetRankDifference(0);
 
         // act
@@ -157,8 +156,8 @@ public class PlayerRatingTest
 
         // assert
         Assert.Equal(
-            new BonusPoints(0),
-            rating.RatingGameResult.BonusPoints);
+            0,
+            rating.RatingGameResult.BonusPoints!.Value);
     }
 
     [Fact]
@@ -166,7 +165,7 @@ public class PlayerRatingTest
     {
         // arrange
         var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
-        rating.Prediction.SetCalculatedRank(CountryPosition10);
+        rating.Prediction.SetCalculatedRank(TenthPosition);
         rating.RatingGameResult.SetRankDifference(1);
 
         // act

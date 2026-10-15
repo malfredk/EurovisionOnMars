@@ -3,6 +3,7 @@ using EurovisionOnMars.Domain.Players.GameResults;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
 using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.GameResults;
 
@@ -19,8 +20,8 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_ValidRatings_CalculatesRankDifferencesForAllRatings()
     {
         // arrange
-        var game = GameScenarioFactory.CreateGameWithOnePlayerWithCalculatedAndActualRank(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var player = PlayerFactory.CreateWithRankedCountries(ratingCount: 3);
+        var ratings = player.PlayerRatings;
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -36,8 +37,8 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_ValidRatings_CalculatesBonusPointsForAllRatings()
     {
         // arrange
-        var game = GameScenarioFactory.CreateGameWithOnePlayerWithCalculatedAndActualRank(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var player = PlayerFactory.CreateWithRankedCountries(ratingCount: 3);
+        var ratings = player.PlayerRatings;
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -53,9 +54,9 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_NotUniqueCalculatedRankButUniquePredictedRank_AwardsBonusPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2); 
+        var player = PlayerFactory.CreateInitial(ratingCount: 2); 
+        var ratings = player.PlayerRatings;
 
-        var ratings = game.Players.First().PlayerRatings;
         var tiedRating = ratings[0];
         var correctRating = ratings[1];
 
@@ -65,9 +66,8 @@ public class RatingGameResultsCalculatorTest
         tiedRating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(0));
         correctRating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(1));
 
-        var countries = game.Countries;
-        countries[0].SetActualRank(ThirdPlace);
-        countries[1].SetActualRank(SecondPlace);
+        tiedRating.Country!.SetActualRank(ThirdPlace);
+        correctRating.Country!.SetActualRank(SecondPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -82,16 +82,14 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_CorrectCalculatedRankButWrongPredictedRank_ZeroBonusPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(1);
-
-        var ratings = game.Players.First().PlayerRatings;
+        var player = PlayerFactory.CreateInitialWithOneRating();
+        var ratings = player.PlayerRatings;
         var rating = ratings[0];
 
         rating.Prediction.SetCalculatedRank(FirstPlace);
         rating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(1));
 
-        var countries = game.Countries;
-        countries[0].SetActualRank(FirstPlace);
+        rating.Country!.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -106,18 +104,17 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_NotUniquePredictedRank_ZeroBonusPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var ratings = player.PlayerRatings;
 
-        var ratings = game.Players.First().PlayerRatings;
         var rating = ratings[0];
         var otherRating = ratings[1];
 
         rating.Prediction.SetCalculatedRank(FirstPlace);
         otherRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        var countries = game.Countries;
-        countries[0].SetActualRank(SecondPlace);
-        countries[1].SetActualRank(FirstPlace);
+        rating.Country!.SetActualRank(SecondPlace);
+        otherRating.Country!.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -132,17 +129,16 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_MissingPredictedRank_ZeroBonusPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var ratings = player.PlayerRatings;
 
-        var ratings = game.Players.First().PlayerRatings;
         var rating = ratings[0];
         var otherRating = ratings[1];
 
         otherRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        var countries = game.Countries;
-        countries[0].SetActualRank(SecondPlace);
-        countries[1].SetActualRank(FirstPlace);
+        rating.Country!.SetActualRank(SecondPlace);
+        otherRating.Country!.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -157,18 +153,17 @@ public class RatingGameResultsCalculatorTest
     public void Calculate_TiedPredictedRank_DoesNotAwardBonusPoints()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var ratings = player.PlayerRatings;
 
-        var ratings = game.Players.First().PlayerRatings;
         var rating = ratings[0];
         var tiedRating = ratings[1];
 
         rating.Prediction.SetCalculatedRank(SecondPlace);
         tiedRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        var countries = game.Countries;
-        countries[0].SetActualRank(SecondPlace);
-        countries[1].SetActualRank(SecondPlace);
+        rating.Country!.SetActualRank(SecondPlace);
+        tiedRating.Country!.SetActualRank(SecondPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);

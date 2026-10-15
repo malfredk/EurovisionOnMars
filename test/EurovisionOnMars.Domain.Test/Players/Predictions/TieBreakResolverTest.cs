@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.Predictions;
-using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.Predictions;
 
@@ -10,9 +10,8 @@ public class TieBreakResolverTest
     public void Resolve_ValidOrderedPredictionIds_SetsTieBreakDemotionsInRequestedOrder()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 3);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -43,9 +42,8 @@ public class TieBreakResolverTest
     public void Resolve_ValidOrderedPredicitonIds_ChangesTieBreakDemotion()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 3);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -84,9 +82,8 @@ public class TieBreakResolverTest
         params int[] ids)
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -114,9 +111,8 @@ public class TieBreakResolverTest
     public void Resolve_DuplicatePredictionIds_ThrowsAndDoesNotSet()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -148,9 +144,8 @@ public class TieBreakResolverTest
     public void Resolve_IncompleteTiedPredictionGroup_ThrowsAndDoesNotSet()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 3);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -184,9 +179,8 @@ public class TieBreakResolverTest
     public void Resolve_PredictionsFromDifferentRanks_ThrowsAndDoesNotSet()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 3);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();
@@ -219,9 +213,8 @@ public class TieBreakResolverTest
     public void Resolve_PredictionWithoutCalculatedRank_ThrowsAndDoesNotSet()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(2);
-        var predictions = game.Players
-            .First()
+        var player = PlayerFactory.CreateInitial(ratingCount: 2);
+        var predictions = player
             .PlayerRatings
             .Select(r => r.Prediction)
             .ToList();

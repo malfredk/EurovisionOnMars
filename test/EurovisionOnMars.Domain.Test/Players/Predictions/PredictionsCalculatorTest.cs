@@ -1,6 +1,6 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players.Predictions;
-using EurovisionOnMars.TestSupport.Game;
+using EurovisionOnMars.TestSupport.Players;
 
 namespace EurovisionOnMars.Domain.Test.Players.Predictions;
 
@@ -13,9 +13,7 @@ public class PredictionsCalculatorTest
     public void Calculate_TotalGivenPointsUnchanged_DoesNotRecalculateRanks()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
-
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalGivenPoints);
@@ -38,8 +36,7 @@ public class PredictionsCalculatorTest
     public void Calculate_TotalGivenPointsUnchanged_DoesNotAdjustTiebreakDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
         updatedRating.Prediction.SetTotalGivenPoints(OldTotalGivenPoints);
@@ -62,8 +59,7 @@ public class PredictionsCalculatorTest
     public void Calculate_TotalGivenPointsChanged_CalculatesRanks()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
@@ -87,8 +83,7 @@ public class PredictionsCalculatorTest
     public void Calculate_TotalGivenPointsChanged_ResetsTieBreakDemotions()
     {
         // arrange
-        var game = GameScenarioFactory.CreateInitialGameWithOnePlayer(3);
-        var ratings = game.Players.First().PlayerRatings;
+        var ratings = PlayerFactory.CreateInitial(ratingCount: 3).PlayerRatings;
 
         var updatedRating = ratings[0];
 
