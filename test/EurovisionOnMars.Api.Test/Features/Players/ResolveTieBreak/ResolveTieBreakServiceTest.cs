@@ -1,8 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
-using EurovisionOnMars.Api.Test.TestData.Players;
-using EurovisionOnMars.Dto.Players.ResolveTieBreak;
 using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Dto.Players.ResolveTieBreak;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -31,11 +31,17 @@ public class ResolveTieBreakServiceTest
     }
 
     [Fact]
-    public async Task UpdateTieBreakDemotions_ValidRequest_ResolvesTieBreak()
+    public async Task UpdateTieBreakDemotions_ValidRequest_SetsTieBreakDemotionsAndSavesChanges()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWith2TiedRatings();
-        var request = CreateValidSwapRequest(player);
+        var player = PlayerFactory.CreateWithTiedRatingsWithPredictionId(ratingsCount: 2);
+        var ratings = player.PlayerRatings;
+
+        var orderedIds = new List<int> {
+            ratings[0].Prediction.Id,
+            ratings[1].Prediction.Id
+            };
+        var request = CreateRequest(orderedIds);
 
         _repositoryMock
             .Setup(r => r.GetPlayer(PlayerId))
@@ -47,12 +53,8 @@ public class ResolveTieBreakServiceTest
             request);
 
         // assert
-        Assert.Equal(1, player.PlayerRatings[0].Prediction.TieBreakDemotion!.Value);
         Assert.Equal(0, player.PlayerRatings[0].Prediction.TieBreakDemotion!.Value);
-
-        _ratingTimeValidatorMock.Verify(
-            v => v.EnsureRatingIsOpen(),
-            Times.Once);
+        Assert.Equal(1, player.PlayerRatings[1].Prediction.TieBreakDemotion!.Value);
 
         _repositoryMock.Verify(
             r => r.GetPlayer(PlayerId),
@@ -64,10 +66,38 @@ public class ResolveTieBreakServiceTest
     }
 
     [Fact]
+    public async Task UpdateTieBreakDemotions_ValidRequest_VerifiesRatingIsOpen()
+    {
+        // arrange
+        var player = PlayerFactory.CreateWithTiedRatingsWithPredictionId(ratingsCount: 2);
+        var ratings = player.PlayerRatings;
+
+        var orderedIds = new List<int> {
+            ratings[0].Prediction.Id,
+            ratings[1].Prediction.Id
+            };
+        var request = CreateRequest(orderedIds);
+
+        _repositoryMock
+            .Setup(r => r.GetPlayer(PlayerId))
+            .ReturnsAsync(player);
+
+        // act
+        await _service.UpdateTieBreakDemotions(
+            PlayerId,
+            request);
+
+        // assert
+        _ratingTimeValidatorMock.Verify(
+            v => v.EnsureRatingIsOpen(),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task UpdateTieBreakDemotions_PlayerDoesNotExist_ThrowsKeyNotFoundException()
     {
         // arrange
-        var request = CreateDefaultRequest();
+        var request = CreateRequest([1, 2]);
 
         _repositoryMock
             .Setup(r => r.GetPlayer(PlayerId))
@@ -89,7 +119,7 @@ public class ResolveTieBreakServiceTest
     public async Task UpdateTieBreakDemotions_RatingIsClosed_DoesNotGetPlayerNorSaveChanges()
     {
         // arrange
-        var request = CreateDefaultRequest();
+        var request = CreateRequest([1, 2]);
 
         _ratingTimeValidatorMock
             .Setup(v => v.EnsureRatingIsOpen())
@@ -111,24 +141,34 @@ public class ResolveTieBreakServiceTest
             Times.Never);
     }
 
-    private static ResolveTieBreakRequestDto CreateValidSwapRequest(Player player)
+    [Fact]
+    public async Task UpdateTieBreakDemotions_InvalidRequest_ThrowsAndDoesNotSaveChanges()
     {
-        var ratings = player.PlayerRatings;
-        List<int> orderedIds = [
-            ratings[1].Prediction.Id,
-            ratings[0].Prediction.Id
-        ];
+        // arrange
+        var player = PlayerFactory.CreateWithTiedRatingsWithPredictionId(ratingsCount: 2);
+        var invalidRequest = CreateRequest([88, 99]);
+
+        _repositoryMock
+            .Setup(r => r.GetPlayer(PlayerId))
+            .ReturnsAsync(player);
+
+        // act
+        var action = () =>
+            _service.UpdateTieBreakDemotions(PlayerId, invalidRequest);
+
+        // assert
+        await Assert.ThrowsAsync<InvalidOperationException>(action);
+
+        _repositoryMock.Verify(
+            r => r.SaveChanges(),
+            Times.Never);
+    }
+
+    private static ResolveTieBreakRequestDto CreateRequest(List<int> orderedIds)
+    {
         return new ResolveTieBreakRequestDto
         {
             OrderedPredictionIds = orderedIds
-        };
-    }
-
-    private static ResolveTieBreakRequestDto CreateDefaultRequest()
-    {
-        return new ResolveTieBreakRequestDto
-        {
-            OrderedPredictionIds = [1, 2]
         };
     }
 }

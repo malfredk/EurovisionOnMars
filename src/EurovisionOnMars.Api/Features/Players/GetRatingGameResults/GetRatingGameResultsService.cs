@@ -31,6 +31,7 @@ public class GetRatingGameResultsService : IGetRatingGameResultsService
         var ratings = await _repository.GetRatings(playerId);
         return ratings
             .Select(rating => _mapper.ToDto(rating))
+            .OrderBy(r => r.Country.ActualRank)
             .ToImmutableList();
     }
 }

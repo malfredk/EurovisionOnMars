@@ -36,13 +36,14 @@ public class GetRatingsService : IGetRatingsService
         return ToOrderedDtos(ratings);
     }
 
-    private ImmutableList<PlayerRatingDto> ToOrderedDtos(ImmutableList<PlayerRating> ratings)
+    private ImmutableList<PlayerRatingDto> ToOrderedDtos(
+        ImmutableList<PlayerRating> ratings)
     {
         return ratings
-            .OrderBy(r => r.Prediction.GetPredictedRank() is null)
-            .ThenBy(r => r.Prediction.GetPredictedRank()?.Value)
-            .ThenBy(r => r.Country!.Number.Value)
             .Select(r => _mapper.ToDto(r))
+            .OrderBy(r => r.Prediction.PredictedRank is null)
+            .ThenBy(r => r.Prediction.PredictedRank)
+            .ThenBy(r => r.Country.Number)
             .ToImmutableList();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Dto.Players.GetRatings;
+using EurovisionOnMars.TestSupport.Countries;
 using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -34,37 +35,32 @@ public class GetRatingsServiceTest
     public async Task GetRatingsByPlayerId_ReturnsRatingsInPredictedRankOrder()
     {
         // arrange
-        var player = PlayerFactory.CreateInitial(4);
+        var player = PlayerFactory.CreateInitial(3);
         var ratings = player.PlayerRatings.ToImmutableList();
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
             .ReturnsAsync(ratings);
 
-        var dto1 = CreateDto(0);
-        var dto2 = CreateDto(1);
-        var dto3 = CreateDto(2);
-        var dto4 = CreateDto(3);
+        var firstRankDto = CreateDto(predictedRank: 1);
+        var secondRankDto = CreateDto(predictedRank: 2);
+        var thirdRankDto = CreateDto(predictedRank: 3);
 
         _mapperMock
             .Setup(m => m.ToDto(ratings[0]))
-            .Returns(dto1);
+            .Returns(thirdRankDto);
         _mapperMock
             .Setup(m => m.ToDto(ratings[1]))
-            .Returns(dto2);
+            .Returns(firstRankDto);
         _mapperMock
             .Setup(m => m.ToDto(ratings[2]))
-            .Returns(dto3);
-        _mapperMock
-            .Setup(m => m.ToDto(ratings[3]))
-            .Returns(dto4);
+            .Returns(secondRankDto);
 
         var expected = new List<PlayerRatingDto>
         {
-            dto2, // predicted rank 1
-            dto1, // predicted rank 2
-            dto4, // no predicted rank
-            dto3, // no predicted rank and high country number
+            firstRankDto,
+            secondRankDto,
+            thirdRankDto,
         }.ToImmutableList();
 
         // act
@@ -75,10 +71,88 @@ public class GetRatingsServiceTest
     }
 
     [Fact]
-    public async Task GetRatingsByPlayerId_CallsRepository()
+    public async Task GetRatingsByPlayerId_SortsNoRankLast()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
+        var player = PlayerFactory.CreateInitial(3);
+        var ratings = player.PlayerRatings.ToImmutableList();
+
+        _repositoryMock
+            .Setup(r => r.GetRatingsByPlayerId(PlayerId))
+            .ReturnsAsync(ratings);
+
+        var firstRankDto = CreateDto(predictedRank: 1);
+        var secondRankDto = CreateDto(predictedRank: 2);
+        var noRankDto = CreateDto(predictedRank: null);
+
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[0]))
+            .Returns(noRankDto);
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[1]))
+            .Returns(firstRankDto);
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[2]))
+            .Returns(secondRankDto);
+
+        var expected = new List<PlayerRatingDto>
+        {
+            firstRankDto,
+            secondRankDto,
+            noRankDto,
+        }.ToImmutableList();
+
+        // act
+        var actual = await _service.GetRatingsByPlayerId(PlayerId);
+
+        // assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetRatingsByPlayerId_SortsFirstByRankThenByNumber()
+    {
+        // arrange
+        var player = PlayerFactory.CreateInitial(3);
+        var ratings = player.PlayerRatings.ToImmutableList();
+
+        _repositoryMock
+            .Setup(r => r.GetRatingsByPlayerId(PlayerId))
+            .ReturnsAsync(ratings);
+
+        var rankedNumber1Dto = CreateDto(predictedRank: 1, number: 1);
+        var noRankNumber2Dto = CreateDto(predictedRank: null, number: 2);
+        var noRankNumber3Dto = CreateDto(predictedRank: null, number: 3);
+
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[0]))
+            .Returns(noRankNumber3Dto);
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[1]))
+            .Returns(rankedNumber1Dto);
+        _mapperMock
+            .Setup(m => m.ToDto(ratings[2]))
+            .Returns(noRankNumber2Dto);
+
+        var expected = new List<PlayerRatingDto>
+        {
+            rankedNumber1Dto,
+            noRankNumber2Dto,
+            noRankNumber3Dto,
+        }.ToImmutableList();
+
+        // act
+        var actual = await _service.GetRatingsByPlayerId(PlayerId);
+
+        // assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetRatingsByPlayerId_GetsRatings()
+    {
+        // arrange
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var ratings = player.PlayerRatings.ToImmutableList();
 
         _repositoryMock
@@ -86,8 +160,8 @@ public class GetRatingsServiceTest
             .ReturnsAsync(ratings);
 
         _mapperMock
-            .Setup(m => m.ToDto(ratings[0]))
-            .Returns(CreateDto(0));
+            .Setup(m => m.ToDto(It.IsAny<PlayerRating>()))
+            .Returns(CreateDto(1));
 
         // act
         var actual = await _service.GetRatingsByPlayerId(PlayerId);
@@ -102,7 +176,7 @@ public class GetRatingsServiceTest
     public async Task GetRatingsByPlayerId_MapsAllRatings()
     {
         // arrange
-        var player = PlayerFactory.CreatePlayerWith2RatedAndDemotedAnd2InitialRatings();
+        var player = PlayerFactory.CreateInitial(3);
 
         var ratings = player.PlayerRatings
             .ToImmutableList();
@@ -120,9 +194,6 @@ public class GetRatingsServiceTest
         await _service.GetRatingsByPlayerId(PlayerId);
 
         // assert
-        _mapperMock.Verify(
-            m => m.ToDto(It.IsAny<PlayerRating>()),
-            Times.Exactly(4));
         foreach (var rating in ratings)
         {
             _mapperMock.Verify(
@@ -150,18 +221,19 @@ public class GetRatingsServiceTest
             Times.Never);
     }
 
-    private static PlayerRatingDto CreateDto(int id)
+    private static PlayerRatingDto CreateDto(int? predictedRank, int number = CountryTestData.Number)
     {
         return new PlayerRatingDto
         {
-            Id = id,
+            Id = 66,
             Prediction = new PredictionDto
             {
                 Id = 666,
+                PredictedRank = predictedRank
             },
             Country = new PlayerRatingCountryDto
             {
-                Number = CountryTestData.Number,
+                Number = number,
                 Name = CountryTestData.Name
             }
         };

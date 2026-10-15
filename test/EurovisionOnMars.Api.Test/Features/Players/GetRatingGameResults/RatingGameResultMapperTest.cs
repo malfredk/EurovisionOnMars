@@ -14,7 +14,7 @@ public class RatingGameResultMapperTest
     public void ToDto_WithoutResults_ResturnsMostlyEmptyDto()
     {
         // arrange
-        var entity = PlayerFactory.CreateInitial().PlayerRatings[0];
+        var entity = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         // act
         var actual = _mapper.ToDto(entity);

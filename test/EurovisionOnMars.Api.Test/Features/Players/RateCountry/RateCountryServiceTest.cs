@@ -1,9 +1,8 @@
 ﻿using EurovisionOnMars.Api.Features.Players;
 using EurovisionOnMars.Api.Features.Players.RateCountry;
-using EurovisionOnMars.Api.Test.TestData.Players;
-using EurovisionOnMars.Api.Test.TestData.Players.PlayerRatings;
-using EurovisionOnMars.Dto.Players.RateCountry;
 using EurovisionOnMars.Domain.Players;
+using EurovisionOnMars.Dto.Players.RateCountry;
+using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -35,11 +34,11 @@ public class RateCountryServiceTest
     public async Task RateCountry_ValidRequest_RatesCountryAndSavesChanges()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
-        var rating = player.PlayerRatings.First();
+        var player = PlayerFactory.CreateInitialWithOneRating();
+        var rating = player.PlayerRatings[0];
         var ratingId = rating.Id;
 
-        var request = CreateValidRequest();
+        var request = CreateRequest();
 
         _repositoryMock
             .Setup(r => r.GetPlayer(PlayerId))
@@ -62,10 +61,6 @@ public class RateCountryServiceTest
             PlayerRatingTestData.Category3Points,
             rating.Category3Points!.Value);
 
-        _ratingTimeValidatorMock.Verify(
-            v => v.EnsureRatingIsOpen(),
-            Times.Once);
-
         _repositoryMock.Verify(
             r => r.GetPlayer(PlayerId),
             Times.Once);
@@ -76,12 +71,36 @@ public class RateCountryServiceTest
     }
 
     [Fact]
+    public async Task RateCountry_ValidRequest_VerifiesRatingIsOpen()
+    {
+        // arrange
+        var player = PlayerFactory.CreateInitialWithOneRating();
+        var rating = player.PlayerRatings[0];
+        var ratingId = rating.Id;
+
+        var request = CreateRequest();
+
+        _repositoryMock
+            .Setup(r => r.GetPlayer(PlayerId))
+            .ReturnsAsync(player);
+
+        // act
+        await _service.RateCountry(
+            PlayerId,
+            ratingId,
+            request);
+
+        // assert
+        _ratingTimeValidatorMock.Verify(
+            v => v.EnsureRatingIsOpen(),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task RateCountry_PlayerDoesNotExist_ThrowsArgumentException()
     {
         // arrange
-        const int ratingId = 456;
-
-        var request = CreateValidRequest();
+        var request = CreateRequest();
 
         _repositoryMock
             .Setup(r => r.GetPlayer(PlayerId))
@@ -90,7 +109,7 @@ public class RateCountryServiceTest
         // act
         var action = () => _service.RateCountry(
             PlayerId,
-            ratingId,
+            567,
             request);
 
         // assert
@@ -102,12 +121,10 @@ public class RateCountryServiceTest
     }
 
     [Fact]
-    public async Task RateCountry_RatingIsClosed_DoesNotGetPlayerOrSaveChanges()
+    public async Task RateCountry_RatingIsClosed_DoesNotGetPlayerNorSaveChanges()
     {
         // arrange
-        const int ratingId = 456;
-
-        var request = CreateValidRequest();
+        var request = CreateRequest();
 
         _ratingTimeValidatorMock
             .Setup(v => v.EnsureRatingIsOpen())
@@ -116,7 +133,7 @@ public class RateCountryServiceTest
         // act
         var action = () => _service.RateCountry(
             PlayerId,
-            ratingId,
+            567,
             request);
 
         // assert
@@ -132,14 +149,14 @@ public class RateCountryServiceTest
     }
 
     [Fact]
-    public async Task RateCountry_InvalidCategoryPoints_DoesNotSaveChanges()
+    public async Task RateCountry_InvalidCategoryPoints_DoesRateCountryNorSaveChanges()
     {
         // arrange
-        var player = PlayerFactory.CreateInitialPlayer();
-        var ratingId = 345;
+        var player = PlayerFactory.CreateInitialWithOneRating();
+        var rating = player.PlayerRatings[0];
+        var ratingId = rating.Id;
 
-        var request = CreateValidRequest();
-        request.Category1Points = 0; // invalid points
+        var invalidRequest = CreateRequest(0);
 
         _repositoryMock
             .Setup(r => r.GetPlayer(PlayerId))
@@ -149,7 +166,38 @@ public class RateCountryServiceTest
         var action = () => _service.RateCountry(
             PlayerId,
             ratingId,
-            request);
+            invalidRequest);
+
+        // assert
+        await Assert.ThrowsAsync<ArgumentException>(action);
+
+        Assert.Null(rating.Category1Points);
+        Assert.Null(rating.Category2Points);
+        Assert.Null(rating.Category3Points);
+
+        _repositoryMock.Verify(
+            r => r.SaveChanges(),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task RateCountry_InvalidRatingId_DoesSaveChanges()
+    {
+        // arrange
+        var player = PlayerFactory.CreateInitialWithOneRating();
+        var invalidRatingId = 567;
+
+        var invalidRequest = CreateRequest(0);
+
+        _repositoryMock
+            .Setup(r => r.GetPlayer(PlayerId))
+            .ReturnsAsync(player);
+
+        // act
+        var action = () => _service.RateCountry(
+            PlayerId,
+            invalidRatingId,
+            invalidRequest);
 
         // assert
         await Assert.ThrowsAsync<ArgumentException>(action);
@@ -159,11 +207,11 @@ public class RateCountryServiceTest
             Times.Never);
     }
 
-    private static RateCountryRequestDto CreateValidRequest()
+    private static RateCountryRequestDto CreateRequest(int category1Points = PlayerRatingTestData.Category1Points)
     {
         return new RateCountryRequestDto
         {
-            Category1Points = PlayerRatingTestData.Category1Points,
+            Category1Points = category1Points,
             Category2Points = PlayerRatingTestData.Category2Points,
             Category3Points = PlayerRatingTestData.Category3Points
         };

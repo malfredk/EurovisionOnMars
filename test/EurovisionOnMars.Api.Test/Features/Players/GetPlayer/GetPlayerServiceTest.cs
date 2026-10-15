@@ -32,7 +32,7 @@ public class GetPlayerServiceTest
     {
         // arrange
         var username = PlayerTestData.Username;
-        var entity = PlayerFactory.CreateInitial();
+        var entity = PlayerFactory.CreateInitialWithOneRating();
         var expectedDto = CreatePlayerDto();
 
         _repositoryMock

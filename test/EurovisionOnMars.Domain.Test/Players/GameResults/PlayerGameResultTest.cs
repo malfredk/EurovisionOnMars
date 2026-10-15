@@ -10,7 +10,7 @@ public class PlayerGameResultTest
     public void Constructor_CreatesResultForPlayer()
     {
         // arrange
-        var player = PlayerFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
 
         // act
         var result = new PlayerGameResult(player);
@@ -25,7 +25,7 @@ public class PlayerGameResultTest
     public void SetRank_SetsRank()
     {
         // arrange
-        var result = PlayerFactory.CreateInitial().PlayerGameResult;
+        var result = PlayerFactory.CreateInitialWithOneRating().PlayerGameResult;
         var rank = new PlayerRank(3);
 
         // act
@@ -39,7 +39,7 @@ public class PlayerGameResultTest
     public void SetTotalPoints_SetsTotalPoints()
     {
         // arrange
-        var result = PlayerFactory.CreateInitial().PlayerGameResult;
+        var result = PlayerFactory.CreateInitialWithOneRating().PlayerGameResult;
         const int totalPoints = 42;
 
         // act

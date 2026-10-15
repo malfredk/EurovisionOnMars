@@ -11,7 +11,7 @@ public class PlayerMapperTest
     public void ToDto()
     {
         // arrange
-        var entity = PlayerFactory.CreateInitial();
+        var entity = PlayerFactory.CreateInitialWithOneRating();
 
         // act
         var actual = _mapper.ToDto(entity);

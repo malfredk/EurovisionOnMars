@@ -4,7 +4,6 @@ using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.TestSupport.Countries;
 using EurovisionOnMars.TestSupport.Game;
 using EurovisionOnMars.TestSupport.Players;
-using EurovisionOnMars.TestSupport.Players.PlayerRatings;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Domain.Test.Players;
@@ -86,7 +85,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_SetsPoints()
     {
         // arrange
-        var player = PlayerFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -107,7 +106,7 @@ public class PlayerTest
     public void RateCountry_InitialRating_CalculatesPrediction()
     {
         // arrange
-        var player = PlayerFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         var rating = player.PlayerRatings[0];
         rating.Id = RatingId;
 
@@ -127,7 +126,7 @@ public class PlayerTest
     public void RateCountry_UnknownRating_ThrowsKeyNotFoundException()
     {
         // arrange
-        var player = PlayerFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
         player.PlayerRatings[0].Id = RatingId;
 
         const int unknownRatingId = 999;

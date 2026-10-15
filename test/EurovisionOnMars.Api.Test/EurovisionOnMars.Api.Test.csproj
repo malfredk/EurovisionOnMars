@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EurovisionOnMars.Api\EurovisionOnMars.Api.csproj" />
+    <ProjectReference Include="..\EurovisionOnMars.TestSupport\EurovisionOnMars.TestSupport.csproj" />
   </ItemGroup>
 
 </Project>

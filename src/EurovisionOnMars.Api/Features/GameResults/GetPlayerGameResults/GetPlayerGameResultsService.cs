@@ -30,9 +30,9 @@ public class GetPlayerGameResultsService : IGetPlayerGameResultsService
     {
         var playerGameResults = await _repository.GetPlayerGameResults();
         return playerGameResults
-            .OrderBy(p => p.Rank is null)
-            .ThenBy(p => p.Rank?.Value)
             .Select(p => _mapper.ToDto(p))
+            .OrderBy(p => p.Rank is null)
+            .ThenBy(p => p.Rank)
             .ToImmutableList();
     }
 }
