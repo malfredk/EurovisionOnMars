@@ -6,7 +6,7 @@ namespace EurovisionOnMars.Api.Features.Players.GetPlayer;
 
 public interface IGetPlayerRepository
 {
-    Task<Player?> GetPlayer(Username username);
+    Task<int?> GetPlayer(Username username);
 }
 
 public class GetPlayerRepository : IGetPlayerRepository
@@ -23,11 +23,13 @@ public class GetPlayerRepository : IGetPlayerRepository
         _context = context;
     }
 
-    public async Task<Player?> GetPlayer(Username username)
+    public async Task<int?> GetPlayer(Username username)
     {
         _logger.LogDebug("Getting player with username={username}.", username);
-        return await _context.Players
+        var player = await _context.Players
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Username == username);
+
+        return player?.Id;
     }
 }

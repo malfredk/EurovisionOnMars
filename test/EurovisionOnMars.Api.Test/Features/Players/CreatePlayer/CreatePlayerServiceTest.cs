@@ -61,6 +61,34 @@ public class CreatePlayerServiceTest
     }
 
     [Fact]
+    public async Task CreatePlayer_ValidUsername_ReturnsPlayerId()
+    {
+        // arrange
+        var username = PlayerTestData.Username;
+        var countries = CountryFactory.CreateInitialSingletonList();
+
+        var expectedPlayerId = 1234;
+
+        _repositoryMock
+            .Setup(r => r.UsernameExists(It.IsAny<Username>()))
+            .ReturnsAsync(false);
+
+        _repositoryMock
+            .Setup(r => r.GetCountries())
+            .ReturnsAsync(countries);
+
+        _repositoryMock
+            .Setup(r => r.AddPlayer(It.IsAny<Player>()))
+            .ReturnsAsync(expectedPlayerId);
+
+        // act
+        var actualPlayerId = await _service.CreatePlayer(username);
+
+        // assert
+        Assert.Equal(expectedPlayerId, actualPlayerId);
+    }
+
+    [Fact]
     public async Task CreatePlayer_UsernameAlreadyExists_ThrowsAndDoesNotCreatePlayer()
     {
         // arrange

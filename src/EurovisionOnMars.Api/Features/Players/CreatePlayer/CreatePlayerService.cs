@@ -5,7 +5,7 @@ namespace EurovisionOnMars.Api.Features.Players.CreatePlayer;
 
 public interface ICreatePlayerService
 {
-    Task CreatePlayer(string username);
+    Task<int> CreatePlayer(string username);
 }
 
 public class CreatePlayerService : ICreatePlayerService
@@ -22,12 +22,13 @@ public class CreatePlayerService : ICreatePlayerService
         _repository = repository;
     }
 
-    public async Task CreatePlayer(string username)
+    public async Task<int> CreatePlayer(string username)
     {
         var validUsername = await ValidateUsername(username);
 
         var player = await CreateEntity(validUsername);
-        await _repository.AddPlayer(player);
+        var playerId = await _repository.AddPlayer(player);
+        return playerId;
     }
 
     private async Task<Username> ValidateUsername(string username)

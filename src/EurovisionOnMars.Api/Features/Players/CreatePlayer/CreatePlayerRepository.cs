@@ -11,7 +11,7 @@ public interface ICreatePlayerRepository
 {
     Task<bool> UsernameExists(Username username);
     Task<ImmutableList<Country>> GetCountries();
-    Task AddPlayer(Player player);
+    Task<int> AddPlayer(Player player);
 }
 
 public class CreatePlayerRepository : ICreatePlayerRepository
@@ -43,13 +43,12 @@ public class CreatePlayerRepository : ICreatePlayerRepository
         _logger.LogDebug("Getting countries for new player.");
 
         var countries = await _context.Countries
-            .AsNoTracking()
             .ToListAsync();
 
         return countries.ToImmutableList();
     }
 
-    public async Task AddPlayer(Player player)
+    public async Task<int> AddPlayer(Player player)
     {
         _logger.LogDebug(
             "Creating player: {player}.",
@@ -57,5 +56,7 @@ public class CreatePlayerRepository : ICreatePlayerRepository
 
         _context.Players.Add(player);
         await _context.SaveChangesAsync();
+
+        return player.Id;
     }
 }

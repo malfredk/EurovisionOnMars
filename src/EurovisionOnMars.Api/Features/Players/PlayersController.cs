@@ -4,7 +4,6 @@ using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
 using EurovisionOnMars.Api.Features.Players.GetRatings;
 using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
-using EurovisionOnMars.Dto.Players.GetPlayer;
 using EurovisionOnMars.Dto.Players.GetRatingGameResults;
 using EurovisionOnMars.Dto.Players.GetRatings;
 using EurovisionOnMars.Dto.Players.RateCountry;
@@ -45,21 +44,21 @@ public class PlayersController : ControllerBase
     }
 
     [HttpGet("{username}")]
-    public async Task<ActionResult<PlayerDto>> GetPlayer(string username)
+    public async Task<ActionResult<int>> GetPlayer(string username)
     {
-        var player = await _getPlayerService.GetPlayer(username);
-        return Ok(player);
+        var playerId = await _getPlayerService.GetPlayer(username);
+        return Ok(playerId);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreatePlayer([FromBody] string username)
+    public async Task<ActionResult<int>> CreatePlayer([FromBody] string username)
     {
-        await _createPlayerService.CreatePlayer(username);
+        var playerId = await _createPlayerService.CreatePlayer(username);
 
         return CreatedAtAction(
             nameof(GetPlayer),
             new { username },
-            value: null);
+            playerId);
     }
 
     [HttpGet("{playerId:int}/ratings")]

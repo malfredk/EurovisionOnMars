@@ -1,6 +1,5 @@
 ﻿using EurovisionOnMars.Api.Features.Players.GetPlayer;
 using EurovisionOnMars.Domain.Players;
-using EurovisionOnMars.Dto.Players.GetPlayer;
 using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,7 +10,6 @@ public class GetPlayerServiceTest
 {
     private readonly Mock<ILogger<GetPlayerService>> _loggerMock;
     private readonly Mock<IGetPlayerRepository> _repositoryMock;
-    private readonly Mock<IPlayerMapper> _mapperMock;
 
     private readonly GetPlayerService _service;
 
@@ -19,12 +17,10 @@ public class GetPlayerServiceTest
     {
         _loggerMock = new Mock<ILogger<GetPlayerService>>();
         _repositoryMock = new Mock<IGetPlayerRepository>();
-        _mapperMock = new Mock<IPlayerMapper>();
 
         _service = new GetPlayerService(
             _loggerMock.Object,
-            _repositoryMock.Object,
-            _mapperMock.Object);
+            _repositoryMock.Object);
     }
 
     [Fact]
@@ -32,31 +28,22 @@ public class GetPlayerServiceTest
     {
         // arrange
         var username = PlayerTestData.Username;
-        var entity = PlayerFactory.CreateInitialWithOneRating();
-        var expectedDto = CreatePlayerDto();
+        var expectedPlayerId = 1234;
 
         _repositoryMock
             .Setup(r => r.GetPlayer(
                 It.Is<Username>(u => u.Value == username)))
-            .ReturnsAsync(entity);
-
-        _mapperMock
-            .Setup(m => m.ToDto(entity))
-            .Returns(expectedDto);
+            .ReturnsAsync(expectedPlayerId);
 
         // act
-        var actualDto = await _service.GetPlayer(username);
+        var actualPlayerId = await _service.GetPlayer(username);
 
         // assert
-        Assert.Equal(expectedDto, actualDto);
+        Assert.Equal(expectedPlayerId, actualPlayerId);
 
         _repositoryMock.Verify(
             r => r.GetPlayer(
                 It.Is<Username>(u => u.Value == username)),
-            Times.Once);
-
-        _mapperMock.Verify(
-            m => m.ToDto(entity),
             Times.Once);
     }
 
@@ -68,17 +55,13 @@ public class GetPlayerServiceTest
 
         _repositoryMock
             .Setup(r => r.GetPlayer(It.IsAny<Username>()))
-            .ReturnsAsync((Player?)null);
+            .ReturnsAsync((int?)null);
 
         // act
         var action = () => _service.GetPlayer(username);
 
         // assert
         await Assert.ThrowsAsync<KeyNotFoundException>(action);
-
-        _mapperMock.Verify(
-            m => m.ToDto(It.IsAny<Player>()),
-            Times.Never);
     }
 
     [Fact]
@@ -96,18 +79,5 @@ public class GetPlayerServiceTest
         _repositoryMock.Verify(
             r => r.GetPlayer(It.IsAny<Username>()),
             Times.Never);
-
-        _mapperMock.Verify(
-            m => m.ToDto(It.IsAny<Player>()),
-            Times.Never);
-    }
-
-    private static PlayerDto CreatePlayerDto()
-    {
-        return new PlayerDto
-        {
-            Id = 1234,
-            Username = PlayerTestData.Username,
-        };
     }
 }
