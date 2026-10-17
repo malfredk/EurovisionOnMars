@@ -68,7 +68,7 @@
             return;
         }
 
-        var response = await Http.PatchAsJsonAsync<int>($"/api/countries/{country.Id}/", (int)updatedRank!);
+        var response = await Http.PatchAsJsonAsync<int>($"/api/countries/{country.Id}/rank", (int)updatedRank!);
         if (response.IsSuccessStatusCode)
         {
             country.ActualRank = (int)updatedRank!;
