@@ -2,7 +2,6 @@
 using EurovisionOnMars.Domain.Players.GameResults;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
-using Microsoft.IdentityModel.Tokens;
 using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Domain.Players;
@@ -29,7 +28,7 @@ public class Player : IdBase
 
     private void ValidateCountries(ImmutableList<Country> countries)
     {
-        if (countries.IsNullOrEmpty())
+        if (countries is null || countries.IsEmpty)
         {
             throw new InvalidOperationException("Country list is empty; therefore user cannot be created.");
         }

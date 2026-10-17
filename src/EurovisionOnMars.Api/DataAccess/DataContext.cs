@@ -5,7 +5,7 @@ using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
 using Microsoft.EntityFrameworkCore;
 
-namespace EurovisionOnMars.Domain.DataAccess;
+namespace EurovisionOnMars.Api.DataAccess;
 
 public class DataContext : DbContext
 {

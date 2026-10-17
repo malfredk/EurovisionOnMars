@@ -1,10 +1,9 @@
-﻿using EurovisionOnMars.Domain.Players;
-using EurovisionOnMars.Domain.Players.Predictions;
+﻿using EurovisionOnMars.Domain.Players.Predictions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EurovisionOnMars.Domain.DataAccess.Configurations.Players.PlayerRatings;
+namespace EurovisionOnMars.Api.DataAccess.Configurations.Players.PlayerRatings;
 
 public class PredictionConfiguration : IEntityTypeConfiguration<Prediction>
 {
