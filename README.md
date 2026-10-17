@@ -12,15 +12,17 @@ A player gets points based on the (absolute) difference between their predicted 
 ## Development 
 
 ### Database
-In Package Manager Console:
+In terminal:
 1. Install the dotnet-ef tool by running
 `dotnet tool install --global dotnet-ef`
+or update if already installed by running
+`dotnet tool update --global dotnet-ef`.
 
 2. Create migrations by running the following command  
-`dotnet ef migrations add <nameOfMigration> --verbose --project .\src\EurovisionOnMars.Entity   --startup-project .\src\EurovisionOnMars.Api`
+`dotnet ef migrations add <nameOfMigration> --verbose --project .\src\EurovisionOnMars.Api   --startup-project .\src\EurovisionOnMars.Api`.
 
-3. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Entity exists first)  
-`dotnet ef database update --verbose --project .\src\EurovisionOnMars.Entity   --startup-project .\src\EurovisionOnMars.Api`
+3. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Api exists first)  
+`dotnet ef database update --verbose --project .\src\EurovisionOnMars.Api   --startup-project .\src\EurovisionOnMars.Api`.
 
 ### Web App
 Simply run the web app by starting the *.Api* project with *https*.

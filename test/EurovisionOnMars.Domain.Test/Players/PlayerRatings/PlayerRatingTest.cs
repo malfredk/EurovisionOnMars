@@ -1,0 +1,196 @@
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Domain.Players.PlayerRatings;
+using EurovisionOnMars.TestSupport.Countries;
+using EurovisionOnMars.TestSupport.Players;
+
+namespace EurovisionOnMars.Domain.Test.Players.PlayerRatings;
+
+public class PlayerRatingTest
+{
+
+    private static readonly Points Category1Points = new(PlayerRatingTestData.Category1Points);
+    private static readonly Points Category2Points = new(PlayerRatingTestData.Category2Points);
+    private static readonly Points Category3Points = new(PlayerRatingTestData.Category3Points);
+
+    private static readonly CountryPosition TenthPosition = new(10);
+    private static readonly CountryPosition EleventhPosition = new(11);
+
+    [Fact]
+    public void Constructor_CreatesRatingForPlayerAndCountry()
+    {
+        // arrange
+        var country = CountryFactory.CreateInitial();
+        var player = PlayerFactory.CreateInitialWithOneRating();
+
+        // act
+        var rating = new PlayerRating(player, country);
+
+        // assert
+        Assert.Same(player, rating.Player);
+        Assert.Same(country, rating.Country);
+
+        Assert.NotNull(rating.Prediction);
+        Assert.NotNull(rating.RatingGameResult);
+
+        Assert.Null(rating.Category1Points);
+        Assert.Null(rating.Category2Points);
+        Assert.Null(rating.Category3Points);
+    }
+
+    [Fact]
+    public void SetPoints_SetsCategoryPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        // act
+        rating.SetPoints(
+            Category1Points,
+            Category2Points,
+            Category3Points);
+
+        // assert
+        Assert.Equal(Category1Points, rating.Category1Points);
+        Assert.Equal(Category2Points, rating.Category2Points);
+        Assert.Equal(Category3Points, rating.Category3Points);
+    }
+
+    [Fact]
+    public void SetPoints_SetsTotalGivenPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        // act
+        rating.SetPoints(
+            Category1Points,
+            Category2Points,
+            Category3Points);
+
+        // assert
+        Assert.NotNull(rating.Prediction.TotalGivenPoints);
+    }
+
+    [InlineData(10, 0)]
+    [InlineData(13, -3)]
+    [InlineData(3, 7)]
+    [Theory]
+    public void CalculateRankDifference_WithPredictedRank_CalculatesDifference(int predictedRank, int expectedRankDifference)
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        rating.Prediction.SetCalculatedRank(new CountryPosition(predictedRank));
+        rating.Country!.SetActualRank(TenthPosition);
+
+        // act
+        rating.CalculateRankDifference();
+
+        // assert
+        Assert.Equal(
+            expectedRankDifference,
+            rating.RatingGameResult.RankDifference);
+    }
+
+    [Fact]
+    public void CalculateRankDifference_WithoutPredictedRank_SetsPenalty()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        rating.Country!.SetActualRank(TenthPosition);
+
+        // act
+        rating.CalculateRankDifference();
+
+        // assert
+        Assert.Equal(
+            30,
+            rating.RatingGameResult.RankDifference);
+    }
+
+    [Fact]
+    public void CalculateRankDifference_MissingActualRank_ThrowsException()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        // act
+        var action = () => rating.CalculateRankDifference();
+
+        // assert
+        Assert.Throws<InvalidOperationException>(action);
+    }
+
+    [Fact]
+    public void CalculateBonusPoints_ExactAndUniquePrediction_SetsBonusPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        rating.Prediction.SetCalculatedRank(TenthPosition);
+        rating.RatingGameResult.SetRankDifference(0);
+
+        // act
+        rating.CalculateBonusPoints(
+            hasUniquePredictedRank: true);
+
+        // assert
+        var actualBonusPoints = rating.RatingGameResult.BonusPoints;
+        Assert.NotNull(actualBonusPoints);
+        Assert.NotEqual(0, actualBonusPoints.Value);
+    }
+
+    [Fact]
+    public void CalculateBonusPoints_ExactButNotUniquePrediction_SetsZeroBonusPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        rating.Prediction.SetCalculatedRank(TenthPosition);
+        rating.RatingGameResult.SetRankDifference(0);
+
+        // act
+        rating.CalculateBonusPoints(
+            hasUniquePredictedRank: false);
+
+        // assert
+        Assert.Equal(
+            0,
+            rating.RatingGameResult.BonusPoints!.Value);
+    }
+
+    [Fact]
+    public void CalculateBonusPoints_UniqueButIncorrectPrediction_SetsZeroBonusPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+        rating.Prediction.SetCalculatedRank(TenthPosition);
+        rating.RatingGameResult.SetRankDifference(1);
+
+        // act
+        rating.CalculateBonusPoints(
+            hasUniquePredictedRank: true);
+
+        // assert
+        Assert.Equal(
+            new BonusPoints(0),
+            rating.RatingGameResult.BonusPoints);
+    }
+
+    [Fact]
+    public void CalculateBonusPoints_MissingPredictedRank_SetsZeroBonusPoints()
+    {
+        // arrange
+        var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
+
+        // act
+        rating.CalculateBonusPoints(
+            hasUniquePredictedRank: true);
+
+        // assert
+        Assert.Equal(
+            new BonusPoints(0),
+            rating.RatingGameResult.BonusPoints);
+    }
+}

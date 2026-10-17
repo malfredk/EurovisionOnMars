@@ -1,24 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
+using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
+using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EurovisionOnMars.Api.Features.GameResults;
 
-[Route("api/[controller]")]
+[Route("api/game-results")]
 [ApiController]
 public class GameResultsController : ControllerBase
 {
-    private readonly IGameResultService _service;
     private readonly ILogger<GameResultsController> _logger;
+    private readonly ICalculateGameResultsService _calculateGameResultsService;
+    private readonly IGetPlayerGameResultsService _getPlayerGameResultsService;
 
-    public GameResultsController(IGameResultService service, ILogger<GameResultsController> logger)
+    public GameResultsController(
+        ILogger<GameResultsController> logger,
+        ICalculateGameResultsService calculateGameResultsService,
+        IGetPlayerGameResultsService getPlayerGameResultsService
+        )
     {
-        _service = service;
         _logger = logger;
+        _calculateGameResultsService = calculateGameResultsService;
+        _getPlayerGameResultsService = getPlayerGameResultsService;
     }
 
-    [HttpPost]
+    [HttpPost("calculate")]
     public async Task<ActionResult> CalculateGameResults()
     {
-        await _service.CalculateGameResults();
+        await _calculateGameResultsService.CalculateGameResults();
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<PlayerGameResultDto>>> GetPlayerGameResults()
+    {
+        var playerGameResults = await _getPlayerGameResultsService.GetPlayerGameResults();
+        return Ok(playerGameResults);
     }
 }
