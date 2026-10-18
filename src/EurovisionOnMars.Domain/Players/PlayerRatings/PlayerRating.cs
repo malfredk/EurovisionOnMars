@@ -13,11 +13,11 @@ public class PlayerRating : IdBase
     public Points? Category3Points { get; private set; }
     public Prediction Prediction { get; private set; } = null!;
     public int CountryId { get; private set; }
-    public Country? Country { get; private set; }
+    public Country Country { get; private set; } = null!;
     public RatingGameResult RatingGameResult { get; private set; } = null!;
     public int PlayerId { get; internal set; }
     [JsonIgnore]
-    public Player? Player { get; private set; }
+    public Player Player { get; private set; } = null!;
 
     private PlayerRating() { }
 
@@ -61,7 +61,7 @@ public class PlayerRating : IdBase
 
     internal void CalculateRankDifference()
     {
-        var actualRank = Country!.ActualRank;
+        var actualRank = Country.ActualRank;
         var predictedRank = Prediction.GetPredictedRank();
         int rankDifference;
 

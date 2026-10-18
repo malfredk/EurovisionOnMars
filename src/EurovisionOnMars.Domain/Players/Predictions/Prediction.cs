@@ -11,7 +11,7 @@ public class Prediction : IdBase
     public TieBreakDemotion? TieBreakDemotion { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
-    public PlayerRating? PlayerRating { get; private set; }
+    public PlayerRating PlayerRating { get; private set; } = null!;
 
     private Prediction() { }
 

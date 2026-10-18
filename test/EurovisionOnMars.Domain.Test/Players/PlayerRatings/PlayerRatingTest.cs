@@ -81,7 +81,7 @@ public class PlayerRatingTest
         var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
         rating.Prediction.SetCalculatedRank(new CountryPosition(predictedRank));
-        rating.Country!.SetActualRank(TenthPosition);
+        rating.Country.SetActualRank(TenthPosition);
 
         // act
         rating.CalculateRankDifference();
@@ -98,7 +98,7 @@ public class PlayerRatingTest
         // arrange
         var rating = PlayerFactory.CreateInitialWithOneRating().PlayerRatings[0];
 
-        rating.Country!.SetActualRank(TenthPosition);
+        rating.Country.SetActualRank(TenthPosition);
 
         // act
         rating.CalculateRankDifference();
