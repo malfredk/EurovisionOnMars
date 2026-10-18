@@ -5,7 +5,7 @@ namespace EurovisionOnMars.Domain.Game;
 
 public class PlayerRanksCalculator
 {
-    public void CalculatePlayerRanks(IReadOnlyList<Player> players)
+    public void CalculatePlayerRanks(IReadOnlyCollection<Player> players)
     {
         var orderedPlayerGameResults = players
             .Select(p => p.PlayerGameResult)

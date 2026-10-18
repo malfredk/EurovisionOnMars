@@ -46,7 +46,7 @@ internal static class TieBreakDemotionAdjuster
         HandleTieBreakDemotions(newGroup!);
     }
 
-    private static List<Prediction>? GetPredictionPointsGroup(
+    private static IReadOnlyCollection<Prediction>? GetPredictionPointsGroup(
         IReadOnlyCollection<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
         int? totalGivenPoints
         )
