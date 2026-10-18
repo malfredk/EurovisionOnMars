@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.DataAccess;
+﻿using EurovisionOnMars.Infrastructure.DataAccess;
 using EurovisionOnMars.Domain.Countries;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;

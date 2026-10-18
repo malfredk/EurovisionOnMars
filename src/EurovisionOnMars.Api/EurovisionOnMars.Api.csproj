@@ -34,6 +34,7 @@
     <ProjectReference Include="..\EurovisionOnMars.CustomException\EurovisionOnMars.CustomException.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Dto\EurovisionOnMars.Dto.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Domain\EurovisionOnMars.Domain.csproj" />
+    <ProjectReference Include="..\EurovisionOnMars.Infrastructure\EurovisionOnMars.Infrastructure.csproj" />
     <ProjectReference Include="..\EurovisionOnMars.Wasm\EurovisionOnMars.Wasm.csproj" />
   </ItemGroup>
 

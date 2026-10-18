@@ -1,7 +1,7 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EurovisionOnMars.Api.DataAccess.Configurations;
+namespace EurovisionOnMars.Infrastructure.DataAccess.Configurations;
 
 internal static class CommonConverters
 {

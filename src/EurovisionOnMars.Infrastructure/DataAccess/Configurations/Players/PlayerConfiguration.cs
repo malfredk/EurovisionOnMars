@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EurovisionOnMars.Api.DataAccess.Configurations.Players;
+namespace EurovisionOnMars.Infrastructure.DataAccess.Configurations.Players;
 
 public class PlayerConfiguration : IEntityTypeConfiguration<Player>
 {

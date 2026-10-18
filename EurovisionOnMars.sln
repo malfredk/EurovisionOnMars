@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Domain.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.TestSupport", "test\EurovisionOnMars.TestSupport\EurovisionOnMars.TestSupport.csproj", "{662249E1-F46D-465C-B009-A068361CEC5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EurovisionOnMars.Infrastructure", "src\EurovisionOnMars.Infrastructure\EurovisionOnMars.Infrastructure.csproj", "{BB6DD363-916D-469C-B1DE-9B5311095B44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{662249E1-F46D-465C-B009-A068361CEC5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{662249E1-F46D-465C-B009-A068361CEC5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{662249E1-F46D-465C-B009-A068361CEC5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6DD363-916D-469C-B1DE-9B5311095B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6DD363-916D-469C-B1DE-9B5311095B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6DD363-916D-469C-B1DE-9B5311095B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6DD363-916D-469C-B1DE-9B5311095B44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
