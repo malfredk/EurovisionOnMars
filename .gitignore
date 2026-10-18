@@ -397,6 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Migrations folder
+# Folders used when testing locally
 Migrations/
 Database/

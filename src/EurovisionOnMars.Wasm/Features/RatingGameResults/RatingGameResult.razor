@@ -1,5 +1,5 @@
 ﻿@page "/stemmeskjema/{playerId:int}/resultat"
-@using EurovisionOnMars.Dto.RatingGameResults
+@using EurovisionOnMars.Dto.Players.GetRatingGameResults
 
 @inject HttpClient Http
 @inject ISnackbar Snackbar
@@ -40,7 +40,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync($"/api/RatingGameResults/{PlayerId}");
+        var response = await Http.GetAsync($"/api/players/{PlayerId}/rating-results");
         if (response.IsSuccessStatusCode)
         {
             RatingGameResults = await response.Content.ReadFromJsonAsync<List<RatingGameResultDto>>();
