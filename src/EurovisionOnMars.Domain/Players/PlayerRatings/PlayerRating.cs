@@ -50,7 +50,7 @@ public class PlayerRating : IdBase
         Category3Points = category3Points;
     }
 
-    private void SetTotalGivenPoints() // TODO: test
+    private void SetTotalGivenPoints()
     {
         var totalGivenPoints =
             Category1Points!.Value +
