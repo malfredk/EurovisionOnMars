@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EurovisionOnMars.Api.DataAccess.Configurations.Countries;
+namespace EurovisionOnMars.Infrastructure.DataAccess.Configurations.Countries;
 
 public class CountryConfiguration : IEntityTypeConfiguration<Country>
 {

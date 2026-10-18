@@ -1,4 +1,4 @@
-﻿using EurovisionOnMars.Api.DataAccess;
+﻿using EurovisionOnMars.Infrastructure.DataAccess;
 using EurovisionOnMars.Domain.Players.GameResults;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,4 @@
 using EurovisionOnMars.Api.Configurations;
-using EurovisionOnMars.Api.DataAccess;
 using EurovisionOnMars.Api.Features.Countries;
 using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
 using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
@@ -12,7 +11,8 @@ using EurovisionOnMars.Api.Features.Players.RateCountry;
 using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Api.Middlewares;
 using EurovisionOnMars.Domain.Game;
-using Microsoft.EntityFrameworkCore;
+using EurovisionOnMars.Infrastructure;
+using EurovisionOnMars.Infrastructure.DataAccess;
 using Microsoft.Net.Http.Headers;
 using Serilog;
 
@@ -26,7 +26,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 RegisterRatingClosingTime(builder);
-AddDbContext(builder);
+builder.Services.AddInfrastructure(
+    builder.Configuration,
+    builder.Environment);
 
 AddCountriesFeature(builder);
 AddGameResultsFeature(builder);
@@ -41,7 +43,6 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -50,11 +51,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    using (var serviceScope = app.Services.CreateScope())
-    {
-        var dataContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
-        dataContext.Database.EnsureCreated();
-    }
+    await DatabaseInitializer.EnsureCreatedAsync(app.Services);
 }
 
 app.UseCors(policy => policy
@@ -84,24 +81,6 @@ static void RegisterRatingClosingTime(WebApplicationBuilder builder)
 {
     var ratingClosingTime = ConfigurationValidator.GetAndValidateRatingClosingTime(builder.Configuration);
     builder.Services.AddSingleton(typeof(DateTimeOffset), ratingClosingTime);
-}
-
-static void AddDbContext(WebApplicationBuilder builder)
-{
-    if (builder.Environment.IsDevelopment())
-    {
-        builder.Services.AddDbContext<DataContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
-    }
-    else
-    {
-        builder.Services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(
-                builder.Configuration.GetConnectionString("Default"),
-                options => options.EnableRetryOnFailure()
-                )
-            );
-    }
 }
 
 static void AddCountriesFeature(WebApplicationBuilder builder)
