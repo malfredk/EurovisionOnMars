@@ -4,6 +4,20 @@
 @inject HttpClient Http
 @inject ISnackbar Snackbar
 
+<style>
+    .tie-rating-row {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        min-height: 48px;
+        cursor: grab;
+        user-select: none;
+    }
+
+    .tie-rating-row:active {
+        cursor: grabbing;
+    }
+</style>
+
 <MudDialog>
     <DialogContent>
         <MudText Class="mb-4">dra og dropp for å rangere land med samme plassering</MudText>
@@ -15,26 +29,32 @@
 
             <ChildContent>
                 <MudPaper>
-                    <MudList>
                         <MudDropZone T="TieRating"
                             Identifier="@ZONE_ID"
                             AllowReorder="true"/>
-                    </MudList>
                 </MudPaper>
             </ChildContent>
 
             <ItemRenderer>
-                <div @key="context.PredictionId">
+                <div @key="context.PredictionId" 
+                     class="tie-rating-row">
+
                     <MudGrid AlignItems="AlignItems.Center">
                         <MudItem>
                             <MudText>
                                 @{
-                                    var showDemotedRanks = _tieBreakAlreadyResolved || _userReordered;
-                                    var displayRank = _calculatedRank + (showDemotedRanks ? context.Order : 0);
+                                    var showDemotedRanks =
+                                        _tieBreakAlreadyResolved || _userReordered;
+
+                                    var displayRank =
+                                        _calculatedRank +
+                                        (showDemotedRanks ? context.Order : 0);
                                 }
-                                @(displayRank)
+
+                                @displayRank
                             </MudText>
                         </MudItem>
+
                         <MudItem>
                             <MudText>
                                 @context.CountryName
@@ -62,7 +82,7 @@
 
 
 @code {
-    [CascadingParameter] public MudDialogInstance Dialog { get; set; } = default!;
+    [CascadingParameter] public IMudDialogInstance Dialog { get; set; } = default!;
     
     [Parameter] public int PlayerId { get; set; }
     [Parameter] public List<PlayerRatingDto> TiedRatings { get; set; } = new();
@@ -150,9 +170,9 @@
 
     private ResolveTieBreakRequestDto? CreateRequest()
     {
-        if (_orderedRatings == null || !_orderedRatings.Any())
+        if (_orderedRatings.Count == 0)
         {
-            Console.WriteLine("Ordered ratings is null or empty.");
+            Console.WriteLine("Ordered ratings is empty.");
             return null;
         }
 
