@@ -4,7 +4,6 @@ using EurovisionOnMars.Dto.Countries;
 using EurovisionOnMars.TestSupport.Countries;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features.Countries;
 
@@ -46,7 +45,7 @@ public class CountryServiceTest
             countryNumber21,
             countryNumber4,
             countryNumber7
-        }.ToImmutableList();
+        };
         _repositoryMock.Setup(m => m.GetCountries())
             .ReturnsAsync(countries);
 
@@ -66,7 +65,7 @@ public class CountryServiceTest
             countryDtoNumber4,
             countryDtoNumber7,
             countryDtoNumber21
-        }.ToImmutableList();
+        };
 
         // act
         var actualCountries = await _service.GetCountries();

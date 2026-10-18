@@ -1,11 +1,10 @@
 ﻿using EurovisionOnMars.Dto.GameResults.GetPlayerResults;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
 
 public interface IGetPlayerGameResultsService
 {
-    Task<ImmutableList<PlayerGameResultDto>> GetPlayerGameResults();
+    Task<IReadOnlyList<PlayerGameResultDto>> GetPlayerGameResults();
 }
 
 public class GetPlayerGameResultsService : IGetPlayerGameResultsService
@@ -26,13 +25,13 @@ public class GetPlayerGameResultsService : IGetPlayerGameResultsService
         _mapper = mapper;
     }
 
-    public async Task<ImmutableList<PlayerGameResultDto>> GetPlayerGameResults()
+    public async Task<IReadOnlyList<PlayerGameResultDto>> GetPlayerGameResults()
     {
         var playerGameResults = await _repository.GetPlayerGameResults();
         return playerGameResults
             .Select(p => _mapper.ToDto(p))
             .OrderBy(p => p.Rank is null)
             .ThenBy(p => p.Rank)
-            .ToImmutableList();
+            .ToList();
     }
 }

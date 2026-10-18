@@ -1,14 +1,13 @@
-﻿using EurovisionOnMars.Domain.Countries;
-using EurovisionOnMars.Api.DataAccess;
+﻿using EurovisionOnMars.Api.DataAccess;
+using EurovisionOnMars.Domain.Countries;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 
 public interface ICountryRepository
 {
-    Task<ImmutableList<Country>> GetCountries();
+    Task<IReadOnlyCollection<Country>> GetCountries();
     Task<Country?> GetCountry(int id);
     Task<Country> CreateCountry(Country country);
     Task UpdateCountry(Country country);
@@ -25,11 +24,10 @@ public class CountryRepository : ICountryRepository
         _context = context;
     }
 
-    public async Task<ImmutableList<Country>> GetCountries()
+    public async Task<IReadOnlyCollection<Country>> GetCountries()
     {
         _logger.LogDebug("Getting all countries.");
-        var countries = await _context.Countries.ToListAsync();
-        return countries.ToImmutableList();
+        return await _context.Countries.ToListAsync();
     }
 
     public async Task<Country?> GetCountry(int id)

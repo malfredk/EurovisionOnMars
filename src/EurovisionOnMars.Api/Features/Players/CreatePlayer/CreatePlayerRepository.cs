@@ -1,8 +1,7 @@
-﻿using EurovisionOnMars.Domain.Countries;
-using EurovisionOnMars.Api.DataAccess;
+﻿using EurovisionOnMars.Api.DataAccess;
+using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using System.Text.Json;
 
 namespace EurovisionOnMars.Api.Features.Players.CreatePlayer;
@@ -10,7 +9,7 @@ namespace EurovisionOnMars.Api.Features.Players.CreatePlayer;
 public interface ICreatePlayerRepository
 {
     Task<bool> UsernameExists(Username username);
-    Task<ImmutableList<Country>> GetCountries();
+    Task<IReadOnlyCollection<Country>> GetCountries();
     Task<int> AddPlayer(Player player);
 }
 
@@ -38,14 +37,10 @@ public class CreatePlayerRepository : ICreatePlayerRepository
             .AnyAsync(p => p.Username == username);
     }
 
-    public async Task<ImmutableList<Country>> GetCountries()
+    public async Task<IReadOnlyCollection<Country>> GetCountries()
     {
         _logger.LogDebug("Getting countries for new player.");
-
-        var countries = await _context.Countries
-            .ToListAsync();
-
-        return countries.ToImmutableList();
+        return await _context.Countries.ToListAsync();
     }
 
     public async Task<int> AddPlayer(Player player)

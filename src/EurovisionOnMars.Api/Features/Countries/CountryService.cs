@@ -1,12 +1,11 @@
-﻿using EurovisionOnMars.Dto.Countries;
-using EurovisionOnMars.Domain.Countries;
-using System.Collections.Immutable;
+﻿using EurovisionOnMars.Domain.Countries;
+using EurovisionOnMars.Dto.Countries;
 
 namespace EurovisionOnMars.Api.Features.Countries;
 
 public interface ICountryService
 {
-    Task<ImmutableList<CountryDto>> GetCountries();
+    Task<IReadOnlyList<CountryDto>> GetCountries();
     Task<CountryDto> CreateCountry(NewCountryRequestDto country);
     Task SetCountryRank(int id, int rank);
 }
@@ -28,13 +27,13 @@ public class CountryService : ICountryService
         _mapper = mapper;
     }
 
-    public async Task<ImmutableList<CountryDto>> GetCountries()
+    public async Task<IReadOnlyList<CountryDto>> GetCountries()
     {
         var countries = await _repository.GetCountries();
         return countries
             .OrderBy(c => c.Number.Value)
             .Select(c => _mapper.ToDto(c))
-            .ToImmutableList();
+            .ToList();
     }
 
     public async Task<CountryDto> CreateCountry(NewCountryRequestDto countryDto)

@@ -1,12 +1,11 @@
-﻿using EurovisionOnMars.Dto.Players.GetRatings;
-using EurovisionOnMars.Domain.Players.PlayerRatings;
-using System.Collections.Immutable;
+﻿using EurovisionOnMars.Domain.Players.PlayerRatings;
+using EurovisionOnMars.Dto.Players.GetRatings;
 
 namespace EurovisionOnMars.Api.Features.Players.GetRatings;
 
 public interface IGetRatingsService
 {
-    Task<ImmutableList<PlayerRatingDto>> GetRatingsByPlayerId(int playerId);
+    Task<IReadOnlyList<PlayerRatingDto>> GetRatingsByPlayerId(int playerId);
 }
 
 public class GetRatingsService : IGetRatingsService
@@ -26,7 +25,7 @@ public class GetRatingsService : IGetRatingsService
         _mapper = mapper;
     }
 
-    public async Task<ImmutableList<PlayerRatingDto>> GetRatingsByPlayerId(int playerId)
+    public async Task<IReadOnlyList<PlayerRatingDto>> GetRatingsByPlayerId(int playerId)
     {
         var ratings = await _repository.GetRatingsByPlayerId(playerId);
         if (!ratings.Any())
@@ -36,14 +35,14 @@ public class GetRatingsService : IGetRatingsService
         return ToOrderedDtos(ratings);
     }
 
-    private ImmutableList<PlayerRatingDto> ToOrderedDtos(
-        ImmutableList<PlayerRating> ratings)
+    private IReadOnlyList<PlayerRatingDto> ToOrderedDtos(
+        IReadOnlyCollection<PlayerRating> ratings)
     {
         return ratings
             .Select(r => _mapper.ToDto(r))
             .OrderBy(r => r.Prediction.PredictedRank is null)
             .ThenBy(r => r.Prediction.PredictedRank)
             .ThenBy(r => r.Country.Number)
-            .ToImmutableList();
+            .ToList();
     }
 }

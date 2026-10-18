@@ -2,9 +2,7 @@
 using EurovisionOnMars.Domain.Players;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.TestSupport.Countries;
-using EurovisionOnMars.TestSupport.Game;
 using EurovisionOnMars.TestSupport.Players;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Domain.Test.Players;
 
@@ -43,7 +41,7 @@ public class PlayerTest
 
     [Theory]
     [MemberData(nameof(NoCountriesTestData))]
-    public void Constructor_NoCountries_ThrowsInvalidOperationException(ImmutableList<Country> countries)
+    public void Constructor_NoCountries_ThrowsInvalidOperationException(List<Country> countries)
     {
         // act and assert
         Assert.Throws<InvalidOperationException>(() => new Player(Username, countries));
@@ -53,7 +51,7 @@ public class PlayerTest
     new List<object[]>
     {
         new object[] { null! },
-        new object[] { ImmutableList<Country>.Empty }
+        new object[] { new List<Country> { } }
     };
 
     // tests for CalculateGamePoints

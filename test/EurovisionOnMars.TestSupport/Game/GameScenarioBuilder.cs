@@ -1,6 +1,5 @@
 ﻿using EurovisionOnMars.Domain.Countries;
 using EurovisionOnMars.Domain.Players;
-using System.Collections.Immutable;
 using EurovisionOnMars.TestSupport.Countries;
 
 namespace EurovisionOnMars.TestSupport.Game;
@@ -28,7 +27,7 @@ public sealed class GameScenarioBuilder
     {
         var player = new Player(
             new Username(username),
-            _countries.ToImmutableList());
+            _countries);
 
         _players.Add(player);
 
