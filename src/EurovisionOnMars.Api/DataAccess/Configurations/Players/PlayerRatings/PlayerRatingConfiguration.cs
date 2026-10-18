@@ -22,6 +22,11 @@ public class PlayerRatingConfiguration : IEntityTypeConfiguration<PlayerRating>
         playerRating
             .Property(rating => rating.Category3Points)
             .HasConversion(pointsConverter);
+
+        playerRating
+            .HasOne(r => r.Country)
+            .WithMany()
+            .HasForeignKey(r => r.CountryId);
     }
 
     private static ValueConverter<Points?, int?> CreatePointsConverter()

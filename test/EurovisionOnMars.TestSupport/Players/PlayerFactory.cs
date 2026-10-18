@@ -86,7 +86,7 @@ public static class PlayerFactory
 
         for (int i = 0; i < ratingCount; i++)
         {
-            player.PlayerRatings[i].Country!.SetActualRank(new CountryPosition(i + 1));
+            player.PlayerRatings[i].Country.SetActualRank(new CountryPosition(i + 1));
         }
 
         return player;

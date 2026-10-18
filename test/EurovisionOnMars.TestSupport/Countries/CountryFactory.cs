@@ -1,5 +1,4 @@
 ﻿using EurovisionOnMars.Domain.Countries;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.TestSupport.Countries;
 
@@ -12,20 +11,20 @@ public static class CountryFactory
         return new Country(number, name);
     }
 
-    public static ImmutableList<Country> CreateInitialSingletonList()
+    public static IReadOnlyCollection<Country> CreateInitialSingletonList()
     {
         var countries = new List<Country>();
         countries.Add(CreateInitial());
-        return countries.ToImmutableList();
+        return countries;
     }
 
-    public static ImmutableList<Country> CreateInitialList(int count)
+    public static IReadOnlyCollection<Country> CreateInitialList(int count)
     {
         var countries = new List<Country>();
         for (int i = 1; i <= count; i++)
         {
             countries.Add(CreateInitial(i));
         }
-        return countries.ToImmutableList();
+        return countries;
     }
 }

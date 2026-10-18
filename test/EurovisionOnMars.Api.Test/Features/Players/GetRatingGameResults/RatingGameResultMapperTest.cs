@@ -39,7 +39,7 @@ public class RatingGameResultMapperTest
             .CreateWithCompleteRatingGameResult(bonusPoints, rankDifference)
             .PlayerRatings[0];
 
-        ratingEntity.Country!.SetActualRank(new CountryPosition(CountryTestData.Rank));
+        ratingEntity.Country.SetActualRank(new CountryPosition(CountryTestData.Rank));
 
         // act
         var actual = _mapper.ToDto(ratingEntity);

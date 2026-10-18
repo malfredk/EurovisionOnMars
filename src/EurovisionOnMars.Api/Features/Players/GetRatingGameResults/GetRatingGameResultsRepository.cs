@@ -1,13 +1,12 @@
 ﻿using EurovisionOnMars.Api.DataAccess;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
 
 public interface IGetRatingGameResultsRepository
 {
-    Task<ImmutableList<PlayerRating>> GetRatings(int playerId);
+    Task<IReadOnlyCollection<PlayerRating>> GetRatings(int playerId);
 }
 
 public class GetRatingGameResultsRepository : IGetRatingGameResultsRepository
@@ -24,15 +23,14 @@ public class GetRatingGameResultsRepository : IGetRatingGameResultsRepository
         _context = context;
     }
 
-    public async Task<ImmutableList<PlayerRating>> GetRatings(int playerId)
+    public async Task<IReadOnlyCollection<PlayerRating>> GetRatings(int playerId)
     {
         _logger.LogDebug("Getting ratings for player with id={playerId}.", playerId);
-        var results = await _context.PlayerRatings
+        return await _context.PlayerRatings
             .AsNoTracking()
             .Where(r => r.PlayerId == playerId)
             .Include(r => r.RatingGameResult)
             .Include(r => r.Country)
             .ToListAsync();
-        return results.ToImmutableList();
     }
 }

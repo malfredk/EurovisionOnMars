@@ -6,7 +6,7 @@ internal static class TieBreakDemotionAdjuster
 {
     internal static void Adjust(
        PlayerRating updatedRating,
-       List<PlayerRating> ratings,
+       IReadOnlyCollection<PlayerRating> ratings,
        int? oldTotalPoints
        )
     {
@@ -22,7 +22,9 @@ internal static class TieBreakDemotionAdjuster
         HandleNewPointsGroup(predictionsGroupedByPoints, prediction);
     }
 
-    private static void HandleOldPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, int? oldTotalPoints)
+    private static void HandleOldPointsGroup(
+        IReadOnlyCollection<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
+        int? oldTotalPoints)
     {
         var oldGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, oldTotalPoints);
 
@@ -35,15 +37,17 @@ internal static class TieBreakDemotionAdjuster
         HandleTieBreakDemotions(oldGroup);
     }
 
-    private static void HandleNewPointsGroup(List<IGrouping<int?, Prediction>> predictionsGroupedByPoints, Prediction newPrediction)
+    private static void HandleNewPointsGroup(
+        IReadOnlyCollection<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
+        Prediction newPrediction)
     {
         var newGroup = GetPredictionPointsGroup(predictionsGroupedByPoints, newPrediction.TotalGivenPoints);
 
         HandleTieBreakDemotions(newGroup!);
     }
 
-    private static List<Prediction>? GetPredictionPointsGroup(
-        List<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
+    private static IReadOnlyCollection<Prediction>? GetPredictionPointsGroup(
+        IReadOnlyCollection<IGrouping<int?, Prediction>> predictionsGroupedByPoints,
         int? totalGivenPoints
         )
     {
@@ -63,7 +67,7 @@ internal static class TieBreakDemotionAdjuster
         return group.ToList();
     }
 
-    private static void HandleTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    private static void HandleTieBreakDemotions(IReadOnlyCollection<Prediction> predictionsWithSamePoints)
     {
         if (predictionsWithSamePoints.Count() == 1)
         {
@@ -79,18 +83,18 @@ internal static class TieBreakDemotionAdjuster
         CalculateTieBreakDemotions(predictionsWithSamePoints);
     }
 
-    private static void HandleSingletonList(List<Prediction> singlePredictionList)
+    private static void HandleSingletonList(IReadOnlyCollection<Prediction> singlePredictionList)
     {
         var singlePrediction = singlePredictionList.First();
         singlePrediction.ResetTieBreakDemotion();
     }
 
-    private static bool AreAllTieBreakDemotionsNull(List<Prediction> predictions)
+    private static bool AreAllTieBreakDemotionsNull(IReadOnlyCollection<Prediction> predictions)
     {
         return predictions.All(p => p.TieBreakDemotion == null);
     }
 
-    private static void CalculateTieBreakDemotions(List<Prediction> predictionsWithSamePoints)
+    private static void CalculateTieBreakDemotions(IReadOnlyCollection<Prediction> predictionsWithSamePoints)
     {
         var sortedPredictions = predictionsWithSamePoints
             .OrderBy(p => p.TieBreakDemotion?.Value);

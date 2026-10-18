@@ -1,15 +1,10 @@
-﻿using EurovisionOnMars.Domain.Players.PlayerRatings;
-using System.Text.Json.Serialization;
-
-namespace EurovisionOnMars.Domain.Countries;
+﻿namespace EurovisionOnMars.Domain.Countries;
 
 public class Country : IdBase
 {
     public CountryPosition Number { get; private set; } = null!;
     public CountryName Name { get; private set; } = null!;
     public CountryPosition? ActualRank { get; private set; }
-    [JsonIgnore]
-    public List<PlayerRating>? PlayerRatings { get; }
 
     private Country() { }
 

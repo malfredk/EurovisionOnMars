@@ -6,7 +6,7 @@ internal static class SpecialPointsPolicy
 {
     internal static void Validate(
         PlayerRating ratingToUpdate,
-        List<PlayerRating> ratings,
+        IReadOnlyCollection<PlayerRating> ratings,
         Points category1Points,
         Points category2Points,
         Points category3Points)
@@ -23,7 +23,7 @@ internal static class SpecialPointsPolicy
 
     private static void ValidateSpecialCategoryPoints(
         PlayerRating ratingToUpdate,
-        List<PlayerRating> ratings,
+        IReadOnlyCollection<PlayerRating> ratings,
         Points newPoints,
         Func<PlayerRating, Points?> pointsSelector
         )
@@ -38,17 +38,16 @@ internal static class SpecialPointsPolicy
 
     private static void EnsureUniqueSpecialPoints(
         PlayerRating ratingToUpdate,
-        List<PlayerRating> ratings,
+        IReadOnlyCollection<PlayerRating> ratings,
         Points newPoints,
         Func<PlayerRating, Points?> pointsSelector
         )
     {
-        var hasGivenPointsToOtherCountry = ratings
-            .AsReadOnly()
+        var hasGivenThesePointsToOtherCountry = ratings
             .Where(r => !ReferenceEquals(ratingToUpdate, r))
             .Any(r => pointsSelector(r) == newPoints);
 
-        if (hasGivenPointsToOtherCountry)
+        if (hasGivenThesePointsToOtherCountry)
         {
             throw new ArgumentException("These special points have already been given in this category to another country.");
         }

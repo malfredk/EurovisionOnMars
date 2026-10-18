@@ -5,13 +5,13 @@ namespace EurovisionOnMars.Domain.Players.GameResults;
 
 internal static class RatingGameResultsCalculator
 {
-    internal static void Calculate(List<PlayerRating> ratings)
+    internal static void Calculate(IReadOnlyCollection<PlayerRating> ratings)
     {
         CalculateRankDifferences(ratings);
         CalculateBonusPoints(ratings);
     }
 
-    private static void CalculateRankDifferences(List<PlayerRating> ratings)
+    private static void CalculateRankDifferences(IReadOnlyCollection<PlayerRating> ratings)
     {
         foreach (var rating in ratings)
         {
@@ -19,7 +19,7 @@ internal static class RatingGameResultsCalculator
         }
     }
 
-    private static void CalculateBonusPoints(List<PlayerRating> ratings)
+    private static void CalculateBonusPoints(IReadOnlyCollection<PlayerRating> ratings)
     {
         var uniquePredictedRanks = GetUniquePredictedRanks(ratings);
 
@@ -35,7 +35,7 @@ internal static class RatingGameResultsCalculator
         }
     }
 
-    private static HashSet<CountryPosition> GetUniquePredictedRanks(List<PlayerRating> ratings)
+    private static HashSet<CountryPosition> GetUniquePredictedRanks(IReadOnlyCollection<PlayerRating> ratings)
     {
         return ratings
             .Select(r => r.Prediction.GetPredictedRank())

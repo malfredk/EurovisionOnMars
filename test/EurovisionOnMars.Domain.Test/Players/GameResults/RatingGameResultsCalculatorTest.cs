@@ -66,8 +66,8 @@ public class RatingGameResultsCalculatorTest
         tiedRating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(0));
         correctRating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(1));
 
-        tiedRating.Country!.SetActualRank(ThirdPlace);
-        correctRating.Country!.SetActualRank(SecondPlace);
+        tiedRating.Country.SetActualRank(ThirdPlace);
+        correctRating.Country.SetActualRank(SecondPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -89,7 +89,7 @@ public class RatingGameResultsCalculatorTest
         rating.Prediction.SetCalculatedRank(FirstPlace);
         rating.Prediction.SetTieBreakDemotion(new TieBreakDemotion(1));
 
-        rating.Country!.SetActualRank(FirstPlace);
+        rating.Country.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -113,8 +113,8 @@ public class RatingGameResultsCalculatorTest
         rating.Prediction.SetCalculatedRank(FirstPlace);
         otherRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        rating.Country!.SetActualRank(SecondPlace);
-        otherRating.Country!.SetActualRank(FirstPlace);
+        rating.Country.SetActualRank(SecondPlace);
+        otherRating.Country.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -137,8 +137,8 @@ public class RatingGameResultsCalculatorTest
 
         otherRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        rating.Country!.SetActualRank(SecondPlace);
-        otherRating.Country!.SetActualRank(FirstPlace);
+        rating.Country.SetActualRank(SecondPlace);
+        otherRating.Country.SetActualRank(FirstPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);
@@ -162,8 +162,8 @@ public class RatingGameResultsCalculatorTest
         rating.Prediction.SetCalculatedRank(SecondPlace);
         tiedRating.Prediction.SetCalculatedRank(SecondPlace);
 
-        rating.Country!.SetActualRank(SecondPlace);
-        tiedRating.Country!.SetActualRank(SecondPlace);
+        rating.Country.SetActualRank(SecondPlace);
+        tiedRating.Country.SetActualRank(SecondPlace);
 
         // act
         RatingGameResultsCalculator.Calculate(ratings);

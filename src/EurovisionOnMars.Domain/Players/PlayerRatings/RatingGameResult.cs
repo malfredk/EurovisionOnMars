@@ -8,7 +8,7 @@ public class RatingGameResult : IdBase
     public BonusPoints? BonusPoints { get; private set; }
     public int PlayerRatingId { get; private set; }
     [JsonIgnore]
-    public PlayerRating? PlayerRating { get; private set; }
+    public PlayerRating PlayerRating { get; private set; } = null!;
 
     private RatingGameResult() { }
 

@@ -5,7 +5,6 @@ using EurovisionOnMars.TestSupport.Countries;
 using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features.Players.GetRatings;
 
@@ -36,7 +35,7 @@ public class GetRatingsServiceTest
     {
         // arrange
         var player = PlayerFactory.CreateInitial(3);
-        var ratings = player.PlayerRatings.ToImmutableList();
+        var ratings = player.PlayerRatings;
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
@@ -61,7 +60,7 @@ public class GetRatingsServiceTest
             firstRankDto,
             secondRankDto,
             thirdRankDto,
-        }.ToImmutableList();
+        };
 
         // act
         var actual = await _service.GetRatingsByPlayerId(PlayerId);
@@ -75,7 +74,7 @@ public class GetRatingsServiceTest
     {
         // arrange
         var player = PlayerFactory.CreateInitial(3);
-        var ratings = player.PlayerRatings.ToImmutableList();
+        var ratings = player.PlayerRatings;
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
@@ -100,7 +99,7 @@ public class GetRatingsServiceTest
             firstRankDto,
             secondRankDto,
             noRankDto,
-        }.ToImmutableList();
+        };
 
         // act
         var actual = await _service.GetRatingsByPlayerId(PlayerId);
@@ -114,7 +113,7 @@ public class GetRatingsServiceTest
     {
         // arrange
         var player = PlayerFactory.CreateInitial(3);
-        var ratings = player.PlayerRatings.ToImmutableList();
+        var ratings = player.PlayerRatings;
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
@@ -139,7 +138,7 @@ public class GetRatingsServiceTest
             rankedNumber1Dto,
             noRankNumber2Dto,
             noRankNumber3Dto,
-        }.ToImmutableList();
+        };
 
         // act
         var actual = await _service.GetRatingsByPlayerId(PlayerId);
@@ -153,7 +152,7 @@ public class GetRatingsServiceTest
     {
         // arrange
         var player = PlayerFactory.CreateInitialWithOneRating();
-        var ratings = player.PlayerRatings.ToImmutableList();
+        var ratings = player.PlayerRatings;
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
@@ -178,8 +177,7 @@ public class GetRatingsServiceTest
         // arrange
         var player = PlayerFactory.CreateInitial(3);
 
-        var ratings = player.PlayerRatings
-            .ToImmutableList();
+        var ratings = player.PlayerRatings;
 
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
@@ -208,7 +206,7 @@ public class GetRatingsServiceTest
         // arrange
         _repositoryMock
             .Setup(r => r.GetRatingsByPlayerId(PlayerId))
-            .ReturnsAsync(ImmutableList<PlayerRating>.Empty);
+            .ReturnsAsync(new List<PlayerRating> { });
 
         // act
         var action = () => _service.GetRatingsByPlayerId(PlayerId);

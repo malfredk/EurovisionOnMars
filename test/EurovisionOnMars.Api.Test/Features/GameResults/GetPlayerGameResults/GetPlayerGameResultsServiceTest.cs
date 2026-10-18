@@ -5,7 +5,6 @@ using EurovisionOnMars.TestSupport.Game;
 using EurovisionOnMars.TestSupport.Players;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Api.Test.Features.GameResults.GetPlayerGameResults;
 
@@ -37,7 +36,7 @@ public class GetPlayerGameResultsServiceTest
         var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
-            .ToImmutableList();
+            .ToList();
 
         _repositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(playersGameResults);
@@ -60,7 +59,7 @@ public class GetPlayerGameResultsServiceTest
         var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 2, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
-            .ToImmutableList();
+            .ToList();
 
         _repositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(playersGameResults);
@@ -94,7 +93,7 @@ public class GetPlayerGameResultsServiceTest
         var gameScenario = GameScenarioFactory.CreateInitialGame(playersCount: 3, countriesCount: 1);
         var playersGameResults = gameScenario.Players
             .Select(p => p.PlayerGameResult)
-            .ToImmutableList();
+            .ToList();
 
         _repositoryMock.Setup(m => m.GetPlayerGameResults())
             .ReturnsAsync(playersGameResults);
