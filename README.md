@@ -19,10 +19,10 @@ or update if already installed by running
 `dotnet tool update --global dotnet-ef`.
 
 2. Create migrations by running the following command  
-`dotnet ef migrations add <nameOfMigration> --verbose --project .\src\EurovisionOnMars.Api   --startup-project .\src\EurovisionOnMars.Api`.
+`dotnet ef migrations add <nameOfMigration> --verbose --project .\src\EurovisionOnMars.Infrastructure --startup-project .\src\EurovisionOnMars.Api`.
 
-3. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Api exists first)  
-`dotnet ef database update --verbose --project .\src\EurovisionOnMars.Api   --startup-project .\src\EurovisionOnMars.Api`.
+3. Create database by running the following command (ensure folder "Database" in EurovisionOnMars.Infrastructure exists first)  
+`dotnet ef database update --verbose --project .\src\EurovisionOnMars.Infrastructure --startup-project .\src\EurovisionOnMars.Api`.
 
 ### Web App
 Simply run the web app by starting the *.Api* project with *https*.
