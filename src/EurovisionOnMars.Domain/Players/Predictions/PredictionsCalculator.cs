@@ -6,7 +6,7 @@ internal static class PredictionsCalculator
 {
     internal static void Calculate(
         PlayerRating ratingWithUpdatedPoints,
-        List<PlayerRating> ratings,
+        IReadOnlyCollection<PlayerRating> ratings,
         int? oldTotalGivenPoints
         )
     {

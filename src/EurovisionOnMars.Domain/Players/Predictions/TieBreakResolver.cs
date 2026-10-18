@@ -4,20 +4,20 @@ namespace EurovisionOnMars.Domain.Players.Predictions;
 
 internal static class TieBreakResolver
 {
-    internal static void Resolve(List<Prediction> predictions, List<int> orderedPredictionIds)
+    internal static void Resolve(IReadOnlyCollection<Prediction> predictions, IReadOnlyList<int> orderedPredictionIds)
     {
         ValidateIdList(predictions, orderedPredictionIds);
         SetTieBreakDemotions(predictions, orderedPredictionIds);
     }
 
-    private static void ValidateIdList(List<Prediction> predictions, List<int> orderedPredictionIds)
+    private static void ValidateIdList(IReadOnlyCollection<Prediction> predictions, IReadOnlyList<int> orderedPredictionIds)
     {
         EnsureMultiplePredictions(orderedPredictionIds);
         EnsureUniquePredictions(orderedPredictionIds);
         EnsureMatchingTiedPredictions(predictions, orderedPredictionIds);
     }
 
-    private static void EnsureMultiplePredictions(List<int> orderedPredictionIds)
+    private static void EnsureMultiplePredictions(IReadOnlyList<int> orderedPredictionIds)
     {
         if (orderedPredictionIds.Count <= 1)
         {
@@ -25,7 +25,7 @@ internal static class TieBreakResolver
         }
     }
 
-    private static void EnsureUniquePredictions(List<int> orderedPredictionIds)
+    private static void EnsureUniquePredictions(IReadOnlyList<int> orderedPredictionIds)
     {
         if (orderedPredictionIds.Distinct().Count() != orderedPredictionIds.Count)
         {
@@ -33,7 +33,7 @@ internal static class TieBreakResolver
         }
     }
 
-    private static void EnsureMatchingTiedPredictions(List<Prediction> predictions, List<int> orderedPredictionIds)
+    private static void EnsureMatchingTiedPredictions(IReadOnlyCollection<Prediction> predictions, IReadOnlyList<int> orderedPredictionIds)
     {
         var calculatedRank = GetCalculatedRank(predictions, orderedPredictionIds[0]);
 
@@ -46,14 +46,14 @@ internal static class TieBreakResolver
         }
     }
 
-    private static CountryPosition GetCalculatedRank(List<Prediction> predictions, int predicitonId)
+    private static CountryPosition GetCalculatedRank(IReadOnlyCollection<Prediction> predictions, int predictionId)
     {
         return predictions
-            .Single(p => p.Id == predicitonId)
-            .CalculatedRank ?? throw new ArgumentException($"Prediction with id={predicitonId} does not have a CalculatedRank.");
+            .Single(p => p.Id == predictionId)
+            .CalculatedRank ?? throw new ArgumentException($"Prediction with id={predictionId} does not have a CalculatedRank.");
     }
 
-    private static HashSet<int> GetTiedPredictionIds(List<Prediction> predictions, CountryPosition calculatedRank)
+    private static HashSet<int> GetTiedPredictionIds(IReadOnlyCollection<Prediction> predictions, CountryPosition calculatedRank)
     {
         return predictions
             .Where(p => p.CalculatedRank == calculatedRank)
@@ -61,7 +61,7 @@ internal static class TieBreakResolver
             .ToHashSet();
     }
 
-    private static void SetTieBreakDemotions(List<Prediction> predictions, List<int> orderedPredictionIds)
+    private static void SetTieBreakDemotions(IReadOnlyCollection<Prediction> predictions, IReadOnlyList<int> orderedPredictionIds)
     {
         var predictionsById = predictions.ToDictionary(p => p.Id);
         for (int i = 0; i < orderedPredictionIds.Count; i++)

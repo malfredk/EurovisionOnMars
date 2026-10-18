@@ -4,7 +4,7 @@ namespace EurovisionOnMars.Domain.Players.GameResults;
 
 internal static class PlayerTotalPointsCalculator
 {
-    internal static void Calculate(List<PlayerRating> ratings, PlayerGameResult playerGameResult)
+    internal static void Calculate(IReadOnlyCollection<PlayerRating> ratings, PlayerGameResult playerGameResult)
     {
         var totalPoints = ratings.Sum(rating =>
         {

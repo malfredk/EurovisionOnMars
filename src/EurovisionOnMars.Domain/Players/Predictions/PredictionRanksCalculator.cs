@@ -5,7 +5,7 @@ namespace EurovisionOnMars.Domain.Players.Predictions;
 
 internal static class PredictionRanksCalculator
 {
-    internal static void Calculate(List<PlayerRating> ratings)
+    internal static void Calculate(IReadOnlyCollection<PlayerRating> ratings)
     {
         var orderedRatings = GetSortedRatingsByDescendingPoints(ratings);
 
@@ -32,7 +32,7 @@ internal static class PredictionRanksCalculator
         }
     }
 
-    private static List<PlayerRating> GetSortedRatingsByDescendingPoints(List<PlayerRating> ratings)
+    private static IReadOnlyList<PlayerRating> GetSortedRatingsByDescendingPoints(IReadOnlyCollection<PlayerRating> ratings)
     {
         return ratings
             .OrderBy(r => r.Prediction.TotalGivenPoints == null)

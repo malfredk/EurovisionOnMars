@@ -2,33 +2,32 @@
 using EurovisionOnMars.Domain.Players.GameResults;
 using EurovisionOnMars.Domain.Players.PlayerRatings;
 using EurovisionOnMars.Domain.Players.Predictions;
-using System.Collections.Immutable;
 
 namespace EurovisionOnMars.Domain.Players;
 
 public class Player : IdBase
 {
+    private readonly List<PlayerRating> _playerRatings = [];
     public Username Username { get; private set; } = null!;
-    public List<PlayerRating> PlayerRatings { get; private set; } = [];
+    public IReadOnlyList<PlayerRating> PlayerRatings => _playerRatings.AsReadOnly();
     public PlayerGameResult PlayerGameResult { get; private set; } = null!;
 
     private Player() { }
 
-    public Player(Username username, ImmutableList<Country> countries)
+    public Player(Username username, IReadOnlyCollection<Country> countries)
     {
         ValidateCountries(countries);
         Username = username;
 
-        PlayerRatings = countries
-            .Select(c => new PlayerRating(this, c))
-            .ToList();
+        _playerRatings.AddRange(countries
+            .Select(c => new PlayerRating(this, c)));
 
         PlayerGameResult = new PlayerGameResult(this);
     }
 
-    private void ValidateCountries(ImmutableList<Country> countries)
+    private void ValidateCountries(IReadOnlyCollection<Country> countries)
     {
-        if (countries is null || countries.IsEmpty)
+        if (countries is null || countries.Count == 0)
         {
             throw new InvalidOperationException("Country list is empty; therefore user cannot be created.");
         }
@@ -36,8 +35,8 @@ public class Player : IdBase
 
     public void CalculateGamePoints()
     {
-        RatingGameResultsCalculator.Calculate(PlayerRatings);
-        PlayerTotalPointsCalculator.Calculate(PlayerRatings, PlayerGameResult);
+        RatingGameResultsCalculator.Calculate(_playerRatings);
+        PlayerTotalPointsCalculator.Calculate(_playerRatings, PlayerGameResult);
     }
 
     public void RateCountry(
@@ -51,7 +50,7 @@ public class Player : IdBase
 
         SpecialPointsPolicy.Validate(
             rating,
-            PlayerRatings,
+            _playerRatings,
             category1Points,
             category2Points,
             category3Points);
@@ -63,7 +62,7 @@ public class Player : IdBase
             category2Points,
             category3Points);
 
-        PredictionsCalculator.Calculate(rating, PlayerRatings, oldTotalPoints);
+        PredictionsCalculator.Calculate(rating, _playerRatings, oldTotalPoints);
     }
 
     private PlayerRating GetRating(int ratingId)
@@ -74,13 +73,13 @@ public class Player : IdBase
                 $"No player rating with id={ratingId} exists for this player.");
     }
 
-    public void ResolveTieBreak(List<int> orderedPredictionIds)
+    public void ResolveTieBreak(IReadOnlyList<int> orderedPredictionIds)
     {
         var predictions = GetPredictions();
         TieBreakResolver.Resolve(predictions, orderedPredictionIds);
     }
 
-    private List<Prediction> GetPredictions()
+    private IReadOnlyCollection<Prediction> GetPredictions()
     {
         return PlayerRatings
             .Select(r => r.Prediction)

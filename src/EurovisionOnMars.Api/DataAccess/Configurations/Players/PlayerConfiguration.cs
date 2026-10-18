@@ -18,6 +18,11 @@ public class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .Property(player => player.Username)
             .HasConversion(usernameConverter)
             .IsRequired();
+
+        player
+            .Navigation(p => p.PlayerRatings)
+            .HasField("_playerRatings")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 
     private static ValueConverter<Username, string> CreateUsernameConverter()
