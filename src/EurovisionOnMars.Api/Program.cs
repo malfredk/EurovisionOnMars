@@ -85,7 +85,7 @@ static void RegisterRatingClosingTime(WebApplicationBuilder builder)
 
 static void AddCountriesFeature(WebApplicationBuilder builder)
 {
-    builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+    builder.Services.AddScoped<IGetCountriesRepository, GetCountriesRepository>();
     builder.Services.AddTransient<ICountryMapper, CountryMapper>();
     builder.Services.AddScoped<ICountryService, CountryService>();
 }
