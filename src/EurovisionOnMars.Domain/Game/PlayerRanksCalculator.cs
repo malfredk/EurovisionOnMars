@@ -3,9 +3,9 @@ using EurovisionOnMars.Domain.Players.GameResults;
 
 namespace EurovisionOnMars.Domain.Game;
 
-public class PlayerRanksCalculator
+public static class PlayerRanksCalculator
 {
-    public void CalculatePlayerRanks(IReadOnlyCollection<Player> players)
+    public static void Calculate(IReadOnlyCollection<Player> players)
     {
         var orderedPlayerGameResults = players
             .Select(p => p.PlayerGameResult)
