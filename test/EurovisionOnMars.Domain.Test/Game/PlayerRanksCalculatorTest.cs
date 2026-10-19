@@ -22,7 +22,7 @@ public class PlayerRanksCalculatorTest
         };
 
         // act
-        _calculator.CalculatePlayerRanks(players);
+        _calculator.Calculate(players);
 
         // assert
         Assert.Equal(1, player10.PlayerGameResult.Rank!.Value);
@@ -40,7 +40,7 @@ public class PlayerRanksCalculatorTest
         Player[] players = [player1, player2];
 
         // act
-        _calculator.CalculatePlayerRanks(players);
+        _calculator.Calculate(players);
 
         // assert
         Assert.Equal(1, player1.PlayerGameResult.Rank!.Value);
@@ -58,7 +58,7 @@ public class PlayerRanksCalculatorTest
         Player[] players = [player1, player2, player3];
 
         // act
-        _calculator.CalculatePlayerRanks(players);
+        _calculator.Calculate(players);
 
         // assert
         Assert.Equal(3, player1.PlayerGameResult.Rank!.Value);
@@ -84,7 +84,7 @@ public class PlayerRanksCalculatorTest
         ];
 
         // act
-        _calculator.CalculatePlayerRanks(players);
+        _calculator.Calculate(players);
 
         // assert
         Assert.Equal(1, player1.PlayerGameResult.Rank!.Value);
@@ -103,7 +103,7 @@ public class PlayerRanksCalculatorTest
         var player = PlayerFactory.CreateWithTotalGamePoints(10);
 
         // act
-        _calculator.CalculatePlayerRanks([player]);
+        _calculator.Calculate([player]);
 
         // assert
         Assert.Equal(1, player.PlayerGameResult.Rank!.Value);
@@ -116,7 +116,7 @@ public class PlayerRanksCalculatorTest
         Player[] players = [];
 
         // act
-        var action = () => _calculator.CalculatePlayerRanks(players);
+        var action = () => _calculator.Calculate(players);
 
         // assert
         var exception = Record.Exception(action);

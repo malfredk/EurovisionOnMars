@@ -11,18 +11,15 @@ public class CalculateGameResultsService : ICalculateGameResultsService
 {
     private readonly ILogger<CalculateGameResultsService> _logger;
     private readonly ICalculateGameResultsRepository _repository;
-    private readonly PlayerRanksCalculator _playerRanksCalculator;
 
     public CalculateGameResultsService
         (
         ILogger<CalculateGameResultsService> logger,
-        ICalculateGameResultsRepository repository,
-        PlayerRanksCalculator playerRanksCalculator
+        ICalculateGameResultsRepository repository
         )
     {
         _logger = logger;
         _repository = repository;
-        _playerRanksCalculator = playerRanksCalculator;
     }
 
     public async Task CalculateGameResults()
@@ -35,7 +32,7 @@ public class CalculateGameResultsService : ICalculateGameResultsService
             player.CalculateGamePoints();
         }
 
-        _playerRanksCalculator.CalculatePlayerRanks(players);
+        PlayerRanksCalculator.Calculate(players);
 
         await _repository.SaveChanges();
     }

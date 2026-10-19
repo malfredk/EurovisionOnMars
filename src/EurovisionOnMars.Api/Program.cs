@@ -1,16 +1,8 @@
 using EurovisionOnMars.Api.Configurations;
 using EurovisionOnMars.Api.Features.Countries;
-using EurovisionOnMars.Api.Features.GameResults.CalculateGameResults;
-using EurovisionOnMars.Api.Features.GameResults.GetPlayerGameResults;
+using EurovisionOnMars.Api.Features.GameResults;
 using EurovisionOnMars.Api.Features.Players;
-using EurovisionOnMars.Api.Features.Players.CreatePlayer;
-using EurovisionOnMars.Api.Features.Players.GetPlayer;
-using EurovisionOnMars.Api.Features.Players.GetRatingGameResults;
-using EurovisionOnMars.Api.Features.Players.GetRatings;
-using EurovisionOnMars.Api.Features.Players.RateCountry;
-using EurovisionOnMars.Api.Features.Players.ResolveTieBreak;
 using EurovisionOnMars.Api.Middlewares;
-using EurovisionOnMars.Domain.Game;
 using EurovisionOnMars.Infrastructure;
 using EurovisionOnMars.Infrastructure.DataAccess;
 using Microsoft.Net.Http.Headers;
@@ -30,9 +22,10 @@ builder.Services.AddInfrastructure(
     builder.Configuration,
     builder.Environment);
 
-AddCountriesFeature(builder);
-AddGameResultsFeature(builder);
-AddPlayerFeature(builder);
+builder.Services
+    .AddCountriesFeatures()
+    .AddGameResultsFeatures()
+    .AddPlayersFeatures();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
@@ -81,86 +74,4 @@ static void RegisterRatingClosingTime(WebApplicationBuilder builder)
 {
     var ratingClosingTime = ConfigurationValidator.GetAndValidateRatingClosingTime(builder.Configuration);
     builder.Services.AddSingleton(typeof(DateTimeOffset), ratingClosingTime);
-}
-
-static void AddCountriesFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IGetCountriesRepository, GetCountriesRepository>();
-    builder.Services.AddTransient<ICountryMapper, CountryMapper>();
-    builder.Services.AddScoped<ICountryService, CountryService>();
-}
-
-static void AddGameResultsFeature(WebApplicationBuilder builder)
-{
-    AddCalculateGameResultsFeature(builder);
-    AddGetPlayerGameResultsFeature(builder);
-}
-
-static void AddCalculateGameResultsFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<ICalculateGameResultsRepository, CalculateGameResultsRepository>();
-    builder.Services.AddScoped<PlayerRanksCalculator>();
-    builder.Services.AddScoped<ICalculateGameResultsService, CalculateGameResultsService>();
-}
-
-static void AddGetPlayerGameResultsFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IGetPlayerGameResultsRepository, GetPlayerGameResultsRepository>();
-    builder.Services.AddTransient<IPlayerGameResultMapper, PlayerGameResultMapper>();
-    builder.Services.AddScoped<IGetPlayerGameResultsService, GetPlayerGameResultsService>();
-}
-
-static void AddPlayerFeature(WebApplicationBuilder builder)
-{
-    AddRatingTimeValidator(builder);
-    AddCreatePlayerFeature(builder);
-    AddGetPlayerFeature(builder);
-    AddGetRatingGameResultsFeature(builder);
-    AddGetRatingsFeature(builder);
-    AddRateCountryFeature(builder);
-    AddResolveTieBreakFeature(builder);
-}
-
-static void AddRatingTimeValidator(WebApplicationBuilder builder)
-{
-    builder.Services.AddTransient<IDateTimeNow, DateTimeNow>();
-    builder.Services.AddScoped<IRatingTimeValidator, RatingTimeValidator>();
-}
-
-static void AddCreatePlayerFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<ICreatePlayerRepository, CreatePlayerRepository>();
-    builder.Services.AddScoped<ICreatePlayerService, CreatePlayerService>();
-}
-
-static void AddGetPlayerFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IGetPlayerRepository, GetPlayerRepository>();
-    builder.Services.AddScoped<IGetPlayerService, GetPlayerService>();
-}
-
-static void AddGetRatingGameResultsFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IGetRatingGameResultsRepository, GetRatingGameResultsRepository>();
-    builder.Services.AddTransient<IRatingGameResultMapper, RatingGameResultMapper>();
-    builder.Services.AddScoped<IGetRatingGameResultsService, GetRatingGameResultsService>();
-}
-
-static void AddGetRatingsFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IGetRatingsRepository, GetRatingsRepository>();
-    builder.Services.AddTransient<IPlayerRatingMapper, PlayerRatingMapper>();
-    builder.Services.AddScoped<IGetRatingsService, GetRatingsService>();
-}
-
-static void AddRateCountryFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IRateCountryRepository, RateCountryRepository>();
-    builder.Services.AddScoped<IRateCountryService, RateCountryService>();
-}
-
-static void AddResolveTieBreakFeature(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IResolveTieBreakRepository, ResolveTieBreakRepository>();
-    builder.Services.AddScoped<IResolveTieBreakService, ResolveTieBreakService>();
 }
